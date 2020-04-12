@@ -1,0 +1,5 @@
+msgpack
+orjson
+psutil
+pymongo
+redis

@@ -1,0 +1,64 @@
+site_name: Sergeant
+site_url: https://intsights.github.io/sergeant/
+repo_url: https://github.com/intsights/sergeant
+site_author: Gal Ben David
+copyright: Intsights (c) 2020
+remote_branch: gh-pages
+docs_dir: docs
+site_dir: site
+nav:
+    - Home: 'index.md'
+    - Worker:
+      - Config:
+        - name: 'worker/config/name.md'
+        - connector: 'worker/config/connector.md'
+        - max_tasks_per_run: 'worker/config/max_tasks_per_run.md'
+        - max_retries: 'worker/config/max_retries.md'
+        - tasks_per_transaction: 'worker/config/tasks_per_transaction.md'
+        - encoder: 'worker/config/encoder.md'
+        - executor: 'worker/config/executor.md'
+        - timeouts: 'worker/config/timeouts.md'
+        - logging: 'worker/config/logging.md'
+      - Handlers:
+        - on_success: 'worker/handlers/on_success.md'
+        - on_failure: 'worker/handlers/on_failure.md'
+        - on_timeout: 'worker/handlers/on_timeout.md'
+        - on_retry: 'worker/handlers/on_retry.md'
+        - on_max_retries: 'worker/handlers/on_max_retries.md'
+        - on_requeue: 'worker/handlers/on_requeue.md'
+      - Worker:
+        - initialize: 'worker/worker/initialize.md'
+        - finalize: 'worker/worker/finalize.md'
+        - pre_work: 'worker/worker/pre_work.md'
+        - post_work: 'worker/worker/post_work.md'
+        - work: 'worker/worker/work.md'
+      - Methods:
+        - retry: 'worker/methods/retry.md'
+        - requeue: 'worker/methods/requeue.md'
+        - apply_async_one: 'worker/methods/apply_async_one.md'
+        - apply_async_many: 'worker/methods/apply_async_many.md'
+        - get_next_tasks: 'worker/methods/get_next_tasks.md'
+        - number_of_enqueued_tasks: 'worker/methods/number_of_enqueued_tasks.md'
+        - purge_tasks: 'worker/methods/purge_tasks.md'
+    - Supervisor: "supervisor.md"
+    - Examples:
+      - 'examples/single_producer_consumer.md'
+      - 'examples/worker_with_apm.md'
+theme:
+  name: material
+  logo: images/logo_icon.png
+  favicon: images/favicon.ico
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js
+markdown_extensions:
+  - toc:
+      permalink: "#"
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - pymdownx.highlight:
+      linenums: 1
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed

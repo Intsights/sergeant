@@ -1,0 +1,58 @@
+version: '2.4'
+
+services:
+    logserver-elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+        environment:
+            - ES_JAVA_OPTS=-Xms512m -Xmx512m -Dio.netty.recycler.maxCapacityPerThread=0
+            - bootstrap.memory_lock=true
+            - discovery.type=single-node
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:9200"]
+            interval: 2s
+            timeout: 5s
+            retries: 5
+
+    logserver-apm:
+        image: docker.elastic.co/apm/apm-server:7.6.2
+        networks:
+            default:
+                aliases:
+                 - logserver-apm
+        ports:
+            - 8200:8200/tcp
+        volumes:
+            - ./apm-server.docker.yml:/usr/share/apm-server/apm-server.yml:ro
+        command: >
+            --strict.perms=false -e -E output.elasticsearch.hosts=["logserver-elasticsearch:9200"]
+
+    logserver-kibana:
+        image: docker.elastic.co/kibana/kibana:7.6.2
+        networks:
+            default:
+                aliases:
+                 - logserver-kibana
+        ports:
+            - 5601:5601
+        environment:
+            ELASTICSEARCH_HOSTS: http://logserver-elasticsearch:9200
+    logserver-logstash:
+        image: docker.elastic.co/logstash/logstash:7.6.2
+        links:
+            - logserver-elasticsearch
+        ports:
+            - "8080:8080"
+            - "9999:9999"
+        volumes:
+            - ./:/config-dir
+        command: logstash -f /config-dir/logstash.conf
+        depends_on:
+            - logserver-elasticsearch
+    redis:
+        image: redis
+        ports:
+            - "6379:6379"
