@@ -1,36 +1,76 @@
-import sys
-import pickle
+import importlib
 import traceback
+import sys
+import multiprocessing.connection
+import argparse
 
 
 def main():
-    data = sys.stdin.buffer.read()
-    obj = pickle.loads(data)
+    parser = argparse.ArgumentParser(
+        description='Sergeant Supervisor',
+    )
+    parser.add_argument(
+        '--child-pipe',
+        help='Pipe fileno to return the potential exception',
+        type=int,
+        required=True,
+        dest='child_pipe',
+    )
+    parser.add_argument(
+        '--worker-class',
+        help='Class name of the worker to spawn',
+        type=str,
+        required=True,
+        dest='worker_class',
+    )
+    parser.add_argument(
+        '--worker-module',
+        help='Module of the worker class',
+        type=str,
+        required=True,
+        dest='worker_module',
+    )
+    args = parser.parse_args()
+    pipe_obj = multiprocessing.connection.Connection(
+        handle=args.child_pipe,
+    )
 
     try:
-        worker_obj = obj['worker_obj']()
+        worker_module = importlib.import_module(
+            name=args.worker_module,
+        )
+    except ModuleNotFoundError:
+        sys.exit(2)
+
+    try:
+        worker_class = getattr(worker_module, args.worker_class)
+    except AttributeError:
+        sys.exit(3)
+
+    try:
+        worker_obj = worker_class()
         worker_obj.init_worker()
         worker_obj.work_loop()
-        obj['pipe'].send(None)
+        pipe_obj.send(None)
 
         return 0
     except KeyboardInterrupt:
-        pass
+        return 0
     except Exception as exception:
-        obj['pipe'].send(
+        pipe_obj.send(
             {
-                'exception': exception,
+                'exception': repr(exception),
                 'traceback': traceback.format_exc(),
             }
         )
 
-        return -1
+        return 1
     finally:
         try:
-            obj['pipe'].close()
+            pipe_obj.close()
         except Exception:
             pass
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

@@ -5,8 +5,6 @@ import subprocess
 import shlex
 import multiprocessing.context
 import traceback
-import pickle
-import importlib
 import argparse
 import logging
 import psutil
@@ -18,7 +16,6 @@ class SupervisedWorker:
         self,
         worker_module_name,
         worker_class_name,
-        worker_obj,
     ):
         pipe = multiprocessing.Pipe()
 
@@ -28,24 +25,12 @@ class SupervisedWorker:
 
         self.process = subprocess.Popen(
             args=shlex.split(
-                s=f'python3 -m sergeant.slave --module={worker_module_name} --class={worker_class_name}',
+                s=f'python3 -m sergeant.slave --child-pipe={self.child_pipe.fileno()} --worker-module={worker_module_name} --worker-class={worker_class_name}',
             ),
-            stdout=None,
-            stdin=subprocess.PIPE,
-            stderr=None,
             pass_fds=(
                 self.child_pipe.fileno(),
             ),
         )
-        self.process.stdin.write(
-            pickle.dumps(
-                {
-                    'pipe': self.child_pipe,
-                    'worker_obj': worker_obj,
-                },
-            )
-        )
-        self.process.stdin.close()
 
         self.psutil_obj = psutil.Process(
             pid=self.process.pid,
@@ -108,13 +93,11 @@ class Supervisor:
         self,
         worker_module_name,
         worker_class_name,
-        worker_obj,
         concurrent_workers,
         max_worker_memory_usage,
     ):
         self.worker_module_name = worker_module_name
         self.worker_class_name = worker_class_name
-        self.worker_obj = worker_obj
         self.concurrent_workers = concurrent_workers
         self.max_worker_memory_usage = max_worker_memory_usage
 
@@ -140,7 +123,6 @@ class Supervisor:
             worker = SupervisedWorker(
                 worker_module_name=self.worker_module_name,
                 worker_class_name=self.worker_class_name,
-                worker_obj=self.worker_obj,
             )
             self.logger.info(f'spawned a new worker at pid: {worker.process.pid}')
 
@@ -182,6 +164,16 @@ class Supervisor:
             except ChildProcessError:
                 pass
 
+            if worker.process.returncode == 2:
+                self.logger.error(f'could not load worker module: {self.worker_module_name}')
+
+                sys.exit(1)
+
+            if worker.process.returncode == 3:
+                self.logger.error(f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}')
+
+                sys.exit(1)
+
             if worker.exception:
                 self.logger.error(f'worker exception: {worker.exception["exception"]}')
                 self.logger.error(f'worker traceback:\n{worker.exception["traceback"]}')
@@ -206,7 +198,6 @@ class Supervisor:
         worker = SupervisedWorker(
             worker_module_name=self.worker_module_name,
             worker_class_name=self.worker_class_name,
-            worker_obj=self.worker_obj,
         )
         self.logger.info(f'spawned a new worker at pid: {worker.process.pid}')
         self.current_workers.append(worker)
@@ -246,23 +237,9 @@ def main():
     )
     args = parser.parse_args()
 
-    try:
-        worker_module = importlib.import_module(
-            name=args.worker_module,
-        )
-    except Exception as exception:
-        print(f'could not load worker module: {exception}')
-
-    try:
-        worker_class = getattr(worker_module, args.worker_class)
-    except Exception as exception:
-        print(f'could not load worker class: {exception}')
-
-    worker_class = worker_module.Worker
     supervisor = Supervisor(
         worker_module_name=args.worker_module,
         worker_class_name=args.worker_class,
-        worker_obj=worker_class,
         concurrent_workers=args.concurrent_workers,
         max_worker_memory_usage=args.max_worker_memory_usage,
     )
