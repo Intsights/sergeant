@@ -844,7 +844,7 @@
 3
 4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
 <span class="k">class</span> <span class="nc">Encoder</span><span class="p">:</span>
-    <span class="n">compressor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;dummy&#39;</span>
+    <span class="n">compressor</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">serializer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pickle&#39;</span>
 </code></pre></div>
 </td></tr></table>
@@ -852,7 +852,7 @@
 <p>The <code>compressor</code> parameter defines the type of the compressor. Each task prior to being pushed to the queue is going through a compressor. The usage of <code>compressor</code> can help reducing the storage/memory of the broker. Tasks with a lot of parameters/data can take a lot of memory and might fill the memory/storage quickly. Using a compressor would impact the performance of task pushing/pulling due to the compression algorithm being a CPU intensive operation.</p>
 <p>The following compressors are available:</p>
 <ul>
-<li><code>dummy</code> [default] - A dummy compressor that does nothing.</li>
+<li><code>None</code> [default] - No compression is applied</li>
 <li><code>bzip2</code></li>
 <li><code>gzip</code></li>
 <li><code>lzma</code></li>
@@ -884,7 +884,7 @@
 2
 3
 4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Encoder</span><span class="p">(</span>
-    <span class="n">compressor</span><span class="o">=</span><span class="s1">&#39;dummy&#39;</span><span class="p">,</span>
+    <span class="n">compressor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">serializer</span><span class="o">=</span><span class="s1">&#39;pickle&#39;</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>

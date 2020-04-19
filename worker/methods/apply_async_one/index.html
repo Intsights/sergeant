@@ -855,10 +855,10 @@
 5
 6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">apply_async_one</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">kwargs</span><span class="p">,</span>
-    <span class="n">task_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">priority</span><span class="o">=</span><span class="s1">&#39;NORMAL&#39;</span><span class="p">,</span>
-<span class="p">)</span>
+    <span class="n">kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+    <span class="n">task_name</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;NORMAL&#39;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 </td></tr></table>
 
