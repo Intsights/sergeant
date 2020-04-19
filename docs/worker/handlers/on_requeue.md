@@ -7,8 +7,8 @@ The `on_requeue` handler is invoked when a task called the `requeue` method.
 ```python
 def on_requeue(
     self,
-    task,
-)
+    task: typing.Dict[str, typing.Any],
+) -> None
 ```
 
 The following use cases are possible:

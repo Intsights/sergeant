@@ -23,21 +23,6 @@ class CompressorsTestCase(
             second=self.obj_to_compress,
         )
 
-    def test_dummy(
-        self,
-    ):
-        compressed_object = sergeant.encoder.compressor.dummy.Compressor.compress(
-            data=self.obj_to_compress,
-        )
-        uncompressed_object = sergeant.encoder.compressor.dummy.Compressor.decompress(
-            data=compressed_object,
-        )
-
-        self.assertEqual(
-            first=uncompressed_object,
-            second=self.obj_to_compress,
-        )
-
     def test_gzip(
         self,
     ):

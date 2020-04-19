@@ -8,8 +8,9 @@ The `retry` method pushes back the task to the queue while increasing the run co
 ```python
 def retry(
     self,
-    task,
-)
+    task: typing.Dict[str, typing.Any],
+    priority: str = 'NORMAL',
+) -> None
 ```
 
 
@@ -24,5 +25,7 @@ def work(
 
     response = requests.get(url_to_crawl)
     if not response.ok:
-        self.retry()
+        self.retry(
+            task=task,
+        )
 ```

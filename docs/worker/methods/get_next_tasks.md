@@ -8,9 +8,9 @@ The `get_next_tasks` method pulls `number_of_tasks` tasks from the queue. Unless
 ```python
 def get_next_tasks(
     self,
-    number_of_tasks,
-    task_name=None,
-)
+    number_of_tasks: int,
+    task_name: typing.Optional[str] = None,
+) -> typing.List[typing.Dict[str, typing.Any]]
 ```
 
 

@@ -29,7 +29,8 @@ class EncoderTestCase(
     def test_encoders(
         self,
     ):
-        compressor_names = sergeant.encoder.compressor.__compressors__.keys()
+        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
+        compressor_names.append(None)
         serializer_names = sergeant.encoder.serializer.__serializers__.keys()
         for compressor_name in compressor_names:
             for serializer_name in serializer_names:

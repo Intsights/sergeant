@@ -1,10 +1,10 @@
+import typing
 import sys
 import os
 import multiprocessing
 import subprocess
 import shlex
 import multiprocessing.context
-import traceback
 import argparse
 import logging
 import psutil
@@ -14,14 +14,17 @@ import time
 class SupervisedWorker:
     def __init__(
         self,
-        worker_module_name,
-        worker_class_name,
+        worker_module_name: str,
+        worker_class_name: str,
     ):
+        self.logger = logging.getLogger(
+            name='SupervisedWorker',
+        )
+
         pipe = multiprocessing.Pipe()
 
         self.parent_pipe = pipe[0]
         self.child_pipe = pipe[1]
-        self._exception = None
 
         self.process = subprocess.Popen(
             args=shlex.split(
@@ -36,33 +39,30 @@ class SupervisedWorker:
             pid=self.process.pid,
         )
 
-    @property
-    def rss_memory(
+    def get_rss_memory(
         self,
-    ):
+    ) -> int:
         try:
             return self.psutil_obj.memory_info().rss
         except psutil.NoSuchProcess:
             return 0
 
-    @property
-    def exception(
+    def get_summary(
         self,
-    ):
+    ) -> typing.Optional[typing.Dict[str, typing.Any]]:
         try:
             if self.parent_pipe.poll():
-                self._exception = self.parent_pipe.recv()
-
-            return self._exception
+                return self.parent_pipe.recv()
+            else:
+                return None
         except Exception as exception:
-            return {
-                'exception': exception,
-                'traceback': traceback.format_exc(),
-            }
+            self.logger.error(f'could not receive supervised_worker\'s summary: {exception}')
+
+            return None
 
     def kill(
         self,
-    ):
+    ) -> None:
         try:
             self.child_pipe.close()
             self.parent_pipe.close()
@@ -84,17 +84,17 @@ class SupervisedWorker:
 
     def __del__(
         self,
-    ):
+    ) -> None:
         self.kill()
 
 
 class Supervisor:
     def __init__(
         self,
-        worker_module_name,
-        worker_class_name,
-        concurrent_workers,
-        max_worker_memory_usage,
+        worker_module_name: str,
+        worker_class_name: str,
+        concurrent_workers: int,
+        max_worker_memory_usage: typing.Optional[int],
     ):
         self.worker_module_name = worker_module_name
         self.worker_class_name = worker_class_name
@@ -118,7 +118,7 @@ class Supervisor:
 
     def start(
         self,
-    ):
+    ) -> None:
         for i in range(self.concurrent_workers):
             worker = SupervisedWorker(
                 worker_module_name=self.worker_module_name,
@@ -132,7 +132,7 @@ class Supervisor:
 
     def supervise_loop(
         self,
-    ):
+    ) -> None:
         try:
             while True:
                 current_workers = self.current_workers.copy()
@@ -155,14 +155,32 @@ class Supervisor:
 
     def supervise_worker(
         self,
-        worker,
-    ):
+        worker: SupervisedWorker,
+    ) -> None:
         if worker.process.poll() is not None:
+            worker_summary = worker.get_summary()
+
             self.logger.info(f'a worker has exited with error code: {worker.process.returncode}')
+
             try:
                 os.waitpid(worker.process.pid, 0)
             except ChildProcessError:
                 pass
+
+            if worker.process.returncode == 0:
+                if worker_summary:
+                    self.logger.debug(f'worker summary: {worker_summary}')
+                else:
+                    self.logger.debug(f'worker summary is unavailable')
+
+            if worker.process.returncode == 1:
+                self.logger.error(f'worker execution has failed')
+
+                if worker_summary:
+                    self.logger.error(f'exception: {worker_summary["exception"]}')
+                    self.logger.error(f'traceback: {worker_summary["traceback"]}')
+                else:
+                    self.logger.error(f'exception and tracback are unavailable')
 
             if worker.process.returncode == 2:
                 self.logger.error(f'could not load worker module: {self.worker_module_name}')
@@ -174,25 +192,21 @@ class Supervisor:
 
                 sys.exit(1)
 
-            if worker.exception:
-                self.logger.error(f'worker exception: {worker.exception["exception"]}')
-                self.logger.error(f'worker traceback:\n{worker.exception["traceback"]}')
-
             self.respawn_a_worker(
                 worker=worker,
             )
 
         if self.max_worker_memory_usage:
-            if worker.rss_memory > self.max_worker_memory_usage:
-                self.logger.info(f'worker exceeded the maximum memory limit: pid: {worker.process.pid}, rss: {worker.rss_memory}')
+            if worker.get_rss_memory() > self.max_worker_memory_usage:
+                self.logger.info(f'worker exceeded the maximum memory limit: pid: {worker.process.pid}, rss: {worker.get_rss_memory()}')
                 self.respawn_a_worker(
                     worker=worker,
                 )
 
     def respawn_a_worker(
         self,
-        worker,
-    ):
+        worker: SupervisedWorker,
+    ) -> None:
         worker.kill()
         self.current_workers.remove(worker)
         worker = SupervisedWorker(
@@ -203,7 +217,7 @@ class Supervisor:
         self.current_workers.append(worker)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description='Sergeant Supervisor',
     )

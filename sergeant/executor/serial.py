@@ -1,3 +1,5 @@
+import typing
+import types
 import os
 import signal
 
@@ -8,8 +10,8 @@ from .. import worker
 class SerialExecutor:
     def __init__(
         self,
-        worker,
-    ):
+        worker: worker.Worker,
+    ) -> None:
         self.worker = worker
 
         self.currently_working = False
@@ -36,24 +38,24 @@ class SerialExecutor:
 
     def sigabrt_handler(
         self,
-        signal_num,
-        frame,
-    ):
+        signal_num: int,
+        frame: types.FrameType,
+    ) -> None:
         if self.currently_working:
             raise worker.WorkerHardTimedout()
 
     def sigint_handler(
         self,
-        signal_num,
-        frame,
-    ):
+        signal_num: int,
+        frame: types.FrameType,
+    ) -> None:
         if self.currently_working:
             raise worker.WorkerSoftTimedout()
 
     def execute_tasks(
         self,
-        tasks,
-    ):
+        tasks: typing.Iterable[typing.Dict[str, typing.Any]],
+    ) -> None:
         for task in tasks:
             self.execute_task(
                 task=task,
@@ -61,8 +63,8 @@ class SerialExecutor:
 
     def execute_task(
         self,
-        task,
-    ):
+        task: typing.Dict[str, typing.Any],
+    ) -> None:
         try:
             self.pre_work(
                 task=task,
@@ -112,8 +114,8 @@ class SerialExecutor:
 
     def pre_work(
         self,
-        task,
-    ):
+        task: typing.Dict[str, typing.Any],
+    ) -> None:
         try:
             self.worker.pre_work(
                 task=task,
@@ -133,10 +135,10 @@ class SerialExecutor:
 
     def post_work(
         self,
-        task,
-        success,
-        exception=None,
-    ):
+        task: typing.Dict[str, typing.Any],
+        success: bool,
+        exception: typing.Optional[Exception] = None,
+    ) -> None:
         if self.killer:
             self.killer.stop_and_reset()
 
@@ -158,7 +160,7 @@ class SerialExecutor:
 
     def __del__(
         self,
-    ):
+    ) -> None:
         if self.killer:
             try:
                 self.killer.kill()

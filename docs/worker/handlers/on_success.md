@@ -7,9 +7,9 @@ The `on_success` handler is invoked when a task has completed successfully. The 
 ```python
 def on_success(
     self,
-    task,
-    returned_value,
-)
+    task: typing.Dict[str, typing.Any],
+    returned_value: typing.Any,
+) -> None
 ```
 
 When the task's work method has finished successfully - without any exception being raised, without any retry attempts, this handler will be invoked. The returned value of the task will be passed to the handler.

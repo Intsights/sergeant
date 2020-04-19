@@ -1,20 +1,17 @@
 import redis
+import typing
 
-from . import _connector
 
-
-class Connector(
-    _connector.Connector,
-):
+class Connector:
     name = 'redis'
 
     def __init__(
         self,
-        host,
-        port,
-        password,
-        database,
-    ):
+        host: str,
+        port: int,
+        password: typing.Optional[str],
+        database: int,
+    ) -> None:
         self.host = host
         self.port = port
         self.password = password
@@ -33,9 +30,9 @@ class Connector(
 
     def key_set(
         self,
-        key,
-        value,
-    ):
+        key: str,
+        value: bytes,
+    ) -> bool:
         is_new = self.connection.set(
             name=key,
             value=value,
@@ -46,22 +43,22 @@ class Connector(
 
     def key_get(
         self,
-        key,
-    ):
+        key: str,
+    ) -> bytes:
         return self.connection.get(
             name=key,
         )
 
     def key_delete(
         self,
-        key,
-    ):
-        return self.connection.delete(key)
+        key: str,
+    ) -> bool:
+        return self.connection.delete(key) > 0
 
     def queue_pop(
         self,
-        queue_name,
-    ):
+        queue_name: str,
+    ) -> typing.Optional[bytes]:
         value = self.connection.lpop(
             name=queue_name,
         )
@@ -73,9 +70,9 @@ class Connector(
 
     def queue_pop_bulk(
         self,
-        queue_name,
-        number_of_items,
-    ):
+        queue_name: str,
+        number_of_items: int,
+    ) -> typing.List[bytes]:
         pipeline = self.connection.pipeline()
 
         pipeline.lrange(queue_name, 0, number_of_items - 1)
@@ -87,10 +84,10 @@ class Connector(
 
     def queue_push(
         self,
-        queue_name,
-        item,
-        priority='NORMAL',
-    ):
+        queue_name: str,
+        item: bytes,
+        priority: str = 'NORMAL',
+    ) -> bool:
         if priority == 'HIGH':
             self.connection.lpush(queue_name, item)
         else:
@@ -100,10 +97,10 @@ class Connector(
 
     def queue_push_bulk(
         self,
-        queue_name,
-        items,
-        priority='NORMAL',
-    ):
+        queue_name: str,
+        items: typing.Iterable[bytes],
+        priority: str = 'NORMAL',
+    ) -> bool:
         if priority == 'HIGH':
             self.connection.lpush(queue_name, *items)
         else:
@@ -113,14 +110,14 @@ class Connector(
 
     def queue_length(
         self,
-        queue_name,
-    ):
+        queue_name: str,
+    ) -> int:
         return self.connection.llen(
             name=queue_name,
         )
 
     def queue_delete(
         self,
-        queue_name,
-    ):
-        return self.connection.delete(queue_name)
+        queue_name: str,
+    ) -> bool:
+        return self.connection.delete(queue_name) > 0

@@ -1,3 +1,4 @@
+import typing
 import os
 import signal
 import asyncio
@@ -17,13 +18,13 @@ class ProcessKillerServer(
 ):
     def __init__(
         self,
-        async_loop,
-        pid_to_kill,
-        sleep_interval,
-        soft_timeout,
-        hard_timeout,
-        critical_timeout,
-    ):
+        async_loop: asyncio.AbstractEventLoop,
+        pid_to_kill: int,
+        sleep_interval: float,
+        soft_timeout: float,
+        hard_timeout: float,
+        critical_timeout: float,
+    ) -> None:
         super().__init__()
 
         self.logger = logger.logger.Logger(
@@ -56,19 +57,17 @@ class ProcessKillerServer(
 
     def connection_made(
         self,
-        transport,
-    ):
-        self.transport = transport
-
-        udp_port = self.transport._sock.getsockname()[1]
+        transport: asyncio.BaseTransport,
+    ) -> None:
+        udp_port = transport._sock.getsockname()[1]
         sys.stdout.write(str(udp_port) + '\n')
         sys.stdout.flush()
 
     def datagram_received(
         self,
-        data,
-        addr,
-    ):
+        data: bytes,
+        addr: typing.Tuple[str, int],
+    ) -> None:
         if data == b'start':
             self.logger.info(
                 msg='start request was received',
@@ -97,7 +96,7 @@ class ProcessKillerServer(
 
     async def kill_loop(
         self,
-    ):
+    ) -> None:
         self.logger.info(
             msg='kill loop started',
         )
@@ -170,9 +169,9 @@ class ProcessKillerServer(
 
     def kill_process(
         self,
-        pid,
-        signal,
-    ):
+        pid: int,
+        signal: int,
+    ) -> None:
         try:
             self.logger.info(
                 msg='kill_process request',
@@ -186,7 +185,7 @@ class ProcessKillerServer(
 
     def killer_start(
         self,
-    ):
+    ) -> None:
         self.running = True
 
         self.logger.info(
@@ -195,7 +194,7 @@ class ProcessKillerServer(
 
     def killer_stop(
         self,
-    ):
+    ) -> None:
         self.running = False
 
         self.logger.info(
@@ -204,7 +203,7 @@ class ProcessKillerServer(
 
     def killer_reset(
         self,
-    ):
+    ) -> None:
         self.time_elapsed = 0.0
         self.soft_timeout_raised = False
         self.hard_timeout_raised = False
@@ -218,12 +217,12 @@ class ProcessKillerServer(
 class ProcessKiller:
     def __init__(
         self,
-        pid_to_kill,
-        sleep_interval,
-        soft_timeout,
-        hard_timeout,
-        critical_timeout,
-    ):
+        pid_to_kill: int,
+        sleep_interval: float,
+        soft_timeout: float,
+        hard_timeout: float,
+        critical_timeout: float,
+    ) -> None:
         self.killer_process = subprocess.Popen(
             args=shlex.split(
                 s=f'python3 -m {__name__} --pid-to-kill {pid_to_kill} --sleep-interval {sleep_interval} --soft-timeout {soft_timeout} --hard-timeout {hard_timeout} --critical-timeout {critical_timeout}',
@@ -257,27 +256,27 @@ class ProcessKiller:
 
     def start(
         self,
-    ):
+    ) -> None:
         self.killer_socket.send(b'start')
 
     def stop(
         self,
-    ):
+    ) -> None:
         self.killer_socket.send(b'stop')
 
     def reset(
         self,
-    ):
+    ) -> None:
         self.killer_socket.send(b'reset')
 
     def stop_and_reset(
         self,
-    ):
+    ) -> None:
         self.killer_socket.send(b'stop_and_reset')
 
     def kill(
         self,
-    ):
+    ) -> None:
         try:
             self.killer_socket.close()
         except Exception:
@@ -298,7 +297,7 @@ class ProcessKiller:
 
     def __del__(
         self,
-    ):
+    ) -> None:
         try:
             self.kill()
         except Exception:

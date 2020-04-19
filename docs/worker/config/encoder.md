@@ -8,7 +8,7 @@ The `encoder` parameter controls the encoder which is responsible for the tasks 
 ```python
 @dataclasses.dataclass
 class Encoder:
-    compressor: str = 'dummy'
+    compressor: typing.Optional[str] = None
     serializer: str = 'pickle'
 ```
 
@@ -17,7 +17,7 @@ The `compressor` parameter defines the type of the compressor. Each task prior t
 
 The following compressors are available:
 
-- `dummy` [default] - A dummy compressor that does nothing.
+- `None` [default] - No compression is applied
 - `bzip2`
 - `gzip`
 - `lzma`
@@ -45,7 +45,7 @@ One can make any combination of compressor and serializer that suit your needs.
 === "default"
     ```python
     sergeant.config.Encoder(
-        compressor='dummy',
+        compressor=None,
         serializer='pickle',
     )
     ```

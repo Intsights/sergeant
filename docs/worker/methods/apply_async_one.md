@@ -14,10 +14,10 @@ The `apply_async_one` method pushes a task onto the queue. Unless `task_name` wa
 ```python
 def apply_async_one(
     self,
-    kwargs,
-    task_name=None,
-    priority='NORMAL',
-)
+    kwargs: typing.Dict[str, typing.Any],
+    task_name: typing.Optional[str] = None,
+    priority: str = 'NORMAL',
+) -> bool
 ```
 
 

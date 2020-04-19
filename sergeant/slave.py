@@ -5,7 +5,7 @@ import multiprocessing.connection
 import argparse
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(
         description='Sergeant Supervisor',
     )
@@ -40,18 +40,18 @@ def main():
             name=args.worker_module,
         )
     except ModuleNotFoundError:
-        sys.exit(2)
+        return 2
 
     try:
         worker_class = getattr(worker_module, args.worker_class)
     except AttributeError:
-        sys.exit(3)
+        return 3
 
     try:
         worker_obj = worker_class()
         worker_obj.init_worker()
-        worker_obj.work_loop()
-        pipe_obj.send(None)
+        summary = worker_obj.work_loop()
+        pipe_obj.send(summary)
 
         return 0
     except KeyboardInterrupt:

@@ -7,9 +7,9 @@ The `on_failure` handler is invoked when a task has raised an exception. The exc
 ```python
 def on_failure(
     self,
-    task,
-    exception,
-)
+    task: typing.Dict[str, typing.Any],
+    exception: Exception,
+) -> None
 ```
 
 The following use cases are possible:

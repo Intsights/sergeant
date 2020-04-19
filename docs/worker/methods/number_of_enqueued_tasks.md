@@ -8,8 +8,8 @@ The `number_of_enqueued_tasks` method return the number of all the tasks from th
 ```python
 def number_of_enqueued_tasks(
     self,
-    task_name=None,
-)
+    task_name: typing.Optional[str] = None,
+) -> typing.Optional[int]
 ```
 
 

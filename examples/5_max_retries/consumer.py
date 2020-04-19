@@ -16,7 +16,7 @@ class Worker(
                 'database': 0,
             },
         ),
-        max_tasks_per_run=10,
+        max_tasks_per_run=4,
         tasks_per_transaction=1,
         max_retries=3,
         logging=sergeant.config.Logging(

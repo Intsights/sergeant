@@ -1,21 +1,18 @@
+import typing
 import orjson
 
-from . import _serializer
 
-
-class Serializer(
-    _serializer.Serializer,
-):
+class Serializer:
     name = 'json'
 
     @staticmethod
     def serialize(
-        data,
-    ):
+        data: typing.Any,
+    ) -> bytes:
         return orjson.dumps(data)
 
     @staticmethod
     def unserialize(
-        data,
-    ):
+        data: bytes,
+    ) -> typing.Any:
         return orjson.loads(data)

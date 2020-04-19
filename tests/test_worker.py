@@ -80,9 +80,8 @@ class WorkerTestCase(
             obj=worker.task_queue.connector,
             cls=sergeant.connector.redis.Connector,
         )
-        self.assertIsInstance(
+        self.assertIsNone(
             obj=worker.task_queue.encoder.compressor,
-            cls=sergeant.encoder.compressor.dummy.Compressor,
         )
         self.assertIsInstance(
             obj=worker.task_queue.encoder.serializer,
@@ -120,9 +119,8 @@ class WorkerTestCase(
             obj=worker.task_queue.connector,
             cls=sergeant.connector.redis_cluster.Connector,
         )
-        self.assertIsInstance(
+        self.assertIsNone(
             obj=worker.task_queue.encoder.compressor,
-            cls=sergeant.encoder.compressor.dummy.Compressor,
         )
         self.assertIsInstance(
             obj=worker.task_queue.encoder.serializer,
@@ -147,16 +145,16 @@ class WorkerTestCase(
             obj=worker.task_queue.connector,
             cls=sergeant.connector.mongo.Connector,
         )
-        self.assertIsInstance(
+        self.assertIsNone(
             obj=worker.task_queue.encoder.compressor,
-            cls=sergeant.encoder.compressor.dummy.Compressor,
         )
         self.assertIsInstance(
             obj=worker.task_queue.encoder.serializer,
             cls=sergeant.encoder.serializer.pickle.Serializer,
         )
 
-        compressor_names = sergeant.encoder.compressor.__compressors__.keys()
+        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
+        compressor_names.append(None)
         serializer_names = sergeant.encoder.serializer.__serializers__.keys()
         for compressor_name in compressor_names:
             for serializer_name in serializer_names:
@@ -185,10 +183,15 @@ class WorkerTestCase(
                     obj=worker.task_queue.connector,
                     cls=sergeant.connector.redis.Connector,
                 )
-                self.assertEqual(
-                    first=worker.task_queue.encoder.compressor.name,
-                    second=compressor_name,
-                )
+                if compressor_name:
+                    self.assertEqual(
+                        first=worker.task_queue.encoder.compressor.name,
+                        second=compressor_name,
+                    )
+                else:
+                    self.assertIsNone(
+                        obj=worker.task_queue.encoder.compressor,
+                    )
                 self.assertEqual(
                     first=worker.task_queue.encoder.serializer.name,
                     second=serializer_name,

@@ -8,7 +8,7 @@ The `initialize` method is invoked by the worker once at the moment the worker i
 ```python
 def initialize(
     self,
-)
+) -> None
 ```
 
 

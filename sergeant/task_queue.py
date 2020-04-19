@@ -1,3 +1,4 @@
+import typing
 import time
 import datetime
 
@@ -7,22 +8,22 @@ class TaskQueue:
         self,
         connector,
         encoder,
-    ):
+    ) -> None:
         self.connector = connector
         self.encoder = encoder
 
     def purge_tasks(
         self,
-        task_name,
-    ):
-        self.connector.queue_delete(
+        task_name: str,
+    ) -> bool:
+        return self.connector.queue_delete(
             queue_name=task_name,
         )
 
     def number_of_enqueued_tasks(
         self,
-        task_name,
-    ):
+        task_name: str,
+    ) -> int:
         number_of_enqueued_tasks = self.connector.queue_length(
             queue_name=task_name,
         )
@@ -31,9 +32,9 @@ class TaskQueue:
 
     @staticmethod
     def craft_task(
-        task_name,
-        kwargs=None,
-    ):
+        task_name: str,
+        kwargs: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> typing.Dict[str, typing.Any]:
         if kwargs is None:
             kwargs = {}
 
@@ -48,16 +49,16 @@ class TaskQueue:
 
     def wait_queue_empty(
         self,
-        task_name,
-        timeout=0,
-        sample_interval=1.0,
-    ):
+        task_name: str,
+        timeout: float = 0,
+        sample_interval: float = 1.0,
+    ) -> bool:
         remaining_time = timeout
 
         not_empty = True
         while not_empty:
             if timeout and remaining_time <= 0:
-                return
+                return False
 
             not_empty = self.number_of_enqueued_tasks(
                 task_name=task_name,
@@ -66,11 +67,13 @@ class TaskQueue:
             time.sleep(sample_interval)
             remaining_time -= sample_interval
 
+        return True
+
     def apply_async_one(
         self,
-        task,
-        priority='NORMAL',
-    ):
+        task: typing.Dict[str, typing.Any],
+        priority: str = 'NORMAL',
+    ) -> bool:
         encoded_item = self.encoder.encode(
             data=task,
         )
@@ -85,13 +88,10 @@ class TaskQueue:
 
     def apply_async_many(
         self,
-        task_name,
-        tasks,
-        priority='NORMAL',
-    ):
-        if len(tasks) == 0:
-            return True
-
+        task_name: str,
+        tasks: typing.Iterable[typing.Dict[str, typing.Any]],
+        priority: str = 'NORMAL',
+    ) -> bool:
         encoded_tasks = []
         for task in tasks:
             encoded_task = self.encoder.encode(
@@ -100,19 +100,20 @@ class TaskQueue:
 
             encoded_tasks.append(encoded_task)
 
-        self.connector.queue_push_bulk(
-            queue_name=task_name,
-            items=encoded_tasks,
-            priority=priority,
-        )
+        if encoded_tasks:
+            self.connector.queue_push_bulk(
+                queue_name=task_name,
+                items=encoded_tasks,
+                priority=priority,
+            )
 
         return True
 
     def get_tasks(
         self,
-        task_name,
-        number_of_tasks,
-    ):
+        task_name: str,
+        number_of_tasks: int,
+    ) -> typing.List[typing.Dict[str, typing.Any]]:
         if number_of_tasks == 1:
             task = self.connector.queue_pop(
                 queue_name=task_name,
@@ -138,9 +139,9 @@ class TaskQueue:
 
     def retry(
         self,
-        task,
-        priority='NORMAL',
-    ):
+        task: typing.Dict[str, typing.Any],
+        priority: str = 'NORMAL',
+    ) -> bool:
         task['run_count'] += 1
 
         return self.apply_async_one(
@@ -150,9 +151,9 @@ class TaskQueue:
 
     def requeue(
         self,
-        task,
+        task: typing.Dict[str, typing.Any],
         priority='NORMAL',
-    ):
+    ) -> bool:
         return self.apply_async_one(
             task=task,
             priority=priority,
@@ -160,8 +161,8 @@ class TaskQueue:
 
     def delete_key(
         self,
-        name,
-    ):
+        name: str,
+    ) -> bool:
         key_was_deleted = self.connector.key_delete(
             key=name.encode(),
         )
@@ -170,8 +171,8 @@ class TaskQueue:
 
     def get_key(
         self,
-        name,
-    ):
+        name: str,
+    ) -> typing.Any:
         value = self.connector.key_get(
             key=name.encode(),
         )
@@ -186,9 +187,9 @@ class TaskQueue:
 
     def set_key(
         self,
-        name,
-        value,
-    ):
+        name: str,
+        value: typing.Any,
+    ) -> bool:
         encoded_value = self.encoder.encode(
             data=value,
         )

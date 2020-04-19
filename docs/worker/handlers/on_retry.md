@@ -7,8 +7,8 @@ The `on_retry` handler is invoked when a task called the `retry` method.
 ```python
 def on_retry(
     self,
-    task,
-)
+    task: typing.Dict[str, typing.Any],
+) -> None
 ```
 
 The following use cases are possible:

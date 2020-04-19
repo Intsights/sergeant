@@ -11,9 +11,9 @@ class LogstashHandler(
 ):
     def __init__(
         self,
-        host,
-        port,
-    ):
+        host: str,
+        port: int,
+    ) -> None:
         super().__init__()
         self.hostname = socket.gethostname()
         self.ipaddress = socket.gethostbyname(self.hostname)
@@ -26,8 +26,8 @@ class LogstashHandler(
 
     def emit(
         self,
-        record,
-    ):
+        record: logging.LogRecord,
+    ) -> None:
         message = {
             '@timestamp': datetime.datetime.utcfromtimestamp(record.created).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'message': record.getMessage(),
@@ -58,7 +58,7 @@ class LogstashHandler(
                 'stacktrace': ''.join(extracted_stacktrace),
             }
 
-        message = orjson.dumps(
+        encoded_message = orjson.dumps(
             obj=message,
             default=repr,
         )
@@ -69,7 +69,7 @@ class LogstashHandler(
                 type=socket.SOCK_STREAM,
             )
             socket_connection.connect(self.address)
-            socket_connection.sendall(message)
+            socket_connection.sendall(encoded_message)
         except Exception:
             traceback.print_exc()
         finally:

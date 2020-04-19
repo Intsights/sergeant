@@ -8,8 +8,8 @@ The `pre_work` method is invoked by the worker for every execution of a task, pr
 ```python
 def pre_work(
     self,
-    task,
-)
+    task: typing.Dict[str, typing.Any],
+) -> None
 ```
 
 

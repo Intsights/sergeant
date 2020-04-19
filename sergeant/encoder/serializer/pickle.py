@@ -1,17 +1,14 @@
+import typing
 import pickle
 
-from . import _serializer
 
-
-class Serializer(
-    _serializer.Serializer,
-):
+class Serializer:
     name = 'pickle'
 
     @staticmethod
     def serialize(
-        data,
-    ):
+        data: typing.Any,
+    ) -> bytes:
         return pickle.dumps(
             obj=data,
             protocol=pickle.HIGHEST_PROTOCOL,
@@ -19,8 +16,8 @@ class Serializer(
 
     @staticmethod
     def unserialize(
-        data,
-    ):
+        data: bytes,
+    ) -> typing.Any:
         return pickle.loads(
             data=data,
             encoding='utf-8',

@@ -33,7 +33,7 @@ class Logging:
 
 @dataclasses.dataclass
 class Encoder:
-    compressor: str = 'dummy'
+    compressor: typing.Optional[str] = None
     serializer: str = 'pickle'
 
 

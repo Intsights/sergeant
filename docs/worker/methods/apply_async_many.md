@@ -14,10 +14,10 @@ The `apply_async_many` method pushes multiple tasks onto the queue in a bulk ins
 ```python
 def apply_async_many(
     self,
-    kwargs_list,
-    task_name=None,
-    priority='NORMAL',
-)
+    kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
+    task_name: typing.Optional[str] = None,
+    priority: str = 'NORMAL',
+) -> bool
 ```
 
 

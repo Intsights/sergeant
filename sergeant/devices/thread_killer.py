@@ -8,10 +8,10 @@ class ThreadKiller(
 ):
     def __init__(
         self,
-        thread_id,
-        timeout,
-        exception,
-    ):
+        thread_id: int,
+        timeout: float,
+        exception: Exception,
+    ) -> None:
         super().__init__()
 
         self.timeout = timeout
@@ -26,27 +26,27 @@ class ThreadKiller(
 
     def kill(
         self,
-    ):
+    ) -> None:
         self.enabled.clear()
 
     def suspend(
         self,
-    ):
+    ) -> None:
         self.running.clear()
 
     def resume(
         self,
-    ):
+    ) -> None:
         self.running.set()
 
     def reset(
         self,
-    ):
+    ) -> None:
         self.time_elapsed = 0
 
     def run(
         self,
-    ):
+    ) -> None:
         while self.enabled.is_set():
             if self.running.is_set():
                 if self.time_elapsed >= self.timeout:

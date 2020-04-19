@@ -8,10 +8,10 @@ The `post_work` method is invoked by the worker for every execution of a task, a
 ```python
 def post_work(
     self,
-    task,
-    success,
-    exception,
-)
+    task: typing.Dict[str, typing.Any],
+    success: bool,
+    exception: typing.Optional[Exception],
+) -> None
 ```
 
 

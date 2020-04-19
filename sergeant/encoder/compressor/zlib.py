@@ -1,25 +1,21 @@
 import zlib
 
-from . import _compressor
 
-
-class Compressor(
-    _compressor.Compressor,
-):
+class Compressor:
     name = 'zlib'
 
     @staticmethod
     def compress(
-        data,
-    ):
+        data: bytes,
+    ) -> bytes:
         compressed_object = zlib.compress(data)
 
         return compressed_object
 
     @staticmethod
     def decompress(
-        data,
-    ):
+        data: bytes,
+    ) -> bytes:
         decompressed_object = zlib.decompress(data)
 
         return decompressed_object

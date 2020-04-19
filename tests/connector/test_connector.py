@@ -1,6 +1,5 @@
 import unittest
 import unittest.mock
-import pickle
 
 import sergeant.connector
 

@@ -8,8 +8,9 @@ The `requeue` method pushes back the task to the queue without increasing the ru
 ```python
 def requeue(
     self,
-    task,
-)
+    task: typing.Dict[str, typing.Any],
+    priority: str = 'NORMAL',
+) -> None
 ```
 
 
@@ -24,5 +25,7 @@ def work(
 
     response = requests.get(url_to_crawl)
     if not response.ok:
-        self.requeue()
+        self.requeue(
+            task=task,
+        )
 ```

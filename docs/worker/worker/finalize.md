@@ -8,7 +8,7 @@ The `finalize` method is invoked by the once after it has exceeded the maximum n
 ```python
 def finalize(
     self,
-)
+) -> None
 ```
 
 

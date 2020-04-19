@@ -8,8 +8,8 @@ The `purge_tasks` method deleted all the tasks from the queue. It allows the wor
 ```python
 def purge_tasks(
     self,
-    task_name=None,
-)
+    task_name: typing.Optional[str] = None,
+) -> bool
 ```
 
 

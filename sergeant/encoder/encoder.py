@@ -1,3 +1,5 @@
+import typing
+
 from . import compressor
 from . import serializer
 
@@ -5,37 +7,42 @@ from . import serializer
 class Encoder:
     def __init__(
         self,
-        compressor_name,
-        serializer_name,
-    ):
-        self.compressor_name = compressor_name
-        self.serializer_name = serializer_name
+        compressor_name: typing.Optional[str],
+        serializer_name: str,
+    ) -> None:
+        if compressor_name:
+            self.compressor = compressor.__compressors__[compressor_name]()
+        else:
+            self.compressor = None
 
-        self.compressor = compressor.__compressors__[compressor_name]()
         self.serializer = serializer.__serializers__[serializer_name]()
 
     def encode(
         self,
-        data,
-    ):
+        data: typing.Any,
+    ) -> bytes:
         serialized_data = self.serializer.serialize(
             data=data,
         )
-        compressed_serialized_data = self.compressor.compress(
-            data=serialized_data,
-        )
 
-        return compressed_serialized_data
+        if self.compressor:
+            serialized_data = self.compressor.compress(
+                data=serialized_data,
+            )
+
+        return serialized_data
 
     def decode(
         self,
-        data,
-    ):
-        decompressed_data = self.compressor.decompress(
+        data: bytes,
+    ) -> typing.Any:
+        if self.compressor:
+            data = self.compressor.decompress(
+                data=data,
+            )
+
+        unserialized_data = self.serializer.unserialize(
             data=data,
         )
-        unserialized_decompressed_data = self.serializer.unserialize(
-            data=decompressed_data,
-        )
 
-        return unserialized_decompressed_data
+        return unserialized_data

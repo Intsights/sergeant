@@ -629,7 +629,8 @@ class RedisSingleServerTaskQueueTestCase(
             database=0,
         )
 
-        compressor_names = sergeant.encoder.compressor.__compressors__.keys()
+        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
+        compressor_names.append(None)
         serializer_names = sergeant.encoder.serializer.__serializers__.keys()
         for compressor_name in compressor_names:
             for serializer_name in serializer_names:
@@ -667,7 +668,8 @@ class RedisClusterSingleServerTaskQueueTestCase(
             ]
         )
 
-        compressor_names = sergeant.encoder.compressor.__compressors__.keys()
+        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
+        compressor_names.append(None)
         serializer_names = sergeant.encoder.serializer.__serializers__.keys()
         for compressor_name in compressor_names:
             for serializer_name in serializer_names:
@@ -711,7 +713,8 @@ class RedisClusterMultipleServerTaskQueueTestCase(
             ]
         )
 
-        compressor_names = sergeant.encoder.compressor.__compressors__.keys()
+        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
+        compressor_names.append(None)
         serializer_names = sergeant.encoder.serializer.__serializers__.keys()
         for compressor_name in compressor_names:
             for serializer_name in serializer_names:
@@ -742,7 +745,8 @@ class MongoTaskQueueTestCase(
             mongodb_uri='mongodb://localhost:27017/',
         )
 
-        compressor_names = sergeant.encoder.compressor.__compressors__.keys()
+        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
+        compressor_names.append(None)
         serializer_names = sergeant.encoder.serializer.__serializers__.keys()
         for compressor_name in compressor_names:
             for serializer_name in serializer_names:

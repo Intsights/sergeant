@@ -22,8 +22,8 @@ task = {
 ```python
 def work(
     self,
-    task,
-)
+    task: typing.Dict[str, typing.Any],
+) -> typing.Any
 ```
 
 

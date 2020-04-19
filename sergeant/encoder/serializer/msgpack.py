@@ -1,11 +1,8 @@
+import typing
 import msgpack
 
-from . import _serializer
 
-
-class Serializer(
-    _serializer.Serializer,
-):
+class Serializer:
     name = 'msgpack'
 
     msgpack_packer = msgpack.Packer(
@@ -14,14 +11,14 @@ class Serializer(
 
     @staticmethod
     def serialize(
-        data,
-    ):
+        data: typing.Any,
+    ) -> bytes:
         return Serializer.msgpack_packer.pack(data)
 
     @staticmethod
     def unserialize(
-        data,
-    ):
+        data: bytes,
+    ) -> typing.Any:
         return msgpack.unpackb(
             packed=data,
             strict_map_key=False,

@@ -28,10 +28,15 @@ python3 -m examples.5_max_retries.producer
 ### Output
 You can see in logs that the worker has retried 3 times, and at the fourth time, it got an exception that states that the worker has reached the maximum number of retries.
 ```
-2020-04-05 21:03:56 Supervisor   8659 INFO     spawned a new worker at pid: 8670
-2020-04-05 21:03:59 test_worker  8670 INFO     Going to retry
-2020-04-05 21:03:59 test_worker  8670 INFO     Going to retry
-2020-04-05 21:03:59 test_worker  8670 INFO     Going to retry
-2020-04-05 21:03:59 test_worker  8670 INFO     Going to retry
-2020-04-05 21:03:59 test_worker  8670 ERROR    task has reached max retries
+2020-04-19 19:35:17 Supervisor   286524 INFO     spawned a new worker at pid: 286534
+2020-04-19 19:35:20 test_worker  286534 INFO     Going to retry
+2020-04-19 19:35:20 test_worker  286534 INFO     task has retried
+2020-04-19 19:35:20 test_worker  286534 INFO     Going to retry
+2020-04-19 19:35:20 test_worker  286534 INFO     task has retried
+2020-04-19 19:35:20 test_worker  286534 INFO     Going to retry
+2020-04-19 19:35:20 test_worker  286534 INFO     task has retried
+2020-04-19 19:35:20 test_worker  286534 INFO     Going to retry
+2020-04-19 19:35:20 test_worker  286534 ERROR    task has reached max retries
+2020-04-19 19:35:20 Supervisor   286524 INFO     a worker has exited with error code: 0
+2020-04-19 19:35:20 Supervisor   286524 INFO     spawned a new worker at pid: 286660
 ```

@@ -1,3 +1,4 @@
+import typing
 import tempfile
 import os
 import logging
@@ -8,10 +9,10 @@ from . import handlers
 class Logger:
     def __init__(
         self,
-        logger_name,
-        log_level=logging.ERROR,
-        log_to_stdout=True,
-    ):
+        logger_name: str,
+        log_level: int = logging.ERROR,
+        log_to_stdout: bool = True,
+    ) -> None:
         self.logger_name = logger_name
         self.log_level = log_level
         self.log_to_stdout = log_to_stdout
@@ -44,9 +45,9 @@ class Logger:
 
     def add_logstash_handler(
         self,
-        host,
-        port,
-    ):
+        host: str,
+        port: int,
+    ) -> None:
         handler = handlers.logstash.LogstashHandler(
             host=host,
             port=port,
@@ -57,9 +58,9 @@ class Logger:
 
     def debug(
         self,
-        msg,
-        extra=None,
-    ):
+        msg: str,
+        extra: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> None:
         self.logger.debug(
             msg=msg,
             extra=extra,
@@ -67,9 +68,9 @@ class Logger:
 
     def warning(
         self,
-        msg,
-        extra=None,
-    ):
+        msg: str,
+        extra: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> None:
         self.logger.warning(
             msg=msg,
             extra=extra,
@@ -77,9 +78,9 @@ class Logger:
 
     def info(
         self,
-        msg,
-        extra=None,
-    ):
+        msg: str,
+        extra: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> None:
         self.logger.info(
             msg=msg,
             extra=extra,
@@ -87,9 +88,9 @@ class Logger:
 
     def error(
         self,
-        msg,
-        extra=None,
-    ):
+        msg: str,
+        extra: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> None:
         self.logger.error(
             msg=msg,
             extra=extra,
@@ -97,9 +98,9 @@ class Logger:
 
     def critical(
         self,
-        msg,
-        extra=None,
-    ):
+        msg: str,
+        extra: typing.Optional[typing.Dict[str, typing.Any]] = None,
+    ) -> None:
         self.logger.critical(
             msg=msg,
             extra=extra,

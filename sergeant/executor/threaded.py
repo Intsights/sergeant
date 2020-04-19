@@ -1,3 +1,4 @@
+import typing
 import threading
 import concurrent.futures
 
@@ -8,9 +9,9 @@ from .. import devices
 class ThreadedExecutor:
     def __init__(
         self,
-        worker,
-        number_of_threads,
-    ):
+        worker: worker.Worker,
+        number_of_threads: int,
+    ) -> None:
         self.worker = worker
         self.number_of_threads = number_of_threads
 
@@ -19,8 +20,8 @@ class ThreadedExecutor:
 
     def execute_tasks(
         self,
-        tasks,
-    ):
+        tasks: typing.Iterable[typing.Dict[str, typing.Any]],
+    ) -> None:
         future_to_task = {}
         self.thread_killers = {}
 
@@ -49,8 +50,8 @@ class ThreadedExecutor:
 
     def execute_task(
         self,
-        task,
-    ):
+        task: typing.Dict[str, typing.Any],
+    ) -> None:
         try:
             self.pre_work(
                 task=task,
@@ -100,8 +101,8 @@ class ThreadedExecutor:
 
     def pre_work(
         self,
-        task,
-    ):
+        task: typing.Dict[str, typing.Any],
+    ) -> None:
         try:
             self.worker.pre_work(
                 task=task,
@@ -130,10 +131,10 @@ class ThreadedExecutor:
 
     def post_work(
         self,
-        task,
-        success,
-        exception=None,
-    ):
+        task: typing.Dict[str, typing.Any],
+        success: bool,
+        exception: typing.Optional[Exception] = None,
+    ) -> None:
         if self.should_use_a_killer:
             self.thread_killers[threading.get_ident()].suspend()
 
