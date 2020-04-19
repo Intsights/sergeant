@@ -101,29 +101,27 @@ class ProcessKillerServer(
             msg='kill loop started',
         )
 
-        while True:
+        process_to_kill = psutil.Process(
+            pid=self.pid_to_kill,
+        )
+        while process_to_kill.is_running():
             try:
-                if not psutil.pid_exists(
-                    pid=self.pid_to_kill,
-                ):
-                    self.logger.info(
-                        msg='pid does not exist anymore, exiting',
-                    )
-
-                    os.kill(os.getpid(), 9)
-
-                pid_to_kill_process = psutil.Process(
-                    pid=self.pid_to_kill,
-                )
-                pid_to_kill_process_status = pid_to_kill_process.status()
-                if pid_to_kill_process_status in [
+                process_to_kill_status = process_to_kill.status()
+                if process_to_kill_status in [
                     psutil.STATUS_DEAD,
                     psutil.STATUS_ZOMBIE,
                 ]:
                     self.logger.error(
-                        msg=f'kill_loop process status not running: {pid_to_kill_process_status}',
+                        msg=f'kill_loop process status not running: {process_to_kill_status}',
                     )
-                    os.kill(os.getpid(), 9)
+
+                    try:
+                        process_to_kill.kill()
+                        process_to_kill.wait(0)
+                    except psutil.TimeoutExpired:
+                        pass
+
+                    break
 
                 if self.running:
                     if not self.soft_timeout_raised and self.soft_timeout != 0 and self.time_elapsed >= self.soft_timeout:
@@ -161,6 +159,10 @@ class ProcessKillerServer(
                 await asyncio.sleep(
                     delay=self.sleep_interval,
                     loop=self.async_loop,
+                )
+            except psutil.NoSuchProcess:
+                self.logger.info(
+                    msg='pid does not exist anymore, exiting',
                 )
             except Exception as exception:
                 self.logger.error(
