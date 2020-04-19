@@ -1,11 +1,11 @@
 import time
 import datetime
+import logging
 import typing
 
 from . import config
 from . import connector
 from . import encoder
-from . import logger
 from . import task_queue
 from . import executor
 
@@ -29,17 +29,30 @@ class Worker:
     def init_logger(
         self,
     ) -> None:
-        self.logger = logger.logger.Logger(
-            logger_name=self.config.name,
-            log_level=self.config.logging.level,
-            log_to_stdout=self.config.logging.log_to_stdout,
+        self.logger = logging.getLogger(
+            name=self.config.name,
         )
+        self.logger.propagate = False
+        self.logger.setLevel(
+            level=self.config.logging.level,
+        )
+
+        if self.config.logging.log_to_stdout:
+            stream_handler = logging.StreamHandler()
+            stream_handler.setFormatter(
+                fmt=logging.Formatter(
+                    fmt='%(asctime)s %(name)-12s %(process)d %(levelname)-8s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                ),
+            )
+            self.logger.addHandler(
+                hdlr=stream_handler,
+            )
+
         for handler in self.config.logging.handlers:
-            if handler.type == 'logstash':
-                self.logger.add_logstash_handler(
-                    host=handler.params['host'],
-                    port=handler.params['port'],
-                )
+            self.logger.addHandler(
+                hdlr=handler,
+            )
 
     def init_task_queue(
         self,

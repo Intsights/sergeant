@@ -14,19 +14,13 @@ class LoggingEvents:
 
 
 @dataclasses.dataclass
-class LoggingHandler:
-    type: str
-    params: typing.Dict[str, typing.Any]
-
-
-@dataclasses.dataclass
 class Logging:
     level: int = logging.ERROR
     log_to_stdout: bool = False
     events: LoggingEvents = dataclasses.field(
         default_factory=LoggingEvents,
     )
-    handlers: typing.List[LoggingHandler] = dataclasses.field(
+    handlers: typing.List[logging.Handler] = dataclasses.field(
         default_factory=list,
     )
 

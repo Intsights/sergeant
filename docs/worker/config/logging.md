@@ -17,19 +17,13 @@ class LoggingEvents:
 
 
 @dataclasses.dataclass
-class LoggingHandler:
-    type: str
-    params: typing.Dict[str, typing.Any]
-
-
-@dataclasses.dataclass
 class Logging:
     level: int = logging.ERROR
     log_to_stdout: bool = False
     events: LoggingEvents = dataclasses.field(
         default_factory=LoggingEvents,
     )
-    handlers: typing.List[LoggingHandler] = dataclasses.field(
+    handlers: typing.List[logging.Handler] = dataclasses.field(
         default_factory=list,
     )
 ```
@@ -45,13 +39,7 @@ The following configurations are available:
     - `on_retry` [True] - Every time a task asked for a retry.
     - `on_max_retries` [True] - Every time a task asked for a retry beyond the maximum number of retries.
     - `on_requeue` [True] - Every time a task asked for a requeue.
-- `handlers` - List of handlers to attach to the `logging.Logger` object.
-
-The following handlers are available:
-
-- `logstash` - Would send logging messages to a logstash instance via UDP protocol.
-    - `host` [str] - Logstash server host.
-    - `port` [int] - Logstash server port (UDP).
+- `handlers` - List of handlers [logging.Handler] to attach to the `logging.Logger` object.
 
 
 ## Examples
@@ -69,12 +57,11 @@ The following handlers are available:
     sergeant.config.Logging(
         level=logging.INFO,
         log_to_stdout=True,
-        handlers=sergeant.config.LoggingHandler(
-            type='logstash',
-            params={
-                'host': 'localhost',
-                'port': 9000,
-            },
-        ),
+        handlers=[
+            sergeant.logging.logstash.LogstashHandler(
+                host='localhost',
+                port=9999,
+            ),
+        ],
     )
     ```

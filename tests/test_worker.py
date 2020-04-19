@@ -32,12 +32,9 @@ class WorkerTestCase(
             ),
             logging=sergeant.config.Logging(
                 handlers=[
-                    sergeant.config.LoggingHandler(
-                        type='logstash',
-                        params={
-                            'host': 'localhost',
-                            'port': 9999,
-                        },
+                    sergeant.logging.logstash.LogstashHandler(
+                        host='localhost',
+                        port=9999,
                     ),
                 ],
             ),
@@ -47,12 +44,12 @@ class WorkerTestCase(
             obj=worker.logger,
         )
         self.assertEqual(
-            first=len(worker.logger.logger.handlers),
+            first=len(worker.logger.handlers),
             second=1,
         )
         self.assertIsInstance(
-            obj=worker.logger.logger.handlers[0],
-            cls=sergeant.logger.handlers.logstash.LogstashHandler,
+            obj=worker.logger.handlers[0],
+            cls=sergeant.logging.logstash.LogstashHandler,
         )
 
     def test_init_task_queue(

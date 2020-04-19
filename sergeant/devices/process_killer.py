@@ -10,8 +10,6 @@ import argparse
 import socket
 import logging
 
-from .. import logger
-
 
 class ProcessKillerServer(
     asyncio.DatagramProtocol,
@@ -27,10 +25,22 @@ class ProcessKillerServer(
     ) -> None:
         super().__init__()
 
-        self.logger = logger.logger.Logger(
-            logger_name='Killer',
-            log_level=logging.ERROR,
-            log_to_stdout=True,
+        self.logger = logging.getLogger(
+            name='Killer',
+        )
+        self.logger.propagate = False
+        self.logger.setLevel(
+            level=logging.ERROR,
+        )
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(
+            fmt=logging.Formatter(
+                fmt='%(asctime)s %(name)-12s %(process)d %(levelname)-8s %(message)s',
+                datefmt='%Y-%m-%d %H:%M:%S',
+            ),
+        )
+        self.logger.addHandler(
+            hdlr=stream_handler,
         )
 
         self.pid_to_kill = pid_to_kill
