@@ -5,10 +5,10 @@ import sys
 import time
 import unittest
 
-import sergeant.devices.process_killer
+import sergeant.killer.process
 
 
-class ProcessKillerTestCase(
+class KillerTestCase(
     unittest.TestCase,
 ):
     def setUp(
@@ -55,7 +55,7 @@ class ProcessKillerTestCase(
     def test_timeouts_killer(
         self,
     ):
-        killer = sergeant.devices.process_killer.ProcessKiller(
+        killer = sergeant.killer.process.Killer(
             pid_to_kill=os.getpid(),
             sleep_interval=0.05,
             soft_timeout=1.0,
@@ -175,7 +175,7 @@ class ProcessKillerTestCase(
             expr=testing_process.is_alive(),
         )
 
-        killer = sergeant.devices.process_killer.ProcessKiller(
+        killer = sergeant.killer.process.Killer(
             pid_to_kill=testing_process.pid,
             sleep_interval=0.05,
             soft_timeout=1.0,
@@ -211,7 +211,7 @@ class ProcessKillerTestCase(
             expr=testing_process.is_alive(),
         )
 
-        killer = sergeant.devices.process_killer.ProcessKiller(
+        killer = sergeant.killer.process.Killer(
             pid_to_kill=testing_process.pid,
             sleep_interval=0.05,
             soft_timeout=1.0,
@@ -251,7 +251,7 @@ class ProcessKillerTestCase(
             expr=testing_process.is_alive(),
         )
 
-        killer = sergeant.devices.process_killer.ProcessKiller(
+        killer = sergeant.killer.process.Killer(
             pid_to_kill=testing_process.pid,
             sleep_interval=0.05,
             soft_timeout=1.0,

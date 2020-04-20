@@ -3,7 +3,7 @@ import threading
 import concurrent.futures
 
 from .. import worker
-from .. import devices
+from .. import killer
 
 
 class ThreadedExecutor:
@@ -122,7 +122,7 @@ class ThreadedExecutor:
                 self.thread_killers[current_thread_id].reset()
                 self.thread_killers[current_thread_id].resume()
             else:
-                self.thread_killers[current_thread_id] = devices.thread_killer.ThreadKiller(
+                self.thread_killers[current_thread_id] = killer.thread.Killer(
                     thread_id=current_thread_id,
                     timeout=self.worker.config.timeouts.soft_timeout,
                     exception=worker.WorkerSoftTimedout,

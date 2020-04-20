@@ -3,7 +3,7 @@ import types
 import os
 import signal
 
-from .. import devices
+from .. import killer
 from .. import worker
 
 
@@ -21,7 +21,7 @@ class SerialExecutor:
         has_critical_timeout = self.worker.config.timeouts.critical_timeout > 0
         should_use_a_killer = has_soft_timeout or has_hard_timeout or has_critical_timeout
         if should_use_a_killer:
-            self.killer = devices.process_killer.ProcessKiller(
+            self.killer = killer.process.Killer(
                 pid_to_kill=os.getpid(),
                 sleep_interval=0.1,
                 soft_timeout=self.worker.config.timeouts.soft_timeout,

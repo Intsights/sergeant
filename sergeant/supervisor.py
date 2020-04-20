@@ -28,7 +28,12 @@ class SupervisedWorker:
 
         self.process = subprocess.Popen(
             args=shlex.split(
-                s=f'python3 -m sergeant.slave --child-pipe={self.child_pipe.fileno()} --worker-module={worker_module_name} --worker-class={worker_class_name}',
+                s=(
+                    f'{sys.executable} -m sergeant.slave '
+                    f'--worker-module={worker_module_name} '
+                    f'--worker-class={worker_class_name} '
+                    f'--child-pipe={self.child_pipe.fileno()} '
+                ),
             ),
             pass_fds=(
                 self.child_pipe.fileno(),
