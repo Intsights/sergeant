@@ -624,23 +624,25 @@ class WorkerTestCase(
             task_name=worker.config.name,
             kwargs={},
         )
-        worker._on_success(
-            task=task,
-            returned_value=True,
-        )
 
         worker.on_success = unittest.mock.MagicMock()
+        worker.logger = unittest.mock.MagicMock()
+
         worker._on_success(
             task=task,
             returned_value=True,
         )
         worker.on_success.assert_called_once()
+        worker.logger.error.assert_not_called()
+
+        worker.on_success.reset_mock()
+        worker.logger.reset_mock()
         worker.config.logging.events.on_success = True
-        worker.logger = unittest.mock.MagicMock()
         worker._on_success(
             task=task,
             returned_value=True,
         )
+        worker.on_success.assert_called_once()
         worker.logger.info.assert_called_once_with(
             msg='task has finished successfully',
             extra={
@@ -648,12 +650,21 @@ class WorkerTestCase(
             },
         )
 
+        worker.on_success.reset_mock()
+        worker.logger.reset_mock()
         worker.on_success.side_effect = Exception('exception message')
         worker._on_success(
             task=task,
             returned_value=True,
         )
-        worker.logger.error.assert_called_once_with(
+        worker.on_success.assert_called_once()
+        worker.logger.info.assert_any_call(
+            msg='task has finished successfully',
+            extra={
+                'task': task,
+            },
+        )
+        worker.logger.error.assert_any_call(
             msg='on_success handler has failed: exception message',
             extra={
                 'task': task,
@@ -688,23 +699,25 @@ class WorkerTestCase(
             task_name=worker.config.name,
             kwargs={},
         )
-        worker._on_failure(
-            task=task,
-            exception=Exception('test_exception'),
-        )
 
         worker.on_failure = unittest.mock.MagicMock()
+        worker.logger = unittest.mock.MagicMock()
+
         worker._on_failure(
             task=task,
             exception=Exception('test_exception'),
         )
         worker.on_failure.assert_called_once()
+        worker.logger.error.assert_not_called()
+
+        worker.on_failure.reset_mock()
+        worker.logger.reset_mock()
         worker.config.logging.events.on_failure = True
-        worker.logger = unittest.mock.MagicMock()
         worker._on_failure(
             task=task,
             exception=Exception('test_exception'),
         )
+        worker.on_failure.assert_called_once()
         worker.logger.error.assert_called_once_with(
             msg='task has failed',
             extra={
@@ -712,12 +725,21 @@ class WorkerTestCase(
             },
         )
 
+        worker.on_failure.reset_mock()
+        worker.logger.reset_mock()
         worker.on_failure.side_effect = Exception('exception message')
         worker._on_failure(
             task=task,
             exception=Exception('test_exception'),
         )
-        worker.logger.error.assert_called_with(
+        worker.on_failure.assert_called_once()
+        worker.logger.error.assert_any_call(
+            msg='task has failed',
+            extra={
+                'task': task,
+            },
+        )
+        worker.logger.error.assert_any_call(
             msg='on_failure handler has failed: exception message',
             extra={
                 'task': task,
@@ -752,20 +774,23 @@ class WorkerTestCase(
             task_name=worker.config.name,
             kwargs={},
         )
-        worker._on_timeout(
-            task=task,
-        )
 
         worker.on_timeout = unittest.mock.MagicMock()
+        worker.logger = unittest.mock.MagicMock()
+
         worker._on_timeout(
             task=task,
         )
         worker.on_timeout.assert_called_once()
+        worker.logger.error.assert_not_called()
+
+        worker.on_timeout.reset_mock()
+        worker.logger.reset_mock()
         worker.config.logging.events.on_timeout = True
-        worker.logger = unittest.mock.MagicMock()
         worker._on_timeout(
             task=task,
         )
+        worker.on_timeout.assert_called_once()
         worker.logger.error.assert_called_once_with(
             msg='task has timedout',
             extra={
@@ -773,11 +798,20 @@ class WorkerTestCase(
             },
         )
 
+        worker.on_timeout.reset_mock()
+        worker.logger.reset_mock()
         worker.on_timeout.side_effect = Exception('exception message')
         worker._on_timeout(
             task=task,
         )
-        worker.logger.error.assert_called_with(
+        worker.on_timeout.assert_called_once()
+        worker.logger.error.assert_any_call(
+            msg='task has timedout',
+            extra={
+                'task': task,
+            },
+        )
+        worker.logger.error.assert_any_call(
             msg='on_timeout handler has failed: exception message',
             extra={
                 'task': task,
@@ -812,20 +846,23 @@ class WorkerTestCase(
             task_name=worker.config.name,
             kwargs={},
         )
-        worker._on_retry(
-            task=task,
-        )
 
         worker.on_retry = unittest.mock.MagicMock()
+        worker.logger = unittest.mock.MagicMock()
+
         worker._on_retry(
             task=task,
         )
         worker.on_retry.assert_called_once()
+        worker.logger.info.assert_not_called()
+
+        worker.on_retry.reset_mock()
+        worker.logger.reset_mock()
         worker.config.logging.events.on_retry = True
-        worker.logger = unittest.mock.MagicMock()
         worker._on_retry(
             task=task,
         )
+        worker.on_retry.assert_called_once()
         worker.logger.info.assert_called_once_with(
             msg='task has retried',
             extra={
@@ -833,9 +870,18 @@ class WorkerTestCase(
             },
         )
 
+        worker.on_retry.reset_mock()
+        worker.logger.reset_mock()
         worker.on_retry.side_effect = Exception('exception message')
         worker._on_retry(
             task=task,
+        )
+        worker.on_retry.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has retried',
+            extra={
+                'task': task,
+            },
         )
         worker.logger.error.assert_called_once_with(
             msg='on_retry handler has failed: exception message',
@@ -872,20 +918,23 @@ class WorkerTestCase(
             task_name=worker.config.name,
             kwargs={},
         )
-        worker._on_max_retries(
-            task=task,
-        )
 
         worker.on_max_retries = unittest.mock.MagicMock()
+        worker.logger = unittest.mock.MagicMock()
+
         worker._on_max_retries(
             task=task,
         )
         worker.on_max_retries.assert_called_once()
+        worker.logger.error.assert_not_called()
+
+        worker.on_max_retries.reset_mock()
+        worker.logger.reset_mock()
         worker.config.logging.events.on_max_retries = True
-        worker.logger = unittest.mock.MagicMock()
         worker._on_max_retries(
             task=task,
         )
+        worker.on_max_retries.assert_called_once()
         worker.logger.error.assert_called_once_with(
             msg='task has reached max retries',
             extra={
@@ -893,11 +942,20 @@ class WorkerTestCase(
             },
         )
 
+        worker.on_max_retries.reset_mock()
+        worker.logger.reset_mock()
         worker.on_max_retries.side_effect = Exception('exception message')
         worker._on_max_retries(
             task=task,
         )
-        worker.logger.error.assert_called_with(
+        worker.on_max_retries.assert_called_once()
+        worker.logger.error.assert_any_call(
+            msg='task has reached max retries',
+            extra={
+                'task': task,
+            },
+        )
+        worker.logger.error.assert_any_call(
             msg='on_max_retries handler has failed: exception message',
             extra={
                 'task': task,
@@ -932,20 +990,23 @@ class WorkerTestCase(
             task_name=worker.config.name,
             kwargs={},
         )
-        worker._on_requeue(
-            task=task,
-        )
 
         worker.on_requeue = unittest.mock.MagicMock()
+        worker.logger = unittest.mock.MagicMock()
+
         worker._on_requeue(
             task=task,
         )
         worker.on_requeue.assert_called_once()
+        worker.logger.info.assert_not_called()
+
+        worker.on_requeue.reset_mock()
+        worker.logger.reset_mock()
         worker.config.logging.events.on_requeue = True
-        worker.logger = unittest.mock.MagicMock()
         worker._on_requeue(
             task=task,
         )
+        worker.on_requeue.assert_called_once()
         worker.logger.info.assert_called_once_with(
             msg='task has requeued',
             extra={
@@ -953,9 +1014,18 @@ class WorkerTestCase(
             },
         )
 
+        worker.on_requeue.reset_mock()
+        worker.logger.reset_mock()
         worker.on_requeue.side_effect = Exception('exception message')
         worker._on_requeue(
             task=task,
+        )
+        worker.on_requeue.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has requeued',
+            extra={
+                'task': task,
+            },
         )
         worker.logger.error.assert_called_once_with(
             msg='on_requeue handler has failed: exception message',
@@ -963,3 +1033,95 @@ class WorkerTestCase(
                 'task': task,
             },
         )
+
+    def test_actions_from_handlers(
+        self,
+    ):
+        worker = sergeant.worker.Worker()
+        worker.config = sergeant.config.WorkerConfig(
+            name='some_worker',
+            connector=sergeant.config.Connector(
+                type='redis',
+                params={
+                    'host': 'localhost',
+                    'port': 6379,
+                    'password': None,
+                    'database': 0,
+                },
+            ),
+            max_retries=3,
+        )
+        worker.init_task_queue()
+
+        task = worker.task_queue.craft_task(
+            task_name=worker.config.name,
+            kwargs={},
+        )
+
+        worker.logger = unittest.mock.MagicMock()
+
+        worker.on_timeout = unittest.mock.MagicMock()
+        worker.on_failure = unittest.mock.MagicMock()
+        worker._on_requeue = unittest.mock.MagicMock()
+
+        worker.on_timeout.side_effect = sergeant.worker.WorkerRequeue()
+        worker._on_timeout(
+            task=task,
+        )
+        worker.on_timeout.assert_called_once()
+        worker._on_requeue.assert_called_once()
+
+        worker._on_requeue.reset_mock()
+
+        worker._on_requeue = unittest.mock.MagicMock()
+        worker.on_failure.side_effect = sergeant.worker.WorkerRequeue()
+        worker._on_failure(
+            task=task,
+            exception=Exception('test_exception'),
+        )
+        worker.on_failure.assert_called_once()
+        worker._on_requeue.assert_called_once()
+
+        worker.on_timeout.reset_mock()
+        worker.on_failure.reset_mock()
+        worker._on_retry = unittest.mock.MagicMock()
+
+        worker.on_timeout.side_effect = sergeant.worker.WorkerRetry()
+        worker._on_timeout(
+            task=task,
+        )
+        worker.on_timeout.assert_called_once()
+        worker._on_retry.assert_called_once()
+
+        worker._on_retry.reset_mock()
+
+        worker._on_retry = unittest.mock.MagicMock()
+        worker.on_failure.side_effect = sergeant.worker.WorkerRetry()
+        worker._on_failure(
+            task=task,
+            exception=Exception('test_exception'),
+        )
+        worker.on_failure.assert_called_once()
+        worker._on_retry.assert_called_once()
+
+        worker.on_timeout.reset_mock()
+        worker.on_failure.reset_mock()
+        worker._on_max_retries = unittest.mock.MagicMock()
+
+        worker.on_timeout.side_effect = sergeant.worker.WorkerMaxRetries()
+        worker._on_timeout(
+            task=task,
+        )
+        worker.on_timeout.assert_called_once()
+        worker._on_max_retries.assert_called_once()
+
+        worker._on_max_retries.reset_mock()
+
+        worker._on_max_retries = unittest.mock.MagicMock()
+        worker.on_failure.side_effect = sergeant.worker.WorkerMaxRetries()
+        worker._on_failure(
+            task=task,
+            exception=Exception('test_exception'),
+        )
+        worker.on_failure.assert_called_once()
+        worker._on_max_retries.assert_called_once()

@@ -345,6 +345,18 @@ class Worker:
                 task=task,
                 exception=exception,
             )
+        except WorkerRetry:
+            self._on_retry(
+                task=task,
+            )
+        except WorkerMaxRetries:
+            self._on_max_retries(
+                task=task,
+            )
+        except WorkerRequeue:
+            self._on_requeue(
+                task=task,
+            )
         except Exception as exception:
             self.logger.error(
                 msg=f'on_failure handler has failed: {exception}',
@@ -367,6 +379,18 @@ class Worker:
                 )
 
             self.on_timeout(
+                task=task,
+            )
+        except WorkerRetry:
+            self._on_retry(
+                task=task,
+            )
+        except WorkerMaxRetries:
+            self._on_max_retries(
+                task=task,
+            )
+        except WorkerRequeue:
+            self._on_requeue(
                 task=task,
             )
         except Exception as exception:

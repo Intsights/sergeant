@@ -62,3 +62,4 @@ markdown_extensions:
       linenums: 1
   - pymdownx.inlinehilite
   - pymdownx.tabbed
+  - pymdownx.details

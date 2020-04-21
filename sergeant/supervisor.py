@@ -99,7 +99,7 @@ class Supervisor:
         worker_module_name: str,
         worker_class_name: str,
         concurrent_workers: int,
-        max_worker_memory_usage: typing.Optional[int],
+        max_worker_memory_usage: typing.Optional[int] = None,
     ):
         self.worker_module_name = worker_module_name
         self.worker_class_name = worker_class_name
