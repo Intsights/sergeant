@@ -838,6 +838,14 @@
                 
                 <h1 id="worker-requeue">Worker - requeue<a class="headerlink" href="#worker-requeue" title="Permanent link">#</a></h1>
 <p>The <code>requeue</code> method pushes back the task to the queue without increasing the run count by one. The way it works is by raising a <code>WorkerRequeue</code> exception which cause the worker to interrupt. It means you should call <code>requeue</code> only if you have nothing more to do. Calling <code>requeue</code> and catching the exception will not interrupt the worker but the task would be pushed back to the queue anyway. <code>requeue</code> makes the task to be considered as a failed task.</p>
+<details class="warning" open="open"><summary>Requeue from handlers</summary><p>One should never call <code>requeue</code> from the following handlers:</p>
+<ul>
+<li><code>on_success</code></li>
+<li><code>on_retry</code></li>
+<li><code>on_max_retries</code></li>
+<li><code>on_requeue</code></li>
+</ul>
+</details>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -852,6 +860,7 @@
 </td></tr></table>
 
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Simple</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -875,6 +884,47 @@
         <span class="p">)</span>
 </code></pre></div>
 </td></tr></table>
+
+</div>
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">OnFailure</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_to_crawl</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">on_failure</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">,</span>
+    <span class="n">exception</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">requeue</span><span class="p">(</span>
+        <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+    <span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+
+</div>
+</div>
                 
               
               
