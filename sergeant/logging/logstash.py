@@ -1,7 +1,7 @@
 import logging
 import socket
 import datetime
-import orjson
+import importlib
 import sys
 import traceback
 
@@ -22,6 +22,9 @@ class LogstashHandler(
         self.address = (
             self.host,
             self.port,
+        )
+        self.orjson = importlib.import_module(
+            name='orjson',
         )
 
     def emit(
@@ -58,7 +61,7 @@ class LogstashHandler(
                 'stacktrace': ''.join(extracted_stacktrace),
             }
 
-        encoded_message = orjson.dumps(
+        encoded_message = self.orjson.dumps(
             obj=message,
             default=repr,
         )

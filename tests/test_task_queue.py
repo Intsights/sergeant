@@ -623,44 +623,9 @@ class RedisSingleServerTaskQueueTestCase(
         self.test_task_queues = []
 
         connector_obj = sergeant.connector.redis.Connector(
-            host='127.0.0.1',
-            port=6379,
-            password=None,
-            database=0,
-        )
-
-        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
-        compressor_names.append(None)
-        serializer_names = sergeant.encoder.serializer.__serializers__.keys()
-        for compressor_name in compressor_names:
-            for serializer_name in serializer_names:
-                encoder_obj = sergeant.encoder.encoder.Encoder(
-                    compressor_name=compressor_name,
-                    serializer_name=serializer_name,
-                )
-                self.test_task_queues.append(
-                    sergeant.task_queue.TaskQueue(
-                        connector=connector_obj,
-                        encoder=encoder_obj,
-                    )
-                )
-
-
-class RedisClusterSingleServerTaskQueueTestCase(
-    TaskQueueTestCase,
-    unittest.TestCase,
-):
-    order_matters = True
-
-    def setUp(
-        self,
-    ):
-        self.test_task_queues = []
-
-        connector_obj = sergeant.connector.redis_cluster.Connector(
             nodes=[
                 {
-                    'host': '127.0.0.1',
+                    'host': 'localhost',
                     'port': 6379,
                     'password': None,
                     'database': 0,
@@ -685,7 +650,7 @@ class RedisClusterSingleServerTaskQueueTestCase(
                 )
 
 
-class RedisClusterMultipleServerTaskQueueTestCase(
+class RedisMultipleServerTaskQueueTestCase(
     TaskQueueTestCase,
     unittest.TestCase,
 ):
@@ -696,16 +661,16 @@ class RedisClusterMultipleServerTaskQueueTestCase(
     ):
         self.test_task_queues = []
 
-        connector_obj = sergeant.connector.redis_cluster.Connector(
+        connector_obj = sergeant.connector.redis.Connector(
             nodes=[
                 {
-                    'host': '127.0.0.1',
+                    'host': 'localhost',
                     'port': 6379,
                     'password': None,
                     'database': 0,
                 },
                 {
-                    'host': '127.0.0.1',
+                    'host': 'localhost',
                     'port': 6380,
                     'password': None,
                     'database': 0,

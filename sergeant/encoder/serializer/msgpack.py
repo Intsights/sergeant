@@ -5,18 +5,21 @@ import msgpack
 class Serializer:
     name = 'msgpack'
 
-    msgpack_packer = msgpack.Packer(
-        autoreset=True,
-    )
+    def __init__(
+        self,
+    ) -> None:
+        self.msgpack_packer = msgpack.Packer(
+            autoreset=True,
+        )
 
-    @staticmethod
     def serialize(
+        self,
         data: typing.Any,
     ) -> bytes:
-        return Serializer.msgpack_packer.pack(data)
+        return self.msgpack_packer.pack(data)
 
-    @staticmethod
     def unserialize(
+        self,
         data: bytes,
     ) -> typing.Any:
         return msgpack.unpackb(

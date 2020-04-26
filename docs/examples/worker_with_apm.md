@@ -21,10 +21,14 @@ This example demonstrates how to integrate with an APM solution. In this case, `
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_tasks_per_run=100,

@@ -1,4 +1,6 @@
 import redis
+import random
+import binascii
 import typing
 
 
@@ -7,45 +9,64 @@ class Connector:
 
     def __init__(
         self,
-        host: str,
-        port: int,
-        password: typing.Optional[str],
-        database: int,
+        nodes: typing.List[typing.Dict[str, typing.Any]],
     ) -> None:
-        self.host = host
-        self.port = port
-        self.password = password
-        self.database = database
+        self.nodes = nodes
 
-        self.connection = redis.Redis(
-            host=self.host,
-            port=self.port,
-            password=self.password,
-            db=self.database,
-            retry_on_timeout=True,
-            socket_keepalive=True,
-            socket_connect_timeout=10,
-            socket_timeout=60,
-        )
+        self.connections = [
+            redis.Redis(
+                host=node['host'],
+                port=node['port'],
+                password=node['password'],
+                db=node['database'],
+                retry_on_timeout=True,
+                socket_keepalive=True,
+                socket_connect_timeout=10,
+                socket_timeout=60,
+            )
+            for node in nodes
+        ]
+        self.number_of_connections = len(self.connections)
+
+        random.shuffle(self.connections)
+
+        self.current_connection_index = 0
+
+    @property
+    def next_connection(
+        self,
+    ) -> redis.Redis:
+        current_connection = self.connections[self.current_connection_index]
+        self.current_connection_index = (self.current_connection_index + 1) % self.number_of_connections
+
+        return current_connection
+
+    def rotate_connections(
+        self,
+    ) -> None:
+        self.connections = self.connections[1:] + self.connections[:1]
 
     def key_set(
         self,
         key: str,
         value: bytes,
-    ) -> bool:
-        is_new = self.connection.set(
+    ) -> None:
+        key_server_location = binascii.crc32(key.encode()) % self.number_of_connections
+
+        old_value = self.connections[key_server_location].getset(
             name=key,
             value=value,
-            nx=True,
         )
 
-        return is_new is True
+        return old_value is None
 
     def key_get(
         self,
         key: str,
-    ) -> bytes:
-        return self.connection.get(
+    ) -> typing.Optional[bytes]:
+        key_server_location = binascii.crc32(key.encode()) % self.number_of_connections
+
+        return self.connections[key_server_location].get(
             name=key,
         )
 
@@ -53,34 +74,47 @@ class Connector:
         self,
         key: str,
     ) -> bool:
-        return self.connection.delete(key) > 0
+        key_server_location = binascii.crc32(key.encode()) % self.number_of_connections
+
+        return self.connections[key_server_location].delete(key) > 0
 
     def queue_pop(
         self,
         queue_name: str,
     ) -> typing.Optional[bytes]:
-        value = self.connection.lpop(
-            name=queue_name,
-        )
+        for i in range(self.number_of_connections):
+            value = self.next_connection.lpop(
+                name=queue_name,
+            )
+            if value:
+                return value
 
-        if value is None:
-            return None
-        else:
-            return value
+        return None
 
     def queue_pop_bulk(
         self,
         queue_name: str,
         number_of_items: int,
     ) -> typing.List[bytes]:
-        pipeline = self.connection.pipeline()
+        values = []
+        current_count = number_of_items
 
-        pipeline.lrange(queue_name, 0, number_of_items - 1)
-        pipeline.ltrim(queue_name, number_of_items, -1)
+        for i in range(self.number_of_connections):
+            pipeline = self.next_connection.pipeline()
 
-        value = pipeline.execute()
+            pipeline.lrange(queue_name, 0, current_count - 1)
+            pipeline.ltrim(queue_name, current_count, -1)
 
-        return value[0]
+            value = pipeline.execute()
+
+            values += value[0]
+
+            if len(values) == number_of_items:
+                return values
+
+            current_count = number_of_items - len(values)
+
+        return values
 
     def queue_push(
         self,
@@ -89,9 +123,9 @@ class Connector:
         priority: str = 'NORMAL',
     ) -> bool:
         if priority == 'HIGH':
-            self.connection.lpush(queue_name, item)
+            self.next_connection.lpush(queue_name, item)
         else:
-            self.connection.rpush(queue_name, item)
+            self.next_connection.rpush(queue_name, item)
 
         return True
 
@@ -102,9 +136,9 @@ class Connector:
         priority: str = 'NORMAL',
     ) -> bool:
         if priority == 'HIGH':
-            self.connection.lpush(queue_name, *items)
+            self.next_connection.lpush(queue_name, *items)
         else:
-            self.connection.rpush(queue_name, *items)
+            self.next_connection.rpush(queue_name, *items)
 
         return True
 
@@ -112,12 +146,22 @@ class Connector:
         self,
         queue_name: str,
     ) -> int:
-        return self.connection.llen(
-            name=queue_name,
-        )
+        total_len = 0
+
+        for connection in self.connections:
+            total_len += connection.llen(
+                name=queue_name,
+            )
+
+        return total_len
 
     def queue_delete(
         self,
         queue_name: str,
     ) -> bool:
-        return self.connection.delete(queue_name) > 0
+        deleted_count = 0
+
+        for connection in self.connections:
+            deleted_count += connection.delete(queue_name)
+
+        return deleted_count > 0

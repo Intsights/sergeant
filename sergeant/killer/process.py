@@ -278,7 +278,7 @@ class Killer:
         )
         self.killer_socket.connect(
             (
-                '127.0.0.1',
+                'localhost',
                 port,
             )
         )
@@ -391,7 +391,7 @@ def main():
     )
     server_socket.bind(
         (
-            '127.0.0.1',
+            'localhost',
             0,
         ),
     )

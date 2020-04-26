@@ -61,10 +61,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
         )
@@ -88,17 +92,17 @@ class WorkerTestCase(
         worker.config = sergeant.config.WorkerConfig(
             name='some_worker',
             connector=sergeant.config.Connector(
-                type='redis_cluster',
+                type='redis',
                 params={
                     'nodes': [
                         {
-                            'host': '127.0.0.1',
+                            'host': 'localhost',
                             'port': 6379,
                             'password': None,
                             'database': 0,
                         },
                         {
-                            'host': '127.0.0.1',
+                            'host': 'localhost',
                             'port': 6380,
                             'password': None,
                             'database': 0,
@@ -114,7 +118,7 @@ class WorkerTestCase(
         )
         self.assertIsInstance(
             obj=worker.task_queue.connector,
-            cls=sergeant.connector.redis_cluster.Connector,
+            cls=sergeant.connector.redis.Connector,
         )
         self.assertIsNone(
             obj=worker.task_queue.encoder.compressor,
@@ -160,10 +164,14 @@ class WorkerTestCase(
                     connector=sergeant.config.Connector(
                         type='redis',
                         params={
-                            'host': 'localhost',
-                            'port': 6379,
-                            'password': None,
-                            'database': 0,
+                            'nodes': [
+                                {
+                                    'host': 'localhost',
+                                    'port': 6379,
+                                    'password': None,
+                                    'database': 0,
+                                },
+                            ],
                         },
                     ),
                     encoder=sergeant.config.Encoder(
@@ -253,10 +261,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
         )
@@ -386,10 +398,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
         )
@@ -429,10 +445,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
         )
@@ -486,10 +506,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -568,10 +592,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -605,10 +633,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -680,10 +712,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -755,10 +791,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -827,10 +867,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -899,10 +943,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -971,10 +1019,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,
@@ -1043,10 +1095,14 @@ class WorkerTestCase(
             connector=sergeant.config.Connector(
                 type='redis',
                 params={
-                    'host': 'localhost',
-                    'port': 6379,
-                    'password': None,
-                    'database': 0,
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
                 },
             ),
             max_retries=3,

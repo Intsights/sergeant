@@ -30,10 +30,11 @@ class SerializersTestCase(
             },
         }
 
-        serialized_object = sergeant.encoder.serializer.msgpack.Serializer.serialize(
+        serializer_obj = sergeant.encoder.serializer.msgpack.Serializer()
+        serialized_object = serializer_obj.serialize(
             data=obj_to_serialize,
         )
-        unserialized_object = sergeant.encoder.serializer.msgpack.Serializer.unserialize(
+        unserialized_object = serializer_obj.unserialize(
             data=serialized_object,
         )
 
@@ -65,10 +66,11 @@ class SerializersTestCase(
             },
         }
 
-        serialized_object = sergeant.encoder.serializer.json.Serializer.serialize(
+        serializer_obj = sergeant.encoder.serializer.json.Serializer()
+        serialized_object = serializer_obj.serialize(
             data=obj_to_serialize,
         )
-        unserialized_object = sergeant.encoder.serializer.json.Serializer.unserialize(
+        unserialized_object = serializer_obj.unserialize(
             data=serialized_object,
         )
 
@@ -105,10 +107,11 @@ class SerializersTestCase(
             ),
         }
 
-        serialized_object = sergeant.encoder.serializer.pickle.Serializer.serialize(
+        serializer_obj = sergeant.encoder.serializer.pickle.Serializer()
+        serialized_object = serializer_obj.serialize(
             data=obj_to_serialize,
         )
-        unserialized_object = sergeant.encoder.serializer.pickle.Serializer.unserialize(
+        unserialized_object = serializer_obj.unserialize(
             data=serialized_object,
         )
 

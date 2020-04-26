@@ -5,7 +5,7 @@ import sergeant.connector
 
 
 class ConnectorTestCase:
-    test_queue_name = b'test_queue_name'
+    test_queue_name = 'test_queue_name'
     test_queue_item = b'test_queue_item'
     test_queue_items = [
         b'test_queue_item_1',
@@ -20,7 +20,7 @@ class ConnectorTestCase:
         b'test_queue_item_10',
     ]
 
-    test_key_name = b'test_key'
+    test_key_name = 'test_key'
     test_key_value = b'test_value'
 
     def test_key(
@@ -360,7 +360,7 @@ class ConnectorTestCase:
         )
 
 
-class RedisConnectorTestCase(
+class RedisSingleServerConnectorTestCase(
     ConnectorTestCase,
     unittest.TestCase,
 ):
@@ -368,24 +368,9 @@ class RedisConnectorTestCase(
         self,
     ):
         self.connector = sergeant.connector.redis.Connector(
-            host='127.0.0.1',
-            port=6379,
-            password=None,
-            database=0,
-        )
-
-
-class RedisClusterSingleServerConnectorTestCase(
-    ConnectorTestCase,
-    unittest.TestCase,
-):
-    def setUp(
-        self,
-    ):
-        self.connector = sergeant.connector.redis_cluster.Connector(
             nodes=[
                 {
-                    'host': '127.0.0.1',
+                    'host': 'localhost',
                     'port': 6379,
                     'password': None,
                     'database': 0,
@@ -394,23 +379,23 @@ class RedisClusterSingleServerConnectorTestCase(
         )
 
 
-class RedisClusterMultipleServersConnectorTestCase(
+class RedisMultipleServersConnectorTestCase(
     ConnectorTestCase,
     unittest.TestCase,
 ):
     def setUp(
         self,
     ):
-        self.connector = sergeant.connector.redis_cluster.Connector(
+        self.connector = sergeant.connector.redis.Connector(
             nodes=[
                 {
-                    'host': '127.0.0.1',
+                    'host': 'localhost',
                     'port': 6379,
                     'password': None,
                     'database': 0,
                 },
                 {
-                    'host': '127.0.0.1',
+                    'host': 'localhost',
                     'port': 6380,
                     'password': None,
                     'database': 0,

@@ -15,7 +15,7 @@ class Connector:
         )
 
         self.connection.sergeant.task_queue.create_index(
-            [
+            keys=[
                 (
                     'queue_name',
                     pymongo.DESCENDING,
@@ -28,7 +28,7 @@ class Connector:
             background=True,
         )
         self.connection.sergeant.keys.create_index(
-            [
+            keys=[
                 (
                     'value',
                     pymongo.ASCENDING,

@@ -5,14 +5,14 @@ import orjson
 class Serializer:
     name = 'json'
 
-    @staticmethod
     def serialize(
+        self,
         data: typing.Any,
     ) -> bytes:
         return orjson.dumps(data)
 
-    @staticmethod
     def unserialize(
+        self,
         data: bytes,
     ) -> typing.Any:
         return orjson.loads(data)

@@ -5,8 +5,8 @@ import pickle
 class Serializer:
     name = 'pickle'
 
-    @staticmethod
     def serialize(
+        self,
         data: typing.Any,
     ) -> bytes:
         return pickle.dumps(
@@ -14,8 +14,8 @@ class Serializer:
             protocol=pickle.HIGHEST_PROTOCOL,
         )
 
-    @staticmethod
     def unserialize(
+        self,
         data: bytes,
     ) -> typing.Any:
         return pickle.loads(

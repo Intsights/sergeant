@@ -164,7 +164,7 @@ class TaskQueue:
         name: str,
     ) -> bool:
         key_was_deleted = self.connector.key_delete(
-            key=name.encode(),
+            key=name,
         )
 
         return key_was_deleted
@@ -174,7 +174,7 @@ class TaskQueue:
         name: str,
     ) -> typing.Any:
         value = self.connector.key_get(
-            key=name.encode(),
+            key=name,
         )
         if not value:
             return value
@@ -195,7 +195,7 @@ class TaskQueue:
         )
 
         key_was_set = self.connector.key_set(
-            key=name.encode(),
+            key=name,
             value=encoded_value,
         )
 

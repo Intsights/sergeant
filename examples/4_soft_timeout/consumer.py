@@ -11,10 +11,14 @@ class Worker(
         connector=sergeant.config.Connector(
             type='redis',
             params={
-                'host': 'localhost',
-                'port': 6379,
-                'password': None,
-                'database': 0,
+                'nodes': [
+                    {
+                        'host': 'localhost',
+                        'port': 6379,
+                        'password': None,
+                        'database': 0,
+                    },
+                ],
             },
         ),
         max_tasks_per_run=4,
