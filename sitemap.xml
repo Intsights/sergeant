@@ -1,127 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
      <loc>https://intsights.github.io/sergeant/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/name/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/connector/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/max_tasks_per_run/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/max_retries/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/tasks_per_transaction/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/encoder/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/executor/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/timeouts/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/config/logging/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/handlers/on_success/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/handlers/on_failure/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/handlers/on_timeout/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/handlers/on_retry/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/handlers/on_max_retries/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/handlers/on_requeue/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/worker/initialize/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/worker/finalize/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/worker/pre_work/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/worker/post_work/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/worker/work/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/methods/retry/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/methods/requeue/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/methods/apply_async_one/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/methods/apply_async_many/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/methods/get_next_tasks/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/methods/number_of_enqueued_tasks/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/worker/methods/purge_tasks/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/supervisor/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/examples/single_producer_consumer/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url><url>
      <loc>https://intsights.github.io/sergeant/examples/worker_with_apm/</loc>
-     <lastmod>2020-04-21</lastmod>
+     <lastmod>2020-04-26</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
