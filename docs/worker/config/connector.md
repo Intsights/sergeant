@@ -6,7 +6,9 @@ The `connector` parameter controlls the connection to the broker.
 ## Definition
 
 ```python
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Connector:
     type: str
     params: typing.Dict[str, typing.Any]

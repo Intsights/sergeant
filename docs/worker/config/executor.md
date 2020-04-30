@@ -6,7 +6,9 @@ The `executor` parameter controls which executor to use when executing tasks.
 ## Definition
 
 ```python
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Executor:
     type: str = 'serial'
     number_of_threads: int = 1

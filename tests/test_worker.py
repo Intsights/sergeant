@@ -412,7 +412,9 @@ class WorkerTestCase(
 
         worker.iterate_tasks_forever = unittest.mock.MagicMock()
         worker.iterate_tasks_until_max_tasks = unittest.mock.MagicMock()
-        worker.config.max_tasks_per_run = 0
+        worker.config = worker.config.replace(
+            max_tasks_per_run=0,
+        )
         list(worker.iterate_tasks())
         self.assertEqual(
             first=worker.iterate_tasks_forever.call_count,
@@ -425,7 +427,9 @@ class WorkerTestCase(
 
         worker.iterate_tasks_forever = unittest.mock.MagicMock()
         worker.iterate_tasks_until_max_tasks = unittest.mock.MagicMock()
-        worker.config.max_tasks_per_run = 1
+        worker.config = worker.config.replace(
+            max_tasks_per_run=1,
+        )
         list(worker.iterate_tasks())
         self.assertEqual(
             first=worker.iterate_tasks_forever.call_count,
@@ -457,7 +461,9 @@ class WorkerTestCase(
             ),
         )
 
-        worker.config.max_tasks_per_run = 10
+        worker.config = worker.config.replace(
+            max_tasks_per_run=10,
+        )
         worker.get_next_tasks = unittest.mock.MagicMock(
             return_value=[
                 {
@@ -477,7 +483,9 @@ class WorkerTestCase(
             second=10,
         )
 
-        worker.config.max_tasks_per_run = 10
+        worker.config = worker.config.replace(
+            max_tasks_per_run=10,
+        )
         worker.get_next_tasks = unittest.mock.MagicMock(
             return_value=[
                 {
@@ -570,7 +578,9 @@ class WorkerTestCase(
             second=3,
         )
 
-        worker.config.max_retries = 0
+        worker.config = worker.config.replace(
+            max_retries=0,
+        )
         for i in range(100):
             with self.assertRaises(
                 expected_exception=sergeant.worker.WorkerRetry,
@@ -669,7 +679,13 @@ class WorkerTestCase(
 
         worker.on_success.reset_mock()
         worker.logger.reset_mock()
-        worker.config.logging.events.on_success = True
+        worker.config = worker.config.replace(
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_success=True,
+                ),
+            ),
+        )
         worker._on_success(
             task=task,
             returned_value=True,
@@ -748,7 +764,13 @@ class WorkerTestCase(
 
         worker.on_failure.reset_mock()
         worker.logger.reset_mock()
-        worker.config.logging.events.on_failure = True
+        worker.config = worker.config.replace(
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_failure=True,
+                ),
+            ),
+        )
         worker._on_failure(
             task=task,
             exception=Exception('test_exception'),
@@ -826,7 +848,13 @@ class WorkerTestCase(
 
         worker.on_timeout.reset_mock()
         worker.logger.reset_mock()
-        worker.config.logging.events.on_timeout = True
+        worker.config = worker.config.replace(
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_timeout=True,
+                ),
+            ),
+        )
         worker._on_timeout(
             task=task,
         )
@@ -902,7 +930,13 @@ class WorkerTestCase(
 
         worker.on_retry.reset_mock()
         worker.logger.reset_mock()
-        worker.config.logging.events.on_retry = True
+        worker.config = worker.config.replace(
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_retry=True,
+                ),
+            ),
+        )
         worker._on_retry(
             task=task,
         )
@@ -978,7 +1012,13 @@ class WorkerTestCase(
 
         worker.on_max_retries.reset_mock()
         worker.logger.reset_mock()
-        worker.config.logging.events.on_max_retries = True
+        worker.config = worker.config.replace(
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_max_retries=True,
+                ),
+            ),
+        )
         worker._on_max_retries(
             task=task,
         )
@@ -1054,7 +1094,13 @@ class WorkerTestCase(
 
         worker.on_requeue.reset_mock()
         worker.logger.reset_mock()
-        worker.config.logging.events.on_requeue = True
+        worker.config = worker.config.replace(
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_requeue=True,
+                ),
+            ),
+        )
         worker._on_requeue(
             task=task,
         )

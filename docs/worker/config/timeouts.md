@@ -6,7 +6,9 @@ The `timeouts` parameter controls the killer timeouts for the worker.
 ## Definition
 
 ```python
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Timeouts:
     soft_timeout: float = 0.0
     hard_timeout: float = 0.0

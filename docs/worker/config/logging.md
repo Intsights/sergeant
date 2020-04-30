@@ -6,7 +6,9 @@ The `logging` parameter controls the logger of the worker.
 ## Definition
 
 ```python
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class LoggingEvents:
     on_success: bool = False
     on_failure: bool = True
@@ -16,7 +18,9 @@ class LoggingEvents:
     on_requeue: bool = True
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Logging:
     level: int = logging.ERROR
     log_to_stdout: bool = False

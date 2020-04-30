@@ -63,7 +63,11 @@ class ThreadedTestCase(
     def test_success_many_tasks(
         self,
     ):
-        self.worker.config.timeouts.soft_timeout = 1.0
+        self.worker.config = self.worker.config.replace(
+            timeouts=sergeant.config.Timeouts(
+                soft_timeout=1.0,
+            ),
+        )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
             worker=self.worker,
@@ -152,7 +156,11 @@ class ThreadedTestCase(
         self.worker.work = unittest.mock.MagicMock(
             side_effect=lambda task: timeout_work_method(task),
         )
-        self.worker.config.timeouts.soft_timeout = 1.0
+        self.worker.config = self.worker.config.replace(
+            timeouts=sergeant.config.Timeouts(
+                soft_timeout=1.0,
+            ),
+        )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
             worker=self.worker,
@@ -190,7 +198,11 @@ class ThreadedTestCase(
         self.worker.work = unittest.mock.MagicMock(
             side_effect=lambda task: timeout_work_method(task),
         )
-        self.worker.config.timeouts.soft_timeout = 1.0
+        self.worker.config = self.worker.config.replace(
+            timeouts=sergeant.config.Timeouts(
+                soft_timeout=1.0,
+            ),
+        )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
             worker=self.worker,

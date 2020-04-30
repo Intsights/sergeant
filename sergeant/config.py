@@ -3,7 +3,9 @@ import dataclasses
 import typing
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class LoggingEvents:
     on_success: bool = False
     on_failure: bool = True
@@ -13,7 +15,9 @@ class LoggingEvents:
     on_requeue: bool = True
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Logging:
     level: int = logging.ERROR
     log_to_stdout: bool = False
@@ -25,32 +29,42 @@ class Logging:
     )
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Encoder:
     compressor: typing.Optional[str] = None
     serializer: str = 'pickle'
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Connector:
     type: str
     params: typing.Dict[str, typing.Any]
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Executor:
     type: str = 'serial'
     number_of_threads: int = 1
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Timeouts:
     soft_timeout: float = 0.0
     hard_timeout: float = 0.0
     critical_timeout: float = 0.0
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class WorkerConfig:
     name: str
     connector: Connector
@@ -69,3 +83,14 @@ class WorkerConfig:
     logging: Logging = dataclasses.field(
         default_factory=Logging,
     )
+
+    def replace(
+        self,
+        *args,
+        **kwargs,
+    ):
+        return dataclasses.replace(
+            self,
+            *args,
+            **kwargs,
+        )

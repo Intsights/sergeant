@@ -125,7 +125,11 @@ class SerialTestCase(
         self.worker.work = unittest.mock.MagicMock(
             side_effect=lambda task: timeout_work_method(task),
         )
-        self.worker.config.timeouts.soft_timeout = 1.0
+        self.worker.config = self.worker.config.replace(
+            timeouts=sergeant.config.Timeouts(
+                soft_timeout=1.0,
+            ),
+        )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
             worker=self.worker,
@@ -165,7 +169,11 @@ class SerialTestCase(
         self.worker.work = unittest.mock.MagicMock(
             side_effect=lambda task: timeout_work_method(task),
         )
-        self.worker.config.timeouts.hard_timeout = 1.0
+        self.worker.config = self.worker.config.replace(
+            timeouts=sergeant.config.Timeouts(
+                hard_timeout=1.0,
+            ),
+        )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
             worker=self.worker,
@@ -205,7 +213,11 @@ class SerialTestCase(
         self.worker.work = unittest.mock.MagicMock(
             side_effect=lambda task: timeout_work_method(task),
         )
-        self.worker.config.timeouts.soft_timeout = 1.0
+        self.worker.config = self.worker.config.replace(
+            timeouts=sergeant.config.Timeouts(
+                soft_timeout=1.0,
+            ),
+        )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
             worker=self.worker,

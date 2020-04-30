@@ -6,7 +6,9 @@ The `encoder` parameter controls the encoder which is responsible for the tasks 
 ## Definition
 
 ```python
-@dataclasses.dataclass
+@dataclasses.dataclass(
+    frozen=True,
+)
 class Encoder:
     compressor: typing.Optional[str] = None
     serializer: str = 'pickle'

@@ -44,6 +44,7 @@ nav:
     - Examples:
       - 'examples/single_producer_consumer.md'
       - 'examples/worker_with_apm.md'
+      - 'examples/base_worker.md'
 theme:
   name: material
   logo: images/logo_icon.png
