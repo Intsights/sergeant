@@ -41,11 +41,6 @@ class Connector:
 
         return current_connection
 
-    def rotate_connections(
-        self,
-    ) -> None:
-        self.connections = self.connections[1:] + self.connections[:1]
-
     def key_set(
         self,
         key: str,

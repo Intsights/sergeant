@@ -186,48 +186,53 @@ class Worker:
     def iterate_tasks(
         self,
     ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
+        time_with_no_tasks = 0
         run_forever = self.config.max_tasks_per_run == 0
-        if run_forever:
-            yield from self.iterate_tasks_forever()
-        else:
-            yield from self.iterate_tasks_until_max_tasks()
-
-    def iterate_tasks_forever(
-        self,
-    ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
-        while True:
-            tasks = self.get_next_tasks(
-                number_of_tasks=self.config.tasks_per_transaction,
-            )
-            if len(tasks) == 0:
-                time.sleep(1)
-
-                continue
-
-            for task in tasks:
-                yield task
-
-    def iterate_tasks_until_max_tasks(
-        self,
-    ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
         tasks_left = self.config.max_tasks_per_run
-        while tasks_left > 0:
-            tasks = self.get_next_tasks(
-                number_of_tasks=min(
-                    self.config.tasks_per_transaction,
-                    tasks_left,
-                ),
-            )
-            number_of_dequeued_tasks = len(tasks)
-            if number_of_dequeued_tasks == 0:
-                time.sleep(1)
+        tasks = []
 
-                continue
+        try:
+            while tasks_left > 0 or run_forever:
+                if run_forever:
+                    number_of_tasks_to_pull = self.config.tasks_per_transaction
+                else:
+                    number_of_tasks_to_pull = min(
+                        self.config.tasks_per_transaction,
+                        tasks_left,
+                    )
 
-            for task in tasks:
-                yield task
+                tasks = self.get_next_tasks(
+                    number_of_tasks=number_of_tasks_to_pull,
+                )
+                number_of_dequeued_tasks = len(tasks)
+                if number_of_dequeued_tasks == 0:
+                    time.sleep(1)
+                    time_with_no_tasks += 1
+                    if self.config.starvation and time_with_no_tasks >= self.config.starvation.time_with_no_tasks:
+                        self._on_starvation(
+                            time_with_no_tasks=time_with_no_tasks,
+                        )
 
-            tasks_left -= number_of_dequeued_tasks
+                    continue
+                else:
+                    time_with_no_tasks = 0
+
+                for task in tasks:
+                    yield task
+
+                if not run_forever:
+                    tasks_left -= number_of_dequeued_tasks
+        except Exception as exception:
+            if tasks:
+                self.apply_async_many(
+                    kwargs_list=[
+                        task['kwargs']
+                        for task in tasks
+                    ],
+                    priority='HIGH',
+                )
+
+            raise exception
 
     def work_loop(
         self,
@@ -473,6 +478,30 @@ class Worker:
                 },
             )
 
+    def _on_starvation(
+        self,
+        time_with_no_tasks: int,
+    ) -> None:
+        try:
+            if self.config.logging.events.on_starvation:
+                self.logger.warning(
+                    msg='worker is starving',
+                    extra={
+                        'time_with_no_tasks': time_with_no_tasks,
+                    },
+                )
+
+            self.on_starvation(
+                time_with_no_tasks=time_with_no_tasks,
+            )
+        except Exception as exception:
+            self.logger.error(
+                msg=f'on_starvation handler has failed: {exception}',
+                extra={
+                    'time_with_no_tasks': time_with_no_tasks,
+                },
+            )
+
     def initialize(
         self,
     ) -> None:
@@ -538,6 +567,12 @@ class Worker:
     def on_max_retries(
         self,
         task: typing.Dict[str, typing.Any],
+    ) -> None:
+        pass
+
+    def on_starvation(
+        self,
+        time_with_no_tasks: int,
     ) -> None:
         pass
 

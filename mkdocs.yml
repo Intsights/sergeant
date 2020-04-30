@@ -26,6 +26,7 @@ nav:
         - on_retry: 'worker/handlers/on_retry.md'
         - on_max_retries: 'worker/handlers/on_max_retries.md'
         - on_requeue: 'worker/handlers/on_requeue.md'
+        - on_starvation: 'worker/handlers/on_starvation.md'
       - Worker:
         - initialize: 'worker/worker/initialize.md'
         - finalize: 'worker/worker/finalize.md'

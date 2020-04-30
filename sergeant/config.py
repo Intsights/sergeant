@@ -13,6 +13,7 @@ class LoggingEvents:
     on_retry: bool = True
     on_max_retries: bool = True
     on_requeue: bool = True
+    on_starvation: bool = True
 
 
 @dataclasses.dataclass(
@@ -65,6 +66,13 @@ class Timeouts:
 @dataclasses.dataclass(
     frozen=True,
 )
+class Starvation:
+    time_with_no_tasks: int
+
+
+@dataclasses.dataclass(
+    frozen=True,
+)
 class WorkerConfig:
     name: str
     connector: Connector
@@ -83,6 +91,7 @@ class WorkerConfig:
     logging: Logging = dataclasses.field(
         default_factory=Logging,
     )
+    starvation: typing.Optional[Starvation] = None
 
     def replace(
         self,
