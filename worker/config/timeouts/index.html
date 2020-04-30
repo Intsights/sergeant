@@ -772,6 +772,18 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../examples/base_worker/" title="Base Worker" class="md-nav__link">
+      Base Worker
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -843,7 +855,11 @@
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
+    <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="k">class</span> <span class="nc">Timeouts</span><span class="p">:</span>
     <span class="n">soft_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="n">hard_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
