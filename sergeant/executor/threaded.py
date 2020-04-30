@@ -17,36 +17,38 @@ class ThreadedExecutor:
 
         has_soft_timeout = self.worker.config.timeouts.soft_timeout > 0
         self.should_use_a_killer = has_soft_timeout
+        self.thread_killers = {}
 
     def execute_tasks(
         self,
         tasks: typing.Iterable[typing.Dict[str, typing.Any]],
     ) -> None:
         future_to_task = {}
-        self.thread_killers = {}
 
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=self.number_of_threads,
-        ) as executor:
-            for task in tasks:
-                future = executor.submit(self.execute_task, task)
-                future_to_task[future] = task
+        try:
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=self.number_of_threads,
+            ) as executor:
+                for task in tasks:
+                    future = executor.submit(self.execute_task, task)
+                    future_to_task[future] = task
 
-                if len(future_to_task) == self.number_of_threads:
-                    finished, pending = concurrent.futures.wait(
-                        fs=future_to_task,
-                        timeout=None,
-                        return_when=concurrent.futures.FIRST_COMPLETED,
-                    )
-                    for finished_future in finished:
-                        del future_to_task[finished_future]
+                    if len(future_to_task) == self.number_of_threads:
+                        finished, pending = concurrent.futures.wait(
+                            fs=future_to_task,
+                            timeout=None,
+                            return_when=concurrent.futures.FIRST_COMPLETED,
+                        )
+                        for finished_future in finished:
+                            del future_to_task[finished_future]
 
-            for future in concurrent.futures.as_completed(future_to_task):
-                pass
+                for future in concurrent.futures.as_completed(future_to_task):
+                    pass
+        finally:
+            for thread_killer in self.thread_killers.values():
+                thread_killer.kill()
 
-        for thread_killer in self.thread_killers.values():
-            thread_killer.kill()
-        self.thread_killers.clear()
+            self.thread_killers.clear()
 
     def execute_task(
         self,
@@ -151,3 +153,11 @@ class ThreadedExecutor:
                     'task': task,
                 },
             )
+
+    def __del__(
+        self,
+    ) -> None:
+        for thread_killer in self.thread_killers.values():
+            thread_killer.kill()
+
+        self.thread_killers.clear()

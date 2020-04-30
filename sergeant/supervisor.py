@@ -151,11 +151,12 @@ class Supervisor:
             pass
         except Exception as exception:
             self.logger.error(f'the supervisor encountered an exception: {exception}')
-            self.logger.error(f'exiting...')
         finally:
             for worker in self.current_workers:
                 self.logger.info(f'killing a worker: {worker.process.pid}')
                 worker.kill()
+
+            self.logger.info(f'exiting...')
             sys.exit(0)
 
     def supervise_worker(
@@ -214,12 +215,12 @@ class Supervisor:
     ) -> None:
         worker.kill()
         self.current_workers.remove(worker)
-        worker = SupervisedWorker(
+        new_worker = SupervisedWorker(
             worker_module_name=self.worker_module_name,
             worker_class_name=self.worker_class_name,
         )
-        self.logger.info(f'spawned a new worker at pid: {worker.process.pid}')
-        self.current_workers.append(worker)
+        self.logger.info(f'spawned a new worker at pid: {new_worker.process.pid}')
+        self.current_workers.append(new_worker)
 
 
 def main() -> None:
