@@ -189,50 +189,52 @@ class Worker:
         time_with_no_tasks = 0
         run_forever = self.config.max_tasks_per_run == 0
         tasks_left = self.config.max_tasks_per_run
-        tasks = []
 
-        try:
-            while tasks_left > 0 or run_forever:
-                if run_forever:
-                    number_of_tasks_to_pull = self.config.tasks_per_transaction
-                else:
-                    number_of_tasks_to_pull = min(
-                        self.config.tasks_per_transaction,
-                        tasks_left,
+        while tasks_left > 0 or run_forever:
+            if run_forever:
+                number_of_tasks_to_pull = self.config.tasks_per_transaction
+            else:
+                number_of_tasks_to_pull = min(
+                    self.config.tasks_per_transaction,
+                    tasks_left,
+                )
+
+            tasks = self.get_next_tasks(
+                number_of_tasks=number_of_tasks_to_pull,
+            )
+            number_of_dequeued_tasks = len(tasks)
+            if number_of_dequeued_tasks == 0:
+                time.sleep(1)
+                time_with_no_tasks += 1
+                if self.config.starvation and time_with_no_tasks >= self.config.starvation.time_with_no_tasks:
+                    self.handle_starvation(
+                        time_with_no_tasks=time_with_no_tasks,
                     )
 
-                tasks = self.get_next_tasks(
-                    number_of_tasks=number_of_tasks_to_pull,
-                )
-                number_of_dequeued_tasks = len(tasks)
-                if number_of_dequeued_tasks == 0:
-                    time.sleep(1)
-                    time_with_no_tasks += 1
-                    if self.config.starvation and time_with_no_tasks >= self.config.starvation.time_with_no_tasks:
-                        self.handle_starvation(
-                            time_with_no_tasks=time_with_no_tasks,
-                        )
+                continue
+            else:
+                time_with_no_tasks = 0
 
-                    continue
-                else:
-                    time_with_no_tasks = 0
-
+            try:
+                iterated_tasks = 0
                 for task in tasks:
                     yield task
 
+                    iterated_tasks += 1
+
                 if not run_forever:
                     tasks_left -= number_of_dequeued_tasks
-        except Exception as exception:
-            if tasks:
-                self.apply_async_many(
-                    kwargs_list=[
-                        task['kwargs']
-                        for task in tasks
-                    ],
-                    priority='HIGH',
-                )
+            except Exception as exception:
+                if tasks:
+                    self.apply_async_many(
+                        kwargs_list=[
+                            task['kwargs']
+                            for task in tasks[iterated_tasks + 1:]
+                        ],
+                        priority='HIGH',
+                    )
 
-            raise exception
+                raise exception
 
     def work_loop(
         self,
