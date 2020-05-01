@@ -215,7 +215,7 @@ class WorkerIterateTasksTestCase(
                 time_with_no_tasks=10,
             ),
         )
-        self.worker._on_starvation = unittest.mock.MagicMock(
+        self.worker.handle_starvation = unittest.mock.MagicMock(
             side_effect=Exception('stop'),
         )
         iterator = self.worker.iterate_tasks()

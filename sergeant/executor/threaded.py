@@ -68,7 +68,7 @@ class ThreadedExecutor:
                 success=True,
             )
 
-            self.worker._on_success(
+            self.worker.handle_success(
                 task=task,
                 returned_value=returned_value,
             )
@@ -80,23 +80,23 @@ class ThreadedExecutor:
             )
 
             if isinstance(exception, worker.WorkerTimedout):
-                self.worker._on_timeout(
+                self.worker.handle_timeout(
                     task=task,
                 )
             elif isinstance(exception, worker.WorkerRetry):
-                self.worker._on_retry(
+                self.worker.handle_retry(
                     task=task,
                 )
             elif isinstance(exception, worker.WorkerMaxRetries):
-                self.worker._on_max_retries(
+                self.worker.handle_max_retries(
                     task=task,
                 )
             elif isinstance(exception, worker.WorkerRequeue):
-                self.worker._on_requeue(
+                self.worker.handle_requeue(
                     task=task,
                 )
             else:
-                self.worker._on_failure(
+                self.worker.handle_failure(
                     task=task,
                     exception=exception,
                 )

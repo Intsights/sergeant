@@ -7,135 +7,6 @@ import sergeant.worker
 class WorkerHandlersTestCase(
     unittest.TestCase,
 ):
-    def test_retry(
-        self,
-    ):
-        worker = sergeant.worker.Worker()
-        worker.config = sergeant.config.WorkerConfig(
-            name='some_worker',
-            connector=sergeant.config.Connector(
-                type='redis',
-                params={
-                    'nodes': [
-                        {
-                            'host': 'localhost',
-                            'port': 6379,
-                            'password': None,
-                            'database': 0,
-                        },
-                    ],
-                },
-            ),
-            max_retries=3,
-        )
-        worker.init_task_queue()
-
-        task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
-            kwargs={},
-        )
-        worker.task_queue.apply_async_one = unittest.mock.MagicMock()
-
-        with self.assertRaises(
-            expected_exception=sergeant.worker.WorkerRetry,
-        ):
-            worker.retry(
-                task=task,
-            )
-        self.assertEqual(
-            first=worker.task_queue.apply_async_one.call_count,
-            second=1,
-        )
-
-        with self.assertRaises(
-            expected_exception=sergeant.worker.WorkerRetry,
-        ):
-            worker.retry(
-                task=worker.task_queue.apply_async_one.call_args[1]['task'],
-            )
-        self.assertEqual(
-            first=worker.task_queue.apply_async_one.call_count,
-            second=2,
-        )
-
-        with self.assertRaises(
-            expected_exception=sergeant.worker.WorkerRetry,
-        ):
-            worker.retry(
-                task=worker.task_queue.apply_async_one.call_args[1]['task'],
-            )
-        self.assertEqual(
-            first=worker.task_queue.apply_async_one.call_count,
-            second=3,
-        )
-
-        with self.assertRaises(
-            expected_exception=sergeant.worker.WorkerMaxRetries,
-        ):
-            worker.retry(
-                task=worker.task_queue.apply_async_one.call_args[1]['task'],
-            )
-        self.assertEqual(
-            first=worker.task_queue.apply_async_one.call_count,
-            second=3,
-        )
-
-        worker.config = worker.config.replace(
-            max_retries=0,
-        )
-        for i in range(100):
-            with self.assertRaises(
-                expected_exception=sergeant.worker.WorkerRetry,
-            ):
-                worker.retry(
-                    task=worker.task_queue.apply_async_one.call_args[1]['task'],
-                )
-        self.assertEqual(
-            first=worker.task_queue.apply_async_one.call_count,
-            second=103,
-        )
-
-    def test_requeue(
-        self,
-    ):
-        worker = sergeant.worker.Worker()
-        worker.config = sergeant.config.WorkerConfig(
-            name='some_worker',
-            connector=sergeant.config.Connector(
-                type='redis',
-                params={
-                    'nodes': [
-                        {
-                            'host': 'localhost',
-                            'port': 6379,
-                            'password': None,
-                            'database': 0,
-                        },
-                    ],
-                },
-            ),
-            max_retries=3,
-        )
-        worker.init_task_queue()
-
-        task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
-            kwargs={},
-        )
-        worker.task_queue.apply_async_one = unittest.mock.MagicMock()
-
-        with self.assertRaises(
-            expected_exception=sergeant.worker.WorkerRequeue,
-        ):
-            worker.requeue(
-                task=task,
-            )
-
-        self.assertEqual(
-            first=worker.task_queue.apply_async_one.call_count,
-            second=1,
-        )
-
     def test_on_success(
         self,
     ):
@@ -172,7 +43,7 @@ class WorkerHandlersTestCase(
         worker.on_success = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
 
-        worker._on_success(
+        worker.handle_success(
             task=task,
             returned_value=True,
         )
@@ -188,7 +59,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker._on_success(
+        worker.handle_success(
             task=task,
             returned_value=True,
         )
@@ -203,7 +74,7 @@ class WorkerHandlersTestCase(
         worker.on_success.reset_mock()
         worker.logger.reset_mock()
         worker.on_success.side_effect = Exception('exception message')
-        worker._on_success(
+        worker.handle_success(
             task=task,
             returned_value=True,
         )
@@ -257,7 +128,7 @@ class WorkerHandlersTestCase(
         worker.on_failure = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
 
-        worker._on_failure(
+        worker.handle_failure(
             task=task,
             exception=Exception('test_exception'),
         )
@@ -273,7 +144,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker._on_failure(
+        worker.handle_failure(
             task=task,
             exception=Exception('test_exception'),
         )
@@ -288,7 +159,7 @@ class WorkerHandlersTestCase(
         worker.on_failure.reset_mock()
         worker.logger.reset_mock()
         worker.on_failure.side_effect = Exception('exception message')
-        worker._on_failure(
+        worker.handle_failure(
             task=task,
             exception=Exception('test_exception'),
         )
@@ -342,7 +213,7 @@ class WorkerHandlersTestCase(
         worker.on_timeout = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
 
-        worker._on_timeout(
+        worker.handle_timeout(
             task=task,
         )
         worker.on_timeout.assert_called_once()
@@ -357,7 +228,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker._on_timeout(
+        worker.handle_timeout(
             task=task,
         )
         worker.on_timeout.assert_called_once()
@@ -371,7 +242,7 @@ class WorkerHandlersTestCase(
         worker.on_timeout.reset_mock()
         worker.logger.reset_mock()
         worker.on_timeout.side_effect = Exception('exception message')
-        worker._on_timeout(
+        worker.handle_timeout(
             task=task,
         )
         worker.on_timeout.assert_called_once()
@@ -424,7 +295,7 @@ class WorkerHandlersTestCase(
         worker.on_retry = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
 
-        worker._on_retry(
+        worker.handle_retry(
             task=task,
         )
         worker.on_retry.assert_called_once()
@@ -439,7 +310,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker._on_retry(
+        worker.handle_retry(
             task=task,
         )
         worker.on_retry.assert_called_once()
@@ -453,7 +324,7 @@ class WorkerHandlersTestCase(
         worker.on_retry.reset_mock()
         worker.logger.reset_mock()
         worker.on_retry.side_effect = Exception('exception message')
-        worker._on_retry(
+        worker.handle_retry(
             task=task,
         )
         worker.on_retry.assert_called_once()
@@ -506,7 +377,7 @@ class WorkerHandlersTestCase(
         worker.on_max_retries = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
 
-        worker._on_max_retries(
+        worker.handle_max_retries(
             task=task,
         )
         worker.on_max_retries.assert_called_once()
@@ -521,7 +392,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker._on_max_retries(
+        worker.handle_max_retries(
             task=task,
         )
         worker.on_max_retries.assert_called_once()
@@ -535,7 +406,7 @@ class WorkerHandlersTestCase(
         worker.on_max_retries.reset_mock()
         worker.logger.reset_mock()
         worker.on_max_retries.side_effect = Exception('exception message')
-        worker._on_max_retries(
+        worker.handle_max_retries(
             task=task,
         )
         worker.on_max_retries.assert_called_once()
@@ -588,7 +459,7 @@ class WorkerHandlersTestCase(
         worker.on_requeue = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
 
-        worker._on_requeue(
+        worker.handle_requeue(
             task=task,
         )
         worker.on_requeue.assert_called_once()
@@ -603,7 +474,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker._on_requeue(
+        worker.handle_requeue(
             task=task,
         )
         worker.on_requeue.assert_called_once()
@@ -617,7 +488,7 @@ class WorkerHandlersTestCase(
         worker.on_requeue.reset_mock()
         worker.logger.reset_mock()
         worker.on_requeue.side_effect = Exception('exception message')
-        worker._on_requeue(
+        worker.handle_requeue(
             task=task,
         )
         worker.on_requeue.assert_called_once()
@@ -664,7 +535,7 @@ class WorkerHandlersTestCase(
         worker.on_starvation = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
 
-        worker._on_starvation(
+        worker.handle_starvation(
             time_with_no_tasks=10,
         )
         worker.on_starvation.assert_called_once()
@@ -679,7 +550,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker._on_starvation(
+        worker.handle_starvation(
             time_with_no_tasks=10,
         )
         worker.on_starvation.assert_called_once()
@@ -693,7 +564,7 @@ class WorkerHandlersTestCase(
         worker.on_starvation.reset_mock()
         worker.logger.reset_mock()
         worker.on_starvation.side_effect = Exception('exception message')
-        worker._on_starvation(
+        worker.handle_starvation(
             time_with_no_tasks=10,
         )
         worker.on_starvation.assert_called_once()
@@ -742,66 +613,66 @@ class WorkerHandlersTestCase(
 
         worker.on_timeout = unittest.mock.MagicMock()
         worker.on_failure = unittest.mock.MagicMock()
-        worker._on_requeue = unittest.mock.MagicMock()
+        worker.handle_requeue = unittest.mock.MagicMock()
 
         worker.on_timeout.side_effect = sergeant.worker.WorkerRequeue()
-        worker._on_timeout(
+        worker.handle_timeout(
             task=task,
         )
         worker.on_timeout.assert_called_once()
-        worker._on_requeue.assert_called_once()
+        worker.handle_requeue.assert_called_once()
 
-        worker._on_requeue.reset_mock()
+        worker.handle_requeue.reset_mock()
 
-        worker._on_requeue = unittest.mock.MagicMock()
+        worker.handle_requeue = unittest.mock.MagicMock()
         worker.on_failure.side_effect = sergeant.worker.WorkerRequeue()
-        worker._on_failure(
+        worker.handle_failure(
             task=task,
             exception=Exception('test_exception'),
         )
         worker.on_failure.assert_called_once()
-        worker._on_requeue.assert_called_once()
+        worker.handle_requeue.assert_called_once()
 
         worker.on_timeout.reset_mock()
         worker.on_failure.reset_mock()
-        worker._on_retry = unittest.mock.MagicMock()
+        worker.handle_retry = unittest.mock.MagicMock()
 
         worker.on_timeout.side_effect = sergeant.worker.WorkerRetry()
-        worker._on_timeout(
+        worker.handle_timeout(
             task=task,
         )
         worker.on_timeout.assert_called_once()
-        worker._on_retry.assert_called_once()
+        worker.handle_retry.assert_called_once()
 
-        worker._on_retry.reset_mock()
+        worker.handle_retry.reset_mock()
 
-        worker._on_retry = unittest.mock.MagicMock()
+        worker.handle_retry = unittest.mock.MagicMock()
         worker.on_failure.side_effect = sergeant.worker.WorkerRetry()
-        worker._on_failure(
+        worker.handle_failure(
             task=task,
             exception=Exception('test_exception'),
         )
         worker.on_failure.assert_called_once()
-        worker._on_retry.assert_called_once()
+        worker.handle_retry.assert_called_once()
 
         worker.on_timeout.reset_mock()
         worker.on_failure.reset_mock()
-        worker._on_max_retries = unittest.mock.MagicMock()
+        worker.handle_max_retries = unittest.mock.MagicMock()
 
         worker.on_timeout.side_effect = sergeant.worker.WorkerMaxRetries()
-        worker._on_timeout(
+        worker.handle_timeout(
             task=task,
         )
         worker.on_timeout.assert_called_once()
-        worker._on_max_retries.assert_called_once()
+        worker.handle_max_retries.assert_called_once()
 
-        worker._on_max_retries.reset_mock()
+        worker.handle_max_retries.reset_mock()
 
-        worker._on_max_retries = unittest.mock.MagicMock()
+        worker.handle_max_retries = unittest.mock.MagicMock()
         worker.on_failure.side_effect = sergeant.worker.WorkerMaxRetries()
-        worker._on_failure(
+        worker.handle_failure(
             task=task,
             exception=Exception('test_exception'),
         )
         worker.on_failure.assert_called_once()
-        worker._on_max_retries.assert_called_once()
+        worker.handle_max_retries.assert_called_once()

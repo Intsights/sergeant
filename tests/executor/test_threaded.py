@@ -25,12 +25,12 @@ class ThreadedTestCase(
         self.worker.work = unittest.mock.MagicMock(
             return_value=True,
         )
-        self.worker._on_success = unittest.mock.MagicMock()
-        self.worker._on_timeout = unittest.mock.MagicMock()
-        self.worker._on_failure = unittest.mock.MagicMock()
-        self.worker._on_retry = unittest.mock.MagicMock()
-        self.worker._on_max_retries = unittest.mock.MagicMock()
-        self.worker._on_requeue = unittest.mock.MagicMock()
+        self.worker.handle_success = unittest.mock.MagicMock()
+        self.worker.handle_timeout = unittest.mock.MagicMock()
+        self.worker.handle_failure = unittest.mock.MagicMock()
+        self.worker.handle_retry = unittest.mock.MagicMock()
+        self.worker.handle_max_retries = unittest.mock.MagicMock()
+        self.worker.handle_requeue = unittest.mock.MagicMock()
 
     def test_success(
         self,
@@ -50,15 +50,15 @@ class ThreadedTestCase(
         self.worker.work.assert_called_once_with(
             task=task,
         )
-        self.worker._on_success.assert_called_once_with(
+        self.worker.handle_success.assert_called_once_with(
             task=task,
             returned_value=True,
         )
-        self.worker._on_failure.assert_not_called()
-        self.worker._on_timeout.assert_not_called()
-        self.worker._on_retry.assert_not_called()
-        self.worker._on_max_retries.assert_not_called()
-        self.worker._on_requeue.assert_not_called()
+        self.worker.handle_failure.assert_not_called()
+        self.worker.handle_timeout.assert_not_called()
+        self.worker.handle_retry.assert_not_called()
+        self.worker.handle_max_retries.assert_not_called()
+        self.worker.handle_requeue.assert_not_called()
 
     def test_success_many_tasks(
         self,
@@ -86,15 +86,15 @@ class ThreadedTestCase(
             second=100,
         )
         self.assertEqual(
-            first=self.worker._on_success.call_count,
+            first=self.worker.handle_success.call_count,
             second=100,
         )
 
-        self.worker._on_failure.assert_not_called()
-        self.worker._on_timeout.assert_not_called()
-        self.worker._on_retry.assert_not_called()
-        self.worker._on_max_retries.assert_not_called()
-        self.worker._on_requeue.assert_not_called()
+        self.worker.handle_failure.assert_not_called()
+        self.worker.handle_timeout.assert_not_called()
+        self.worker.handle_retry.assert_not_called()
+        self.worker.handle_max_retries.assert_not_called()
+        self.worker.handle_requeue.assert_not_called()
 
     def test_failure(
         self,
@@ -123,26 +123,26 @@ class ThreadedTestCase(
         self.worker.work.assert_called_once_with(
             task=task,
         )
-        self.worker._on_failure.assert_called_once()
+        self.worker.handle_failure.assert_called_once()
         self.assertEqual(
-            first=self.worker._on_failure.call_args[1]['task'],
+            first=self.worker.handle_failure.call_args[1]['task'],
             second=task,
         )
         self.assertIsInstance(
-            obj=self.worker._on_failure.call_args[1]['exception'],
+            obj=self.worker.handle_failure.call_args[1]['exception'],
             cls=Exception,
         )
         self.assertEqual(
-            first=self.worker._on_failure.call_args[1]['exception'].args,
+            first=self.worker.handle_failure.call_args[1]['exception'].args,
             second=(
                 'some exception',
             ),
         )
-        self.worker._on_success.assert_not_called()
-        self.worker._on_timeout.assert_not_called()
-        self.worker._on_retry.assert_not_called()
-        self.worker._on_max_retries.assert_not_called()
-        self.worker._on_requeue.assert_not_called()
+        self.worker.handle_success.assert_not_called()
+        self.worker.handle_timeout.assert_not_called()
+        self.worker.handle_retry.assert_not_called()
+        self.worker.handle_max_retries.assert_not_called()
+        self.worker.handle_requeue.assert_not_called()
 
     def test_soft_timeout(
         self,
@@ -177,14 +177,14 @@ class ThreadedTestCase(
         self.worker.work.assert_called_once_with(
             task=task,
         )
-        self.worker._on_timeout.assert_called_once_with(
+        self.worker.handle_timeout.assert_called_once_with(
             task=task,
         )
-        self.worker._on_success.assert_not_called()
-        self.worker._on_failure.assert_not_called()
-        self.worker._on_retry.assert_not_called()
-        self.worker._on_max_retries.assert_not_called()
-        self.worker._on_requeue.assert_not_called()
+        self.worker.handle_success.assert_not_called()
+        self.worker.handle_failure.assert_not_called()
+        self.worker.handle_retry.assert_not_called()
+        self.worker.handle_max_retries.assert_not_called()
+        self.worker.handle_requeue.assert_not_called()
 
     def test_soft_timeout_multiple_tasks(
         self,
@@ -221,14 +221,14 @@ class ThreadedTestCase(
             second=10,
         )
         self.assertEqual(
-            first=self.worker._on_timeout.call_count,
+            first=self.worker.handle_timeout.call_count,
             second=10,
         )
-        self.worker._on_success.assert_not_called()
-        self.worker._on_failure.assert_not_called()
-        self.worker._on_retry.assert_not_called()
-        self.worker._on_max_retries.assert_not_called()
-        self.worker._on_requeue.assert_not_called()
+        self.worker.handle_success.assert_not_called()
+        self.worker.handle_failure.assert_not_called()
+        self.worker.handle_retry.assert_not_called()
+        self.worker.handle_max_retries.assert_not_called()
+        self.worker.handle_requeue.assert_not_called()
 
     def test_on_retry(
         self,
@@ -257,14 +257,14 @@ class ThreadedTestCase(
         self.worker.work.assert_called_once_with(
             task=task,
         )
-        self.worker._on_retry.assert_called_once_with(
+        self.worker.handle_retry.assert_called_once_with(
             task=task,
         )
-        self.worker._on_sucess.assert_not_called()
-        self.worker._on_failure.assert_not_called()
-        self.worker._on_timeout.assert_not_called()
-        self.worker._on_max_retries.assert_not_called()
-        self.worker._on_requeue.assert_not_called()
+        self.worker.handle_success.assert_not_called()
+        self.worker.handle_failure.assert_not_called()
+        self.worker.handle_timeout.assert_not_called()
+        self.worker.handle_max_retries.assert_not_called()
+        self.worker.handle_requeue.assert_not_called()
 
     def test_on_max_retries(
         self,
@@ -293,14 +293,14 @@ class ThreadedTestCase(
         self.worker.work.assert_called_once_with(
             task=task,
         )
-        self.worker._on_max_retries.assert_called_once_with(
+        self.worker.handle_max_retries.assert_called_once_with(
             task=task,
         )
-        self.worker._on_sucess.assert_not_called()
-        self.worker._on_failure.assert_not_called()
-        self.worker._on_timeout.assert_not_called()
-        self.worker._on_retry.assert_not_called()
-        self.worker._on_requeue.assert_not_called()
+        self.worker.handle_success.assert_not_called()
+        self.worker.handle_failure.assert_not_called()
+        self.worker.handle_timeout.assert_not_called()
+        self.worker.handle_retry.assert_not_called()
+        self.worker.handle_requeue.assert_not_called()
 
     def test_requeue(
         self,
@@ -329,11 +329,11 @@ class ThreadedTestCase(
         self.worker.work.assert_called_once_with(
             task=task,
         )
-        self.worker._on_requeue.assert_called_once_with(
+        self.worker.handle_requeue.assert_called_once_with(
             task=task,
         )
-        self.worker._on_sucess.assert_not_called()
-        self.worker._on_failure.assert_not_called()
-        self.worker._on_timeout.assert_not_called()
-        self.worker._on_retry.assert_not_called()
-        self.worker._on_max_retries.assert_not_called()
+        self.worker.handle_success.assert_not_called()
+        self.worker.handle_failure.assert_not_called()
+        self.worker.handle_timeout.assert_not_called()
+        self.worker.handle_retry.assert_not_called()
+        self.worker.handle_max_retries.assert_not_called()

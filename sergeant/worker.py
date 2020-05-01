@@ -209,7 +209,7 @@ class Worker:
                     time.sleep(1)
                     time_with_no_tasks += 1
                     if self.config.starvation and time_with_no_tasks >= self.config.starvation.time_with_no_tasks:
-                        self._on_starvation(
+                        self.handle_starvation(
                             time_with_no_tasks=time_with_no_tasks,
                         )
 
@@ -306,7 +306,7 @@ class Worker:
 
         raise WorkerRequeue()
 
-    def _on_success(
+    def handle_success(
         self,
         task: typing.Dict[str, typing.Any],
         returned_value: typing.Any,
@@ -332,7 +332,7 @@ class Worker:
                 },
             )
 
-    def _on_failure(
+    def handle_failure(
         self,
         task: typing.Dict[str, typing.Any],
         exception: Exception,
@@ -351,15 +351,15 @@ class Worker:
                 exception=exception,
             )
         except WorkerRetry:
-            self._on_retry(
+            self.handle_retry(
                 task=task,
             )
         except WorkerMaxRetries:
-            self._on_max_retries(
+            self.handle_max_retries(
                 task=task,
             )
         except WorkerRequeue:
-            self._on_requeue(
+            self.handle_requeue(
                 task=task,
             )
         except Exception as exception:
@@ -370,7 +370,7 @@ class Worker:
                 },
             )
 
-    def _on_timeout(
+    def handle_timeout(
         self,
         task: typing.Dict[str, typing.Any],
     ) -> None:
@@ -387,15 +387,15 @@ class Worker:
                 task=task,
             )
         except WorkerRetry:
-            self._on_retry(
+            self.handle_retry(
                 task=task,
             )
         except WorkerMaxRetries:
-            self._on_max_retries(
+            self.handle_max_retries(
                 task=task,
             )
         except WorkerRequeue:
-            self._on_requeue(
+            self.handle_requeue(
                 task=task,
             )
         except Exception as exception:
@@ -406,7 +406,7 @@ class Worker:
                 },
             )
 
-    def _on_retry(
+    def handle_retry(
         self,
         task: typing.Dict[str, typing.Any],
     ) -> None:
@@ -430,7 +430,7 @@ class Worker:
                 },
             )
 
-    def _on_max_retries(
+    def handle_max_retries(
         self,
         task: typing.Dict[str, typing.Any],
     ) -> None:
@@ -454,7 +454,7 @@ class Worker:
                 },
             )
 
-    def _on_requeue(
+    def handle_requeue(
         self,
         task: typing.Dict[str, typing.Any],
     ) -> None:
@@ -478,7 +478,7 @@ class Worker:
                 },
             )
 
-    def _on_starvation(
+    def handle_starvation(
         self,
         time_with_no_tasks: int,
     ) -> None:
