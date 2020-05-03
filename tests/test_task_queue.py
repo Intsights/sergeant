@@ -95,17 +95,6 @@ class TaskQueueTestCase:
                 ),
                 second=100,
             )
-            test_task_queue.apply_async_many(
-                task_name='test_task',
-                tasks=[task] * 1000,
-                priority='NORMAL',
-            )
-            self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
-                    task_name='test_task',
-                ),
-                second=1100,
-            )
             test_task_queue.purge_tasks(
                 task_name='test_task',
             )
@@ -171,6 +160,13 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task',
             )
+            self.assertTrue(
+                expr=test_task_queue.wait_queue_empty(
+                    task_name='test_task',
+                    sample_interval=0.1,
+                ),
+            )
+
             task = test_task_queue.craft_task(
                 task_name='test_task',
                 kwargs={},
@@ -179,8 +175,16 @@ class TaskQueueTestCase:
                 task=task,
                 priority='NORMAL',
             )
+            self.assertFalse(
+                expr=test_task_queue.wait_queue_empty(
+                    task_name='test_task',
+                    sample_interval=0.01,
+                    timeout=0.1,
+                ),
+            )
+
             purge_tasks_timer = threading.Timer(
-                interval=1.0,
+                interval=0.1,
                 function=test_task_queue.purge_tasks,
                 args=(
                     'test_task',
@@ -188,14 +192,11 @@ class TaskQueueTestCase:
             )
             purge_tasks_timer.start()
 
-            before = time.time()
-            test_task_queue.wait_queue_empty(
-                task_name='test_task',
-                sample_interval=0.1,
-            )
-            after = time.time()
             self.assertTrue(
-                expr=1.2 > after - before > 1.0,
+                expr=test_task_queue.wait_queue_empty(
+                    task_name='test_task',
+                    sample_interval=0.1,
+                ),
             )
 
     def test_apply_async_one(
@@ -246,6 +247,14 @@ class TaskQueueTestCase:
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
+            empty_list = test_task_queue.get_tasks(
+                task_name='test_task',
+                number_of_tasks=1,
+            )
+            self.assertEqual(
+                first=empty_list,
+                second=[],
+            )
             if self.order_matters:
                 self.assertEqual(
                     first=task_one,

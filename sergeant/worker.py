@@ -262,6 +262,10 @@ class Worker:
             self.executor_obj.execute_tasks(
                 tasks=self.iterate_tasks(),
             )
+        except WorkerRespawn as exception:
+            summary['executor_exception'] = exception
+        except WorkerStop as exception:
+            summary['executor_exception'] = exception
         except Exception as exception:
             self.logger.error(
                 msg=f'execute_tasks has failed: {exception}',
@@ -308,6 +312,16 @@ class Worker:
 
         raise WorkerRequeue()
 
+    def stop(
+        self,
+    ) -> None:
+        raise WorkerStop()
+
+    def respawn(
+        self,
+    ) -> None:
+        raise WorkerRespawn()
+
     def handle_success(
         self,
         task: typing.Dict[str, typing.Any],
@@ -326,6 +340,8 @@ class Worker:
                 task=task,
                 returned_value=returned_value,
             )
+        except WorkerInterrupt as exception:
+            raise exception
         except Exception as exception:
             self.logger.error(
                 msg=f'on_success handler has failed: {exception}',
@@ -364,6 +380,8 @@ class Worker:
             self.handle_requeue(
                 task=task,
             )
+        except WorkerInterrupt as exception:
+            raise exception
         except Exception as exception:
             self.logger.error(
                 msg=f'on_failure handler has failed: {exception}',
@@ -400,6 +418,8 @@ class Worker:
             self.handle_requeue(
                 task=task,
             )
+        except WorkerInterrupt as exception:
+            raise exception
         except Exception as exception:
             self.logger.error(
                 msg=f'on_timeout handler has failed: {exception}',
@@ -424,6 +444,8 @@ class Worker:
             self.on_retry(
                 task=task,
             )
+        except WorkerInterrupt as exception:
+            raise exception
         except Exception as exception:
             self.logger.error(
                 msg=f'on_retry handler has failed: {exception}',
@@ -448,6 +470,8 @@ class Worker:
             self.on_max_retries(
                 task=task,
             )
+        except WorkerInterrupt as exception:
+            raise exception
         except Exception as exception:
             self.logger.error(
                 msg=f'on_max_retries handler has failed: {exception}',
@@ -472,6 +496,8 @@ class Worker:
             self.on_requeue(
                 task=task,
             )
+        except WorkerInterrupt as exception:
+            raise exception
         except Exception as exception:
             self.logger.error(
                 msg=f'on_requeue handler has failed: {exception}',
@@ -496,6 +522,8 @@ class Worker:
             self.on_starvation(
                 time_with_no_tasks=time_with_no_tasks,
             )
+        except WorkerInterrupt as exception:
+            raise exception
         except Exception as exception:
             self.logger.error(
                 msg=f'on_starvation handler has failed: {exception}',
@@ -617,5 +645,23 @@ class WorkerRetry(
 
 class WorkerMaxRetries(
     WorkerException,
+):
+    pass
+
+
+class WorkerInterrupt(
+    WorkerException,
+):
+    pass
+
+
+class WorkerRespawn(
+    WorkerInterrupt,
+):
+    pass
+
+
+class WorkerStop(
+    WorkerInterrupt,
 ):
     pass

@@ -23,55 +23,111 @@ class ThreadedExecutor:
         self,
         tasks: typing.Iterable[typing.Dict[str, typing.Any]],
     ) -> None:
+        interrupt_exception = None
         future_to_task = {}
 
-        try:
-            with concurrent.futures.ThreadPoolExecutor(
-                max_workers=self.number_of_threads,
-            ) as executor:
-                for task in tasks:
-                    future = executor.submit(self.execute_task, task)
-                    future_to_task[future] = task
+        executor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=self.number_of_threads,
+        )
 
-                    if len(future_to_task) == self.number_of_threads:
-                        finished, pending = concurrent.futures.wait(
-                            fs=future_to_task,
-                            timeout=None,
-                            return_when=concurrent.futures.FIRST_COMPLETED,
-                        )
-                        for finished_future in finished:
-                            del future_to_task[finished_future]
+        for task in tasks:
+            future = executor.submit(self.execute_task, task)
+            future_to_task[future] = task
 
-                for future in concurrent.futures.as_completed(future_to_task):
-                    pass
-        finally:
-            for thread_killer in self.thread_killers.values():
-                thread_killer.kill()
+            if len(future_to_task) == self.number_of_threads:
+                finished, pending = concurrent.futures.wait(
+                    fs=future_to_task,
+                    timeout=None,
+                    return_when=concurrent.futures.FIRST_COMPLETED,
+                )
+                for finished_future in finished:
+                    del future_to_task[finished_future]
 
-            self.thread_killers.clear()
+                    try:
+                        finished_future.result()
+                    except worker.WorkerInterrupt as exception:
+                        interrupt_exception = exception
+
+                        break
+
+        for future in concurrent.futures.as_completed(future_to_task):
+            try:
+                finished_future.result()
+            except worker.WorkerInterrupt as exception:
+                if not interrupt_exception:
+                    interrupt_exception = exception
+
+        for thread_killer in self.thread_killers.values():
+            thread_killer.kill()
+        self.thread_killers.clear()
+
+        executor.shutdown(
+            wait=True,
+        )
+
+        if interrupt_exception:
+            raise interrupt_exception
 
     def execute_task(
         self,
         task: typing.Dict[str, typing.Any],
     ) -> None:
-        try:
-            self.pre_work(
-                task=task,
-            )
+        self.pre_work(
+            task=task,
+        )
 
+        try:
             returned_value = self.worker.work(
                 task=task,
             )
-
+        except worker.WorkerTimedout as exception:
             self.post_work(
                 task=task,
-                success=True,
+                success=False,
+                exception=exception,
             )
 
-            self.worker.handle_success(
+            self.worker.handle_timeout(
                 task=task,
-                returned_value=returned_value,
             )
+        except worker.WorkerRetry as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            self.worker.handle_retry(
+                task=task,
+            )
+        except worker.WorkerMaxRetries as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            self.worker.handle_max_retries(
+                task=task,
+            )
+        except worker.WorkerRequeue as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            self.worker.handle_requeue(
+                task=task,
+            )
+        except worker.WorkerInterrupt as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            raise exception
         except Exception as exception:
             self.post_work(
                 task=task,
@@ -79,27 +135,20 @@ class ThreadedExecutor:
                 exception=exception,
             )
 
-            if isinstance(exception, worker.WorkerTimedout):
-                self.worker.handle_timeout(
-                    task=task,
-                )
-            elif isinstance(exception, worker.WorkerRetry):
-                self.worker.handle_retry(
-                    task=task,
-                )
-            elif isinstance(exception, worker.WorkerMaxRetries):
-                self.worker.handle_max_retries(
-                    task=task,
-                )
-            elif isinstance(exception, worker.WorkerRequeue):
-                self.worker.handle_requeue(
-                    task=task,
-                )
-            else:
-                self.worker.handle_failure(
-                    task=task,
-                    exception=exception,
-                )
+            self.worker.handle_failure(
+                task=task,
+                exception=exception,
+            )
+        else:
+            self.post_work(
+                task=task,
+                success=True,
+                exception=None,
+            )
+            self.worker.handle_success(
+                task=task,
+                returned_value=returned_value,
+            )
 
     def pre_work(
         self,
@@ -151,6 +200,8 @@ class ThreadedExecutor:
                 msg=f'post_work has failed: {exception}',
                 extra={
                     'task': task,
+                    'success': success,
+                    'exception': exception,
                 },
             )
 

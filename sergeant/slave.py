@@ -3,6 +3,7 @@ import traceback
 import sys
 import multiprocessing.connection
 import argparse
+import sergeant
 
 
 def main() -> int:
@@ -53,7 +54,12 @@ def main() -> int:
         summary = worker_obj.work_loop()
         pipe_obj.send(summary)
 
-        return 0
+        if isinstance(summary['executor_exception'], sergeant.worker.WorkerRespawn):
+            return 4
+        elif isinstance(summary['executor_exception'], sergeant.worker.WorkerStop):
+            return 5
+        else:
+            return 0
     except KeyboardInterrupt:
         return 0
     except Exception as exception:

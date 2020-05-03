@@ -17,3 +17,5 @@ The following use cases are possible:
 
 - Fire a logging event.
 - Hint an external autoscaler to reduce the amount of worker in the system.
+- Call `stop` to kill the worker as it is no longer needed.
+- Call `respawn` to respawn the worker process as it is an opportunity to release memory and start from scratch.

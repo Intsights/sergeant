@@ -92,6 +92,44 @@ class WorkerHandlersTestCase(
             },
         )
 
+        worker.on_success.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_success.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_success(
+                task=task,
+                returned_value=None,
+            )
+        worker.on_success.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has finished successfully',
+            extra={
+                'task': task,
+            },
+        )
+        worker.logger.error.assert_not_called()
+
+        worker.on_success.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_success.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_success(
+                task=task,
+                returned_value=None,
+            )
+        worker.on_success.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has finished successfully',
+            extra={
+                'task': task,
+            },
+        )
+        worker.logger.error.assert_not_called()
+
     def test_on_failure(
         self,
     ):
@@ -172,6 +210,42 @@ class WorkerHandlersTestCase(
         )
         worker.logger.error.assert_any_call(
             msg='on_failure handler has failed: exception message',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_failure.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_failure.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_failure(
+                task=task,
+                exception=Exception('test_exception'),
+            )
+        worker.on_failure.assert_called_once()
+        worker.logger.error.assert_called_once_with(
+            msg='task has failed',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_failure.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_failure.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_failure(
+                task=task,
+                exception=Exception('test_exception'),
+            )
+        worker.on_failure.assert_called_once()
+        worker.logger.error.assert_called_once_with(
+            msg='task has failed',
             extra={
                 'task': task,
             },
@@ -259,6 +333,40 @@ class WorkerHandlersTestCase(
             },
         )
 
+        worker.on_timeout.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_timeout.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_timeout(
+                task=task,
+            )
+        worker.on_timeout.assert_called_once()
+        worker.logger.error.assert_called_once_with(
+            msg='task has timedout',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_timeout.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_timeout.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_timeout(
+                task=task,
+            )
+        worker.on_timeout.assert_called_once()
+        worker.logger.error.assert_called_once_with(
+            msg='task has timedout',
+            extra={
+                'task': task,
+            },
+        )
+
     def test_on_retry(
         self,
     ):
@@ -336,6 +444,40 @@ class WorkerHandlersTestCase(
         )
         worker.logger.error.assert_called_once_with(
             msg='on_retry handler has failed: exception message',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_retry.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_retry.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_retry(
+                task=task,
+            )
+        worker.on_retry.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has retried',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_retry.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_retry.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_retry(
+                task=task,
+            )
+        worker.on_retry.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has retried',
             extra={
                 'task': task,
             },
@@ -423,6 +565,40 @@ class WorkerHandlersTestCase(
             },
         )
 
+        worker.on_max_retries.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_max_retries.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_max_retries(
+                task=task,
+            )
+        worker.on_max_retries.assert_called_once()
+        worker.logger.error.assert_called_once_with(
+            msg='task has reached max retries',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_max_retries.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_max_retries.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_max_retries(
+                task=task,
+            )
+        worker.on_max_retries.assert_called_once()
+        worker.logger.error.assert_called_once_with(
+            msg='task has reached max retries',
+            extra={
+                'task': task,
+            },
+        )
+
     def test_on_requeue(
         self,
     ):
@@ -505,6 +681,40 @@ class WorkerHandlersTestCase(
             },
         )
 
+        worker.on_requeue.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_requeue.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_requeue(
+                task=task,
+            )
+        worker.on_requeue.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has requeued',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_requeue.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_requeue.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_requeue(
+                task=task,
+            )
+        worker.on_requeue.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has requeued',
+            extra={
+                'task': task,
+            },
+        )
+
     def test_on_starvation(
         self,
     ):
@@ -576,6 +786,40 @@ class WorkerHandlersTestCase(
         )
         worker.logger.error.assert_called_once_with(
             msg='on_starvation handler has failed: exception message',
+            extra={
+                'time_with_no_tasks': 10,
+            },
+        )
+
+        worker.on_starvation.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_starvation.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_starvation(
+                time_with_no_tasks=10,
+            )
+        worker.on_starvation.assert_called_once()
+        worker.logger.warning.assert_called_once_with(
+            msg='worker is starving',
+            extra={
+                'time_with_no_tasks': 10,
+            },
+        )
+
+        worker.on_starvation.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_starvation.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_starvation(
+                time_with_no_tasks=10,
+            )
+        worker.on_starvation.assert_called_once()
+        worker.logger.warning.assert_called_once_with(
+            msg='worker is starving',
             extra={
                 'time_with_no_tasks': 10,
             },

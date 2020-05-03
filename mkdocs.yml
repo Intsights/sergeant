@@ -36,6 +36,8 @@ nav:
       - Methods:
         - retry: 'worker/methods/retry.md'
         - requeue: 'worker/methods/requeue.md'
+        - stop: 'worker/methods/stop.md'
+        - respawn: 'worker/methods/respawn.md'
         - apply_async_one: 'worker/methods/apply_async_one.md'
         - apply_async_many: 'worker/methods/apply_async_many.md'
         - get_next_tasks: 'worker/methods/get_next_tasks.md'

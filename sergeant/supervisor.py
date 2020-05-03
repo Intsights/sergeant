@@ -139,7 +139,7 @@ class Supervisor:
         self,
     ) -> None:
         try:
-            while True:
+            while self.current_workers:
                 current_workers = self.current_workers.copy()
                 for worker in current_workers:
                     self.supervise_worker(
@@ -147,6 +147,8 @@ class Supervisor:
                     )
 
                 time.sleep(0.5)
+
+            self.logger.info(f'no more workers to supervise')
         except KeyboardInterrupt:
             pass
         except Exception as exception:
@@ -178,8 +180,7 @@ class Supervisor:
                     self.logger.debug(f'worker summary: {worker_summary}')
                 else:
                     self.logger.debug(f'worker summary is unavailable')
-
-            if worker.process.returncode == 1:
+            elif worker.process.returncode == 1:
                 self.logger.error(f'worker execution has failed')
 
                 if worker_summary:
@@ -187,16 +188,24 @@ class Supervisor:
                     self.logger.error(f'traceback: {worker_summary["traceback"]}')
                 else:
                     self.logger.error(f'exception and tracback are unavailable')
-
-            if worker.process.returncode == 2:
+            elif worker.process.returncode == 2:
                 self.logger.error(f'could not load worker module: {self.worker_module_name}')
 
                 sys.exit(1)
-
-            if worker.process.returncode == 3:
+            elif worker.process.returncode == 3:
                 self.logger.error(f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}')
 
                 sys.exit(1)
+            elif worker.process.returncode == 4:
+                self.logger.info(f'worker has requested to respawn')
+            elif worker.process.returncode == 5:
+                self.logger.info(f'worker has requested to stop')
+
+                self.stop_a_worker(
+                    worker=worker,
+                )
+
+                return
 
             self.respawn_a_worker(
                 worker=worker,
@@ -221,6 +230,14 @@ class Supervisor:
         )
         self.logger.info(f'spawned a new worker at pid: {new_worker.process.pid}')
         self.current_workers.append(new_worker)
+
+    def stop_a_worker(
+        self,
+        worker: SupervisedWorker,
+    ) -> None:
+        worker.kill()
+        self.current_workers.remove(worker)
+        self.logger.info(f'worker has stopped: {worker.process.pid}')
 
 
 def main() -> None:

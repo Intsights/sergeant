@@ -19,8 +19,8 @@ class SerialExecutor:
         has_soft_timeout = self.worker.config.timeouts.soft_timeout > 0
         has_hard_timeout = self.worker.config.timeouts.hard_timeout > 0
         has_critical_timeout = self.worker.config.timeouts.critical_timeout > 0
-        should_use_a_killer = has_soft_timeout or has_hard_timeout or has_critical_timeout
-        if should_use_a_killer:
+        self.should_use_a_killer = has_soft_timeout or has_hard_timeout or has_critical_timeout
+        if self.should_use_a_killer:
             self.killer = killer.process.Killer(
                 pid_to_kill=os.getpid(),
                 sleep_interval=0.1,
@@ -65,24 +65,62 @@ class SerialExecutor:
         self,
         task: typing.Dict[str, typing.Any],
     ) -> None:
-        try:
-            self.pre_work(
-                task=task,
-            )
+        self.pre_work(
+            task=task,
+        )
 
+        try:
             returned_value = self.worker.work(
                 task=task,
             )
-
+        except worker.WorkerTimedout as exception:
             self.post_work(
                 task=task,
-                success=True,
+                success=False,
+                exception=exception,
             )
 
-            self.worker.handle_success(
+            self.worker.handle_timeout(
                 task=task,
-                returned_value=returned_value,
             )
+        except worker.WorkerRetry as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            self.worker.handle_retry(
+                task=task,
+            )
+        except worker.WorkerMaxRetries as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            self.worker.handle_max_retries(
+                task=task,
+            )
+        except worker.WorkerRequeue as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            self.worker.handle_requeue(
+                task=task,
+            )
+        except worker.WorkerInterrupt as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+            )
+
+            raise exception
         except Exception as exception:
             self.post_work(
                 task=task,
@@ -90,27 +128,20 @@ class SerialExecutor:
                 exception=exception,
             )
 
-            if isinstance(exception, worker.WorkerTimedout):
-                self.worker.handle_timeout(
-                    task=task,
-                )
-            elif isinstance(exception, worker.WorkerRetry):
-                self.worker.handle_retry(
-                    task=task,
-                )
-            elif isinstance(exception, worker.WorkerMaxRetries):
-                self.worker.handle_max_retries(
-                    task=task,
-                )
-            elif isinstance(exception, worker.WorkerRequeue):
-                self.worker.handle_requeue(
-                    task=task,
-                )
-            else:
-                self.worker.handle_failure(
-                    task=task,
-                    exception=exception,
-                )
+            self.worker.handle_failure(
+                task=task,
+                exception=exception,
+            )
+        else:
+            self.post_work(
+                task=task,
+                success=True,
+                exception=None,
+            )
+            self.worker.handle_success(
+                task=task,
+                returned_value=returned_value,
+            )
 
     def pre_work(
         self,
@@ -130,7 +161,7 @@ class SerialExecutor:
 
         self.currently_working = True
 
-        if self.killer:
+        if self.should_use_a_killer:
             self.killer.start()
 
     def post_work(
@@ -139,7 +170,7 @@ class SerialExecutor:
         success: bool,
         exception: typing.Optional[Exception] = None,
     ) -> None:
-        if self.killer:
+        if self.should_use_a_killer:
             self.killer.stop_and_reset()
 
         self.currently_working = False
@@ -155,13 +186,15 @@ class SerialExecutor:
                 msg=f'post_work has failed: {exception}',
                 extra={
                     'task': task,
+                    'success': success,
+                    'exception': exception,
                 },
             )
 
     def __del__(
         self,
     ) -> None:
-        if self.killer:
+        if self.should_use_a_killer:
             try:
                 self.killer.kill()
 

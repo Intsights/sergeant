@@ -135,3 +135,57 @@ class WorkerActionsTestCase(
             first=worker.task_queue.apply_async_one.call_count,
             second=1,
         )
+
+    def test_stop(
+        self,
+    ):
+        worker = sergeant.worker.Worker()
+        worker.config = sergeant.config.WorkerConfig(
+            name='some_worker',
+            connector=sergeant.config.Connector(
+                type='redis',
+                params={
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
+                },
+            ),
+            max_retries=3,
+        )
+
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.stop()
+
+    def test_respawn(
+        self,
+    ):
+        worker = sergeant.worker.Worker()
+        worker.config = sergeant.config.WorkerConfig(
+            name='some_worker',
+            connector=sergeant.config.Connector(
+                type='redis',
+                params={
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
+                },
+            ),
+            max_retries=3,
+        )
+
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.respawn()
