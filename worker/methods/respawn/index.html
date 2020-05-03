@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/config/logging/">
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/methods/respawn/">
       
       
         <meta name="author" content="Gal Ben David">
@@ -19,7 +19,7 @@
     
     
       
-        <title>logging - Sergeant</title>
+        <title>respawn - Sergeant</title>
       
     
     
@@ -52,7 +52,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#worker-config-timeouts" class="md-skip">
+        <a href="#worker-respawn" class="md-skip">
           Skip to content
         </a>
       
@@ -79,7 +79,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              logging
+              respawn
             
           </span>
         </div>
@@ -215,12 +215,10 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-1" type="checkbox" id="nav-2-1" checked>
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-1" type="checkbox" id="nav-2-1">
     
     <label class="md-nav__link" for="nav-2-1">
       Config
@@ -244,7 +242,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../name/" title="name" class="md-nav__link">
+    <a href="../../config/name/" title="name" class="md-nav__link">
       name
     </a>
   </li>
@@ -256,7 +254,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../connector/" title="connector" class="md-nav__link">
+    <a href="../../config/connector/" title="connector" class="md-nav__link">
       connector
     </a>
   </li>
@@ -268,7 +266,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../max_tasks_per_run/" title="max_tasks_per_run" class="md-nav__link">
+    <a href="../../config/max_tasks_per_run/" title="max_tasks_per_run" class="md-nav__link">
       max_tasks_per_run
     </a>
   </li>
@@ -280,7 +278,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../max_retries/" title="max_retries" class="md-nav__link">
+    <a href="../../config/max_retries/" title="max_retries" class="md-nav__link">
       max_retries
     </a>
   </li>
@@ -292,7 +290,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../tasks_per_transaction/" title="tasks_per_transaction" class="md-nav__link">
+    <a href="../../config/tasks_per_transaction/" title="tasks_per_transaction" class="md-nav__link">
       tasks_per_transaction
     </a>
   </li>
@@ -304,7 +302,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../encoder/" title="encoder" class="md-nav__link">
+    <a href="../../config/encoder/" title="encoder" class="md-nav__link">
       encoder
     </a>
   </li>
@@ -316,7 +314,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../executor/" title="executor" class="md-nav__link">
+    <a href="../../config/executor/" title="executor" class="md-nav__link">
       executor
     </a>
   </li>
@@ -328,7 +326,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../timeouts/" title="timeouts" class="md-nav__link">
+    <a href="../../config/timeouts/" title="timeouts" class="md-nav__link">
       timeouts
     </a>
   </li>
@@ -338,60 +336,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        logging
-        <span class="md-nav__icon md-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
-        </span>
-      </label>
-    
-    <a href="./" title="logging" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../../config/logging/" title="logging" class="md-nav__link">
       logging
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-      </span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#definition" class="md-nav__link">
-    Definition
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
         
@@ -608,10 +557,12 @@
           
           
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4" checked>
     
     <label class="md-nav__link" for="nav-2-4">
       Methods
@@ -635,7 +586,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/retry/" title="retry" class="md-nav__link">
+    <a href="../retry/" title="retry" class="md-nav__link">
       retry
     </a>
   </li>
@@ -647,7 +598,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/requeue/" title="requeue" class="md-nav__link">
+    <a href="../requeue/" title="requeue" class="md-nav__link">
       requeue
     </a>
   </li>
@@ -659,7 +610,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/stop/" title="stop" class="md-nav__link">
+    <a href="../stop/" title="stop" class="md-nav__link">
       stop
     </a>
   </li>
@@ -669,11 +620,60 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../../methods/respawn/" title="respawn" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        respawn
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="respawn" class="md-nav__link md-nav__link--active">
       respawn
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definition" class="md-nav__link">
+    Definition
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -683,7 +683,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/apply_async_one/" title="apply_async_one" class="md-nav__link">
+    <a href="../apply_async_one/" title="apply_async_one" class="md-nav__link">
       apply_async_one
     </a>
   </li>
@@ -695,7 +695,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/apply_async_many/" title="apply_async_many" class="md-nav__link">
+    <a href="../apply_async_many/" title="apply_async_many" class="md-nav__link">
       apply_async_many
     </a>
   </li>
@@ -707,7 +707,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/get_next_tasks/" title="get_next_tasks" class="md-nav__link">
+    <a href="../get_next_tasks/" title="get_next_tasks" class="md-nav__link">
       get_next_tasks
     </a>
   </li>
@@ -719,7 +719,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/number_of_enqueued_tasks/" title="number_of_enqueued_tasks" class="md-nav__link">
+    <a href="../number_of_enqueued_tasks/" title="number_of_enqueued_tasks" class="md-nav__link">
       number_of_enqueued_tasks
     </a>
   </li>
@@ -731,7 +731,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../methods/purge_tasks/" title="purge_tasks" class="md-nav__link">
+    <a href="../purge_tasks/" title="purge_tasks" class="md-nav__link">
       purge_tasks
     </a>
   </li>
@@ -876,7 +876,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/config/logging.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/methods/respawn.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -884,88 +884,19 @@
                   
                 
                 
-                <h1 id="worker-config-timeouts">Worker Config - timeouts<a class="headerlink" href="#worker-config-timeouts" title="Permanent link">#</a></h1>
-<p>The <code>logging</code> parameter controls the logger of the worker.</p>
+                <h1 id="worker-respawn">Worker - respawn<a class="headerlink" href="#worker-respawn" title="Permanent link">#</a></h1>
+<p>The <code>respawn</code> method is used to respawn the worker's process. The supervisor gets the exception, and triggers a new worker process instead. This method can be used to intentionally kill the current worker process and spawn another one. Reasons for using this method can be detection of some bad worker state that can be fixed by restarting the process.</p>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
-    <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">class</span> <span class="nc">LoggingEvents</span><span class="p">:</span>
-    <span class="n">on_success</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">on_failure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">on_timeout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">on_retry</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">on_max_retries</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">on_requeue</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-
-
-<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
-    <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">class</span> <span class="nc">Logging</span><span class="p">:</span>
-    <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span>
-    <span class="n">log_to_stdout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">events</span><span class="p">:</span> <span class="n">LoggingEvents</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="n">LoggingEvents</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">handlers</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
-        <span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span>
-    <span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-
-<p>The following configurations are available:</p>
-<ul>
-<li><code>level</code> [logging.ERROR] - The <code>logging.level</code> of the logger. Can be one of the available levels.</li>
-<li><code>log_to_stdout</code> [False] - Whether the logger should log to stdout.</li>
-<li><code>events</code> - On which events the logger should log.<ul>
-<li><code>on_success</code> [False] - Every time a task has finished successfully.</li>
-<li><code>on_failure</code> [True] - Every time a task has failed.</li>
-<li><code>on_timeout</code> [True] - Every time a task timed out.</li>
-<li><code>on_retry</code> [True] - Every time a task asked for a retry.</li>
-<li><code>on_max_retries</code> [True] - Every time a task asked for a retry beyond the maximum number of retries.</li>
-<li><code>on_requeue</code> [True] - Every time a task asked for a requeue.</li>
-</ul>
-</li>
-<li><code>handlers</code> - List of handlers [logging.Handler] to attach to the <code>logging.Logger</code> object.</li>
-</ul>
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
-<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">STDOUT</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Logging</span><span class="p">(</span>
-    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-    <span class="n">log_to_stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">respawn</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 </td></tr></table>
 
-</div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Logstash</label><div class="tabbed-content">
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
+<div class="tabbed-set" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Simple</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -975,16 +906,16 @@
  7
  8
  9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Logging</span><span class="p">(</span>
-    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-    <span class="n">log_to_stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">sergeant</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">logstash</span><span class="o">.</span><span class="n">LogstashHandler</span><span class="p">(</span>
-            <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-            <span class="n">port</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
-        <span class="p">),</span>
-    <span class="p">],</span>
-<span class="p">)</span>
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_to_crawl</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">memory_usage</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_memory_usage</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">respawn</span><span class="p">()</span>
 </code></pre></div>
 </td></tr></table>
 
@@ -1008,7 +939,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../timeouts/" title="timeouts" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../stop/" title="stop" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -1017,19 +948,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                timeouts
+                stop
               </div>
             </div>
           </a>
         
         
-          <a href="../../handlers/on_success/" title="on_success" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../apply_async_one/" title="apply_async_one" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                on_success
+                apply_async_one
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
