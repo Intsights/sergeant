@@ -2,7 +2,6 @@ import unittest
 import unittest.mock
 import datetime
 import threading
-import time
 
 import sergeant.task_queue
 import sergeant.connector
