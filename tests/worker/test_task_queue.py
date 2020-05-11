@@ -69,10 +69,6 @@ class WorkerTaskQueueTestCase(
             first=tasks[0]['kwargs']['task'],
             second=1,
         )
-        self.assertEqual(
-            first=tasks[0]['name'],
-            second=worker.config.name,
-        )
         worker.purge_tasks()
         self.assertEqual(
             first=worker.number_of_enqueued_tasks(),
@@ -129,10 +125,6 @@ class WorkerTaskQueueTestCase(
         self.assertEqual(
             first=tasks[0]['kwargs']['task'],
             second=1,
-        )
-        self.assertEqual(
-            first=tasks[0]['name'],
-            second='other_worker',
         )
         worker.purge_tasks(
             task_name='other_worker',

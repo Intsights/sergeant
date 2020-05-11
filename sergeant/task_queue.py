@@ -32,14 +32,12 @@ class TaskQueue:
 
     @staticmethod
     def craft_task(
-        task_name: str,
         kwargs: typing.Optional[typing.Dict[str, typing.Any]] = None,
     ) -> typing.Dict[str, typing.Any]:
         if kwargs is None:
             kwargs = {}
 
         task = {
-            'name': task_name,
             'date': datetime.datetime.utcnow().timestamp(),
             'kwargs': kwargs,
             'run_count': 0,
@@ -71,6 +69,7 @@ class TaskQueue:
 
     def apply_async_one(
         self,
+        task_name: str,
         task: typing.Dict[str, typing.Any],
         priority: str = 'NORMAL',
     ) -> bool:
@@ -79,7 +78,7 @@ class TaskQueue:
         )
 
         pushed = self.connector.queue_push(
-            queue_name=task['name'],
+            queue_name=task_name,
             item=encoded_item,
             priority=priority,
         )
@@ -139,22 +138,26 @@ class TaskQueue:
 
     def retry(
         self,
+        task_name: str,
         task: typing.Dict[str, typing.Any],
         priority: str = 'NORMAL',
     ) -> bool:
         task['run_count'] += 1
 
         return self.apply_async_one(
+            task_name=task_name,
             task=task,
             priority=priority,
         )
 
     def requeue(
         self,
+        task_name: str,
         task: typing.Dict[str, typing.Any],
         priority='NORMAL',
     ) -> bool:
         return self.apply_async_one(
+            task_name=task_name,
             task=task,
             priority=priority,
         )

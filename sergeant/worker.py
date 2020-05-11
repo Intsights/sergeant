@@ -119,11 +119,11 @@ class Worker:
     ) -> bool:
         try:
             task = self.task_queue.craft_task(
-                task_name=task_name if task_name else self.config.name,
                 kwargs=kwargs,
             )
 
             self.task_queue.apply_async_one(
+                task_name=task_name if task_name else self.config.name,
                 task=task,
                 priority=priority,
             )
@@ -148,7 +148,6 @@ class Worker:
 
             tasks = [
                 self.task_queue.craft_task(
-                    task_name=task_name,
                     kwargs=kwargs,
                 )
                 for kwargs in kwargs_list
@@ -294,6 +293,7 @@ class Worker:
             raise WorkerMaxRetries()
         else:
             self.task_queue.retry(
+                task_name=self.config.name,
                 task=task,
                 priority=priority,
             )
@@ -306,6 +306,7 @@ class Worker:
         priority: str = 'NORMAL',
     ) -> None:
         self.task_queue.requeue(
+            task_name=self.config.name,
             task=task,
             priority=priority,
         )

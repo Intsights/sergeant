@@ -47,7 +47,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.pre_work(
@@ -96,7 +95,6 @@ class ThreadedTestCase(
         threaded_executor.thread_killers[threading.get_ident()] = unittest.mock.MagicMock()
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.post_work(
@@ -146,7 +144,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -188,7 +185,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -235,7 +231,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -295,7 +290,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -352,7 +346,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -398,7 +391,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -449,7 +441,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -500,7 +491,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         threaded_executor.execute_tasks(
@@ -551,7 +541,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         with self.assertRaises(
@@ -603,7 +592,6 @@ class ThreadedTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         with self.assertRaises(

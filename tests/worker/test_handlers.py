@@ -36,7 +36,6 @@ class WorkerHandlersTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
 
@@ -159,7 +158,6 @@ class WorkerHandlersTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
 
@@ -280,7 +278,6 @@ class WorkerHandlersTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
 
@@ -396,7 +393,6 @@ class WorkerHandlersTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
 
@@ -512,7 +508,6 @@ class WorkerHandlersTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
 
@@ -628,7 +623,6 @@ class WorkerHandlersTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
 
@@ -849,7 +843,6 @@ class WorkerHandlersTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
 

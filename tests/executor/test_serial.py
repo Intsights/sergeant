@@ -46,7 +46,6 @@ class SerialTestCase(
         serial_executor.killer = unittest.mock.MagicMock()
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         self.assertFalse(
@@ -90,7 +89,6 @@ class SerialTestCase(
         serial_executor.killer = unittest.mock.MagicMock()
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.currently_working = True
@@ -145,7 +143,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -192,7 +189,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -254,7 +250,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -313,7 +308,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -373,7 +367,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -421,7 +414,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -474,7 +466,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -527,7 +518,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         serial_executor.execute_tasks(
@@ -580,7 +570,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         with self.assertRaises(
@@ -631,7 +620,6 @@ class SerialTestCase(
         )
 
         task = sergeant.task_queue.TaskQueue.craft_task(
-            task_name='test_worker',
             kwargs={},
         )
         with self.assertRaises(

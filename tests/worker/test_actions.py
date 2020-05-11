@@ -31,7 +31,6 @@ class WorkerActionsTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
         worker.task_queue.apply_async_one = unittest.mock.MagicMock()
@@ -119,7 +118,6 @@ class WorkerActionsTestCase(
         worker.init_task_queue()
 
         task = worker.task_queue.craft_task(
-            task_name=worker.config.name,
             kwargs={},
         )
         worker.task_queue.apply_async_one = unittest.mock.MagicMock()

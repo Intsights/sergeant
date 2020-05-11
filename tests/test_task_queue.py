@@ -24,10 +24,9 @@ class TaskQueueTestCase:
                 ),
                 second=0,
             )
-            task = test_task_queue.craft_task(
-                task_name='test_task',
-            )
+            task = test_task_queue.craft_task()
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task,
                 priority='NORMAL',
             )
@@ -60,10 +59,9 @@ class TaskQueueTestCase:
                 ),
                 second=0,
             )
-            task = test_task_queue.craft_task(
-                task_name='test_task',
-            )
+            task = test_task_queue.craft_task()
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task,
                 priority='NORMAL',
             )
@@ -109,7 +107,6 @@ class TaskQueueTestCase:
     ):
         for test_task_queue in self.test_task_queues:
             task = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={},
             )
             current_date = datetime.datetime.utcnow().timestamp()
@@ -121,14 +118,12 @@ class TaskQueueTestCase:
             self.assertEqual(
                 first=task,
                 second={
-                    'name': 'test_task',
                     'kwargs': {},
                     'run_count': 0,
                 }
             )
 
             task = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={
                     'a': 1,
                     'b': 2,
@@ -143,7 +138,6 @@ class TaskQueueTestCase:
             self.assertEqual(
                 first=task,
                 second={
-                    'name': 'test_task',
                     'kwargs': {
                         'a': 1,
                         'b': 2,
@@ -167,10 +161,10 @@ class TaskQueueTestCase:
             )
 
             task = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={},
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task,
                 priority='NORMAL',
             )
@@ -206,31 +200,31 @@ class TaskQueueTestCase:
                 task_name='test_task',
             )
             task_one = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={
                     'arg': 'one',
                 },
             )
             task_two = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={
                     'arg': 'two',
                 },
             )
             task_three = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={},
             )
 
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_two,
                 priority='NORMAL',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_three,
                 priority='NORMAL',
             )
@@ -301,13 +295,11 @@ class TaskQueueTestCase:
                 task_name='test_task_one',
             )
             task_one = test_task_queue.craft_task(
-                task_name='test_task_one',
                 kwargs={
                     'arg': 'one',
                 },
             )
             task_two = test_task_queue.craft_task(
-                task_name='test_task_one',
                 kwargs={
                     'arg': 'two',
                 },
@@ -371,46 +363,52 @@ class TaskQueueTestCase:
                 task_name='test_task',
             )
             task_NORMAL_priority = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={
                     'priority': 'NORMAL',
                 },
             )
             task_HIGH_priority = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={
                     'priority': 'HIGH',
                 },
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
@@ -457,17 +455,12 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task_one',
             )
-            test_task_queue.purge_tasks(
-                task_name='test_task_two',
-            )
             task_one = test_task_queue.craft_task(
-                task_name='test_task_one',
                 kwargs={
                     'arg': 'one',
                 },
             )
             task_two = test_task_queue.craft_task(
-                task_name='test_task_one',
                 kwargs={
                     'arg': 'two',
                 },
@@ -480,17 +473,17 @@ class TaskQueueTestCase:
                 ],
                 priority='NORMAL',
             )
-            tasks_one = test_task_queue.get_tasks(
+            tasks = test_task_queue.get_tasks(
                 task_name='test_task_one',
                 number_of_tasks=3,
             )
             self.assertIn(
                 member=task_one,
-                container=tasks_one,
+                container=tasks,
             )
             self.assertIn(
                 member=task_two,
-                container=tasks_one,
+                container=tasks,
             )
 
     def test_retry(
@@ -501,11 +494,11 @@ class TaskQueueTestCase:
                 task_name='test_task',
             )
             task_one = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={},
             )
             self.assertEqual(task_one['run_count'], 0)
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
             )
@@ -515,6 +508,7 @@ class TaskQueueTestCase:
             )[0]
 
             test_task_queue.retry(
+                task_name='test_task',
                 task=task_one,
             )
             task_one = test_task_queue.get_tasks(
@@ -534,11 +528,11 @@ class TaskQueueTestCase:
                 task_name='test_task',
             )
             task_one = test_task_queue.craft_task(
-                task_name='test_task',
                 kwargs={},
             )
             self.assertEqual(task_one['run_count'], 0)
             test_task_queue.apply_async_one(
+                task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
             )
@@ -548,6 +542,7 @@ class TaskQueueTestCase:
             )[0]
 
             test_task_queue.requeue(
+                task_name='test_task',
                 task=task_one,
             )
             task_one = test_task_queue.get_tasks(
