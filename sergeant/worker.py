@@ -143,9 +143,6 @@ class Worker:
         priority: str = 'NORMAL',
     ) -> bool:
         try:
-            if task_name is None:
-                task_name = self.config.name
-
             tasks = [
                 self.task_queue.craft_task(
                     kwargs=kwargs,
@@ -154,7 +151,7 @@ class Worker:
             ]
 
             return self.task_queue.apply_async_many(
-                task_name=task_name,
+                task_name=task_name if task_name else self.config.name,
                 tasks=tasks,
                 priority=priority,
             )

@@ -1,5 +1,6 @@
 import typing
 import msgpack
+import datetime
 
 
 class Serializer:
@@ -10,7 +11,36 @@ class Serializer:
     ) -> None:
         self.msgpack_packer = msgpack.Packer(
             autoreset=True,
+            default=self.encode_extensions,
+            use_bin_type=True,
+            strict_types=True,
         )
+
+    def decode_extensions(
+        self,
+        obj,
+    ):
+        if '__datetime__' in obj:
+            return datetime.datetime.fromtimestamp(obj['__datetime__'])
+        elif '__tuple__' in obj:
+            return tuple(obj['__tuple__'])
+        else:
+            return obj
+
+    def encode_extensions(
+        self,
+        obj,
+    ):
+        if type(obj) == datetime.datetime:
+            return {
+                '__datetime__': obj.timestamp(),
+            }
+        elif type(obj) == tuple:
+            return {
+                '__tuple__': list(obj),
+            }
+        else:
+            raise TypeError(f'unsupported type {type(obj)}')
 
     def serialize(
         self,
@@ -25,4 +55,6 @@ class Serializer:
         return msgpack.unpackb(
             packed=data,
             strict_map_key=False,
+            object_hook=self.decode_extensions,
+            raw=False,
         )

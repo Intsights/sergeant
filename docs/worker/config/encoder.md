@@ -33,12 +33,9 @@ The following serializers are available:
 - `pickle` [default]:
     - pros: fast, native, many supported data types.
     - cons: insecure (allows to run arbitrary code), non-portable, might mislead to think that the parameters were serialized correctly but deserializing them would end with a broken object.
-- `json`
-    - pros: portable, secure.
-    - cons: relatively slow, few supported data types.
 - `msgpack`
-    - pros: fast, portable, secure.
-    - cons: few supported data types.
+    - pros: fast, portable, secured.
+    - cons: fewer supported data types.
 
 One can make any combination of compressor and serializer that suit your needs.
 
