@@ -890,9 +890,7 @@
 2
 3
 4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">task</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">task_name</span><span class="p">,</span>
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">task</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">timestamp</span><span class="p">(),</span>
     <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">,</span>
     <span class="s1">&#39;run_count&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -901,7 +899,6 @@
 </td></tr></table>
 
 <ul>
-<li><code>name</code> - This is the task name. It is also the name of the queue.</li>
 <li><code>date</code> - This is the date the task object was created and pushed to the queue.</li>
 <li><code>kwargs</code> - This is a dictionary of arguments that were passed to the worker.</li>
 <li><code>run_count</code> - This is the number of times the task was executed.</li>
