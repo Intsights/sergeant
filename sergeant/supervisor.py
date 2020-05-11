@@ -179,7 +179,7 @@ class Supervisor:
                 if worker_summary:
                     self.logger.debug(f'worker summary: {worker_summary}')
                 else:
-                    self.logger.debug(f'worker summary is unavailable')
+                    self.logger.error(f'worker summary is unavailable')
             elif worker.process.returncode == 1:
                 self.logger.error(f'worker execution has failed')
 

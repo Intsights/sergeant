@@ -243,6 +243,7 @@ class Worker:
             'executor_exception': None,
             'initialize_exception': None,
             'finalize_exception': None,
+            'executor': {},
         }
 
         try:
@@ -258,6 +259,9 @@ class Worker:
             return summary
 
         try:
+            task_start_time = time.perf_counter()
+            task_start_process_time = time.process_time()
+
             self.executor_obj.execute_tasks(
                 tasks=self.iterate_tasks(),
             )
@@ -271,18 +275,25 @@ class Worker:
             )
 
             summary['executor_exception'] = exception
-        finally:
-            try:
-                self.finalize()
-            except Exception as exception:
-                self.logger.error(
-                    msg=f'finalize has failed: {exception}',
-                )
-                summary['finalize_exception'] = exception
 
-            summary['end_time'] = datetime.datetime.utcnow()
+        try:
+            self.finalize()
+        except Exception as exception:
+            self.logger.error(
+                msg=f'finalize has failed: {exception}',
+            )
+            summary['finalize_exception'] = exception
 
-            return summary
+        total_cpu_time = time.process_time() - task_start_process_time
+        total_wall_time = time.perf_counter() - task_start_time
+        summary['end_time'] = datetime.datetime.utcnow()
+        summary['executor'] = {
+            'cpu_utilization': total_cpu_time / total_wall_time,
+            'total_wall_time': total_wall_time,
+            'total_cpu_time': total_cpu_time,
+        }
+
+        return summary
 
     def retry(
         self,
