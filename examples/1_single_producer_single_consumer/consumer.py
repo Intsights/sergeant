@@ -33,4 +33,4 @@ class Worker(
         self,
         task,
     ):
-        self.logger.info(f'{task["kwargs"]["some_parameter"]} task')
+        self.logger.info(f'{task.kwargs["some_parameter"]} task')

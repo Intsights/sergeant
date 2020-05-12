@@ -8,7 +8,7 @@ The `post_work` method is invoked by the worker for every execution of a task, a
 ```python
 def post_work(
     self,
-    task: typing.Dict[str, typing.Any],
+    task: sergeant.objects.Task,
     success: bool,
     exception: typing.Optional[Exception],
 ) -> None
@@ -24,7 +24,7 @@ def post_work(
     success,
     exception,
 ):
-    self.my_logger.debug(f'stopped working on {task["kwargs"]["url"]}: {time.time()}, exception: {exception}')
+    self.my_logger.debug(f'stopped working on {task.kwargs["url"]}: {time.time()}, exception: {exception}')
 
     if exception is not None:
         self.apm_client.capture_exception()

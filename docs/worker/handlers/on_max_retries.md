@@ -7,7 +7,7 @@ The `on_max_retries` handler is invoked when a task called the `retry` method mo
 ```python
 def on_max_retries(
     self,
-    task: typing.Dict[str, typing.Any],
+    task: sergeant.objects.Task,
 ) -> None
 ```
 

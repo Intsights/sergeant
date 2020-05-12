@@ -7,7 +7,7 @@ The `on_success` handler is invoked when a task has completed successfully. The 
 ```python
 def on_success(
     self,
-    task: typing.Dict[str, typing.Any],
+    task: sergeant.objects.Task,
     returned_value: typing.Any,
 ) -> None
 ```

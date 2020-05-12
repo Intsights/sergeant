@@ -85,7 +85,7 @@ This example demonstrates how to integrate with an APM solution. In this case, `
             self,
             task,
         ):
-            url_to_crawl = task['kwargs']['url']
+            url_to_crawl = task.kwargs['url']
             response = requests.get(
                 url=url_to_crawl,
             )

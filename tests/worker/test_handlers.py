@@ -35,9 +35,7 @@ class WorkerHandlersTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
 
         worker.on_success = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
@@ -157,9 +155,7 @@ class WorkerHandlersTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
 
         worker.on_failure = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
@@ -277,9 +273,7 @@ class WorkerHandlersTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
 
         worker.on_timeout = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
@@ -392,9 +386,7 @@ class WorkerHandlersTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
 
         worker.on_retry = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
@@ -507,9 +499,7 @@ class WorkerHandlersTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
 
         worker.on_max_retries = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
@@ -622,9 +612,7 @@ class WorkerHandlersTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
 
         worker.on_requeue = unittest.mock.MagicMock()
         worker.logger = unittest.mock.MagicMock()
@@ -842,9 +830,7 @@ class WorkerHandlersTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
 
         worker.logger = unittest.mock.MagicMock()
 

@@ -66,7 +66,7 @@ class WorkerTaskQueueTestCase(
             )
         )
         self.assertEqual(
-            first=tasks[0]['kwargs']['task'],
+            first=tasks[0].kwargs['task'],
             second=1,
         )
         worker.purge_tasks()
@@ -123,7 +123,7 @@ class WorkerTaskQueueTestCase(
             )
         )
         self.assertEqual(
-            first=tasks[0]['kwargs']['task'],
+            first=tasks[0].kwargs['task'],
             second=1,
         )
         worker.purge_tasks(

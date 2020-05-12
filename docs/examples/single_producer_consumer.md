@@ -48,7 +48,7 @@ graph LR
             self,
             task,
         ):
-            self.logger.info(f'task parameters are: {task["kwargs"]}')
+            self.logger.info(f'task parameters are: {task.kwargs}')
     ```
 
 === "producer.py"

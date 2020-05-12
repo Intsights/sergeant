@@ -20,7 +20,7 @@ def stop(
         self,
         task,
     ):
-        url_to_crawl = task['kwargs']['url']
+        url_to_crawl = task.kwargs['url']
 
         response = requests.get(url_to_crawl)
         try:
@@ -38,7 +38,7 @@ def stop(
         self,
         task,
     ):
-        url_to_crawl = task['kwargs']['url']
+        url_to_crawl = task.kwargs['url']
 
         response = requests.get(url_to_crawl)
         self.database.insert_crawl_result(

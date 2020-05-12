@@ -4,4 +4,5 @@ from . import encoder
 from . import executor
 from . import killer
 from . import logging
+from . import objects
 from . import worker

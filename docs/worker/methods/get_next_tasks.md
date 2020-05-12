@@ -35,7 +35,7 @@ def work(
             break
 
         for task in tasks:
-            domain = task['kwargs']['domain']
+            domain = task.kwargs['domain']
             if domain not in statistics:
                 continue
 
@@ -43,7 +43,7 @@ def work(
             self.apply_async_one(
                 kwargs={
                     'domain': domain,
-                    'params': task['kwargs']['params']
+                    'params': task.kwargs['params']
                 },
                 task_name='filtered_task',
             )

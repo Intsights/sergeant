@@ -5,6 +5,7 @@ import signal
 
 from . import _executor
 from .. import killer
+from .. import objects
 from .. import worker
 
 
@@ -17,6 +18,8 @@ class SerialExecutor(
     ) -> None:
         self.worker = worker
         self.currently_working = False
+        self.original_int = signal.getsignal(signal.SIGINT)
+        self.original_abrt = signal.getsignal(signal.SIGABRT)
 
         has_soft_timeout = self.worker.config.timeouts.soft_timeout > 0
         has_hard_timeout = self.worker.config.timeouts.hard_timeout > 0
@@ -31,8 +34,6 @@ class SerialExecutor(
                 critical_timeout=self.worker.config.timeouts.critical_timeout,
             )
 
-            self.original_int = signal.getsignal(signal.SIGINT)
-            self.original_abrt = signal.getsignal(signal.SIGABRT)
             signal.signal(signal.SIGABRT, self.sigabrt_handler)
             signal.signal(signal.SIGINT, self.sigint_handler)
         else:
@@ -56,7 +57,7 @@ class SerialExecutor(
 
     def execute_tasks(
         self,
-        tasks: typing.Iterable[typing.Dict[str, typing.Any]],
+        tasks: typing.Iterable[objects.Task],
     ) -> None:
         for task in tasks:
             self.execute_task(
@@ -65,7 +66,7 @@ class SerialExecutor(
 
     def execute_task(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         self.pre_work(
             task=task,
@@ -147,7 +148,7 @@ class SerialExecutor(
 
     def pre_work(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         try:
             self.worker.pre_work(
@@ -168,7 +169,7 @@ class SerialExecutor(
 
     def post_work(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         success: bool,
         exception: typing.Optional[Exception] = None,
     ) -> None:

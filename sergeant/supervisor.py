@@ -119,7 +119,7 @@ class Supervisor:
         self.logger.addHandler(stream_handler)
         self.logger.setLevel(logging.INFO)
 
-        self.current_workers = []
+        self.current_workers: typing.List[SupervisedWorker] = []
 
     def start(
         self,

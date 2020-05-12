@@ -20,7 +20,7 @@ def respawn(
         self,
         task,
     ):
-        url_to_crawl = task['kwargs']['url']
+        url_to_crawl = task.kwargs['url']
 
         response = requests.get(url_to_crawl)
 

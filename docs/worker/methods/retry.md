@@ -16,7 +16,7 @@ The `retry` method pushes back the task to the queue while increasing the run co
 ```python
 def retry(
     self,
-    task: typing.Dict[str, typing.Any],
+    task: sergeant.objects.Task,
     priority: str = 'NORMAL',
 ) -> None
 ```
@@ -30,7 +30,7 @@ def retry(
         self,
         task,
     ):
-        url_to_crawl = task['kwargs']['url']
+        url_to_crawl = task.kwargs['url']
 
         response = requests.get(url_to_crawl)
         if not response.ok:
@@ -44,7 +44,7 @@ def retry(
         self,
         task,
     ):
-        url_to_crawl = task['kwargs']['url']
+        url_to_crawl = task.kwargs['url']
 
         response = requests.get(url_to_crawl)
         response.raise_for_status()

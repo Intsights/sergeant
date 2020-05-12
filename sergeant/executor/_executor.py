@@ -1,9 +1,11 @@
 import typing
 
+from .. import objects
+
 
 class Executor:
     def execute_tasks(
         self,
-        tasks: typing.Iterable[typing.Dict[str, typing.Any]],
+        tasks: typing.Iterable[objects.Task],
     ) -> None:
         raise NotImplementedError()

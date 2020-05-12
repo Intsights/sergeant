@@ -7,6 +7,7 @@ from . import config
 from . import connector
 from . import encoder
 from . import executor
+from . import objects
 from . import task_queue
 
 
@@ -118,7 +119,7 @@ class Worker:
         priority: str = 'NORMAL',
     ) -> bool:
         try:
-            task = self.task_queue.craft_task(
+            task = objects.Task(
                 kwargs=kwargs,
             )
 
@@ -144,7 +145,7 @@ class Worker:
     ) -> bool:
         try:
             tasks = [
-                self.task_queue.craft_task(
+                objects.Task(
                     kwargs=kwargs,
                 )
                 for kwargs in kwargs_list
@@ -166,7 +167,7 @@ class Worker:
         self,
         number_of_tasks: int,
         task_name: typing.Optional[str] = None,
-    ) -> typing.List[typing.Dict[str, typing.Any]]:
+    ) -> typing.List[objects.Task]:
         try:
             return self.task_queue.get_tasks(
                 task_name=task_name if task_name else self.config.name,
@@ -181,7 +182,7 @@ class Worker:
 
     def iterate_tasks(
         self,
-    ) -> typing.Iterable[typing.Dict[str, typing.Any]]:
+    ) -> typing.Iterable[objects.Task]:
         time_with_no_tasks = 0
         run_forever = self.config.max_tasks_per_run == 0
         tasks_left = self.config.max_tasks_per_run
@@ -224,7 +225,7 @@ class Worker:
                 if tasks:
                     self.apply_async_many(
                         kwargs_list=[
-                            task['kwargs']
+                            task.kwargs
                             for task in tasks[iterated_tasks + 1:]
                         ],
                         priority='HIGH',
@@ -294,10 +295,10 @@ class Worker:
 
     def retry(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         priority: str = 'NORMAL',
     ) -> None:
-        if self.config.max_retries > 0 and self.config.max_retries <= task['run_count']:
+        if self.config.max_retries > 0 and self.config.max_retries <= task.run_count:
             raise WorkerMaxRetries()
         else:
             self.task_queue.retry(
@@ -310,7 +311,7 @@ class Worker:
 
     def requeue(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         priority: str = 'NORMAL',
     ) -> None:
         self.task_queue.requeue(
@@ -333,7 +334,7 @@ class Worker:
 
     def handle_success(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         returned_value: typing.Any,
     ) -> None:
         try:
@@ -361,7 +362,7 @@ class Worker:
 
     def handle_failure(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         exception: Exception,
     ) -> None:
         try:
@@ -401,7 +402,7 @@ class Worker:
 
     def handle_timeout(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_timeout:
@@ -439,7 +440,7 @@ class Worker:
 
     def handle_retry(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_retry:
@@ -465,7 +466,7 @@ class Worker:
 
     def handle_max_retries(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_max_retries:
@@ -491,7 +492,7 @@ class Worker:
 
     def handle_requeue(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_requeue:
@@ -553,13 +554,13 @@ class Worker:
 
     def pre_work(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         pass
 
     def post_work(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         success: bool,
         exception: typing.Optional[Exception],
     ) -> None:
@@ -567,45 +568,45 @@ class Worker:
 
     def work(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> typing.Any:
         pass
 
     def on_success(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         returned_value: typing.Any,
     ) -> None:
         pass
 
     def on_failure(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         exception: Exception,
     ) -> None:
         pass
 
     def on_timeout(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         pass
 
     def on_retry(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         pass
 
     def on_requeue(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         pass
 
     def on_max_retries(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         pass
 

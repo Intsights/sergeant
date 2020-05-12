@@ -42,7 +42,6 @@ The main process which takes care of the worker is the `supervisor`. The supervi
 
 ### Built With
 
-* [orjson](https://github.com/ijl/orjson)
 * [msgpack](https://github.com/msgpack/msgpack-python)
 * [pymongo](https://github.com/mongodb/mongo-python-driver)
 * [redis](https://github.com/andymccurdy/redis-py)

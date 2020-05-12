@@ -7,7 +7,7 @@ The `on_timeout` handler is invoked when a task has timed out. Unlike other even
 ```python
 def on_timeout(
     self,
-    task: typing.Dict[str, typing.Any],
+    task: sergeant.objects.Task,
 ) -> None
 ```
 

@@ -3,6 +3,7 @@ import msgpack
 import datetime
 
 from . import _serializer
+from ... import objects
 
 
 class Serializer(
@@ -28,6 +29,10 @@ class Serializer(
             return datetime.datetime.fromtimestamp(obj['__datetime__'])
         elif '__tuple__' in obj:
             return tuple(obj['__tuple__'])
+        elif '__task__' in obj:
+            return objects.Task(
+                **obj['__task__'],
+            )
         else:
             return obj
 
@@ -42,6 +47,10 @@ class Serializer(
         elif type(obj) == tuple:
             return {
                 '__tuple__': list(obj),
+            }
+        elif type(obj) == objects.Task:
+            return {
+                '__task__': obj.__dict__,
             }
         else:
             raise TypeError(f'unsupported type {type(obj)}')

@@ -1,6 +1,7 @@
 import typing
 import time
-import datetime
+
+from . import objects
 
 from . import encoder
 from . import connector
@@ -33,21 +34,6 @@ class TaskQueue:
 
         return number_of_enqueued_tasks
 
-    @staticmethod
-    def craft_task(
-        kwargs: typing.Optional[typing.Dict[str, typing.Any]] = None,
-    ) -> typing.Dict[str, typing.Any]:
-        if kwargs is None:
-            kwargs = {}
-
-        task = {
-            'date': datetime.datetime.utcnow().timestamp(),
-            'kwargs': kwargs,
-            'run_count': 0,
-        }
-
-        return task
-
     def wait_queue_empty(
         self,
         task_name: str,
@@ -73,7 +59,7 @@ class TaskQueue:
     def apply_async_one(
         self,
         task_name: str,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         priority: str = 'NORMAL',
     ) -> bool:
         encoded_item = self.encoder.encode(
@@ -91,7 +77,7 @@ class TaskQueue:
     def apply_async_many(
         self,
         task_name: str,
-        tasks: typing.Iterable[typing.Dict[str, typing.Any]],
+        tasks: typing.Iterable[objects.Task],
         priority: str = 'NORMAL',
     ) -> bool:
         encoded_tasks = []
@@ -115,7 +101,7 @@ class TaskQueue:
         self,
         task_name: str,
         number_of_tasks: int,
-    ) -> typing.List[typing.Dict[str, typing.Any]]:
+    ) -> typing.List[objects.Task]:
         if number_of_tasks == 1:
             task = self.connector.queue_pop(
                 queue_name=task_name,
@@ -142,10 +128,10 @@ class TaskQueue:
     def retry(
         self,
         task_name: str,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         priority: str = 'NORMAL',
     ) -> bool:
-        task['run_count'] += 1
+        task.run_count += 1
 
         return self.apply_async_one(
             task_name=task_name,
@@ -156,7 +142,7 @@ class TaskQueue:
     def requeue(
         self,
         task_name: str,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         priority='NORMAL',
     ) -> bool:
         return self.apply_async_one(

@@ -4,6 +4,7 @@ import concurrent.futures
 
 from . import _executor
 from .. import killer
+from .. import objects
 from .. import worker
 
 
@@ -24,7 +25,7 @@ class ThreadedExecutor(
 
     def execute_tasks(
         self,
-        tasks: typing.Iterable[typing.Dict[str, typing.Any]],
+        tasks: typing.Iterable[objects.Task],
     ) -> None:
         interrupt_exception = None
         future_to_task = {}
@@ -73,7 +74,7 @@ class ThreadedExecutor(
 
     def execute_task(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         self.pre_work(
             task=task,
@@ -155,7 +156,7 @@ class ThreadedExecutor(
 
     def pre_work(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
     ) -> None:
         try:
             self.worker.pre_work(
@@ -185,7 +186,7 @@ class ThreadedExecutor(
 
     def post_work(
         self,
-        task: typing.Dict[str, typing.Any],
+        task: objects.Task,
         success: bool,
         exception: typing.Optional[Exception] = None,
     ) -> None:

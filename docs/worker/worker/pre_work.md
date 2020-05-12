@@ -8,7 +8,7 @@ The `pre_work` method is invoked by the worker for every execution of a task, pr
 ```python
 def pre_work(
     self,
-    task: typing.Dict[str, typing.Any],
+    task: sergeant.objects.Task,
 ) -> None
 ```
 
@@ -20,6 +20,6 @@ def pre_work(
     self,
     task,
 ):
-    self.my_logger.debug(f'started working on {task["kwargs"]["url"]}: {time.time()}')
+    self.my_logger.debug(f'started working on {task.kwargs["url"]}: {time.time()}')
     self.apm_client.begin_transaction()
 ```

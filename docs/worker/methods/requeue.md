@@ -16,7 +16,7 @@ The `requeue` method pushes back the task to the queue without increasing the ru
 ```python
 def requeue(
     self,
-    task: typing.Dict[str, typing.Any],
+    task: sergeant.objects.Task,
     priority: str = 'NORMAL',
 ) -> None
 ```
@@ -30,7 +30,7 @@ def requeue(
         self,
         task,
     ):
-        url_to_crawl = task['kwargs']['url']
+        url_to_crawl = task.kwargs['url']
 
         response = requests.get(url_to_crawl)
         if not response.ok:
@@ -44,7 +44,7 @@ def requeue(
         self,
         task,
     ):
-        url_to_crawl = task['kwargs']['url']
+        url_to_crawl = task.kwargs['url']
 
         response = requests.get(url_to_crawl)
         response.raise_for_status()

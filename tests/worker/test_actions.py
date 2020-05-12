@@ -2,6 +2,7 @@ import unittest
 import unittest.mock
 
 import sergeant.worker
+import sergeant.objects
 
 
 class WorkerActionsTestCase(
@@ -30,9 +31,7 @@ class WorkerActionsTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
         worker.task_queue.apply_async_one = unittest.mock.MagicMock()
 
         with self.assertRaises(
@@ -117,9 +116,7 @@ class WorkerActionsTestCase(
         )
         worker.init_task_queue()
 
-        task = worker.task_queue.craft_task(
-            kwargs={},
-        )
+        task = sergeant.objects.Task()
         worker.task_queue.apply_async_one = unittest.mock.MagicMock()
 
         with self.assertRaises(

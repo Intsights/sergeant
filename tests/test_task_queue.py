@@ -1,11 +1,11 @@
 import unittest
 import unittest.mock
-import datetime
 import threading
 
 import sergeant.task_queue
 import sergeant.connector
 import sergeant.encoder
+import sergeant.objects
 
 
 class TaskQueueTestCase:
@@ -24,7 +24,7 @@ class TaskQueueTestCase:
                 ),
                 second=0,
             )
-            task = test_task_queue.craft_task()
+            task = sergeant.objects.Task()
             test_task_queue.apply_async_one(
                 task_name='test_task',
                 task=task,
@@ -59,7 +59,7 @@ class TaskQueueTestCase:
                 ),
                 second=0,
             )
-            task = test_task_queue.craft_task()
+            task = sergeant.objects.Task()
             test_task_queue.apply_async_one(
                 task_name='test_task',
                 task=task,
@@ -102,50 +102,6 @@ class TaskQueueTestCase:
                 second=0,
             )
 
-    def test_craft_task(
-        self,
-    ):
-        for test_task_queue in self.test_task_queues:
-            task = test_task_queue.craft_task(
-                kwargs={},
-            )
-            current_date = datetime.datetime.utcnow().timestamp()
-            date = task.pop('date')
-            self.assertAlmostEqual(
-                first=date / (10 ** 8),
-                second=current_date / (10 ** 8),
-            )
-            self.assertEqual(
-                first=task,
-                second={
-                    'kwargs': {},
-                    'run_count': 0,
-                }
-            )
-
-            task = test_task_queue.craft_task(
-                kwargs={
-                    'a': 1,
-                    'b': 2,
-                },
-            )
-            current_date = datetime.datetime.utcnow().timestamp()
-            date = task.pop('date')
-            self.assertAlmostEqual(
-                first=date / (10 ** 8),
-                second=current_date / (10 ** 8),
-            )
-            self.assertEqual(
-                first=task,
-                second={
-                    'kwargs': {
-                        'a': 1,
-                        'b': 2,
-                    },
-                    'run_count': 0,
-                }
-            )
-
     def test_wait_queue_empty(
         self,
     ):
@@ -160,9 +116,7 @@ class TaskQueueTestCase:
                 ),
             )
 
-            task = test_task_queue.craft_task(
-                kwargs={},
-            )
+            task = sergeant.objects.Task()
             test_task_queue.apply_async_one(
                 task_name='test_task',
                 task=task,
@@ -199,17 +153,17 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task',
             )
-            task_one = test_task_queue.craft_task(
+            task_one = sergeant.objects.Task(
                 kwargs={
                     'arg': 'one',
                 },
             )
-            task_two = test_task_queue.craft_task(
+            task_two = sergeant.objects.Task(
                 kwargs={
                     'arg': 'two',
                 },
             )
-            task_three = test_task_queue.craft_task(
+            task_three = sergeant.objects.Task(
                 kwargs={},
             )
 
@@ -294,12 +248,12 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task_one',
             )
-            task_one = test_task_queue.craft_task(
+            task_one = sergeant.objects.Task(
                 kwargs={
                     'arg': 'one',
                 },
             )
-            task_two = test_task_queue.craft_task(
+            task_two = sergeant.objects.Task(
                 kwargs={
                     'arg': 'two',
                 },
@@ -362,12 +316,12 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task',
             )
-            task_NORMAL_priority = test_task_queue.craft_task(
+            task_NORMAL_priority = sergeant.objects.Task(
                 kwargs={
                     'priority': 'NORMAL',
                 },
             )
-            task_HIGH_priority = test_task_queue.craft_task(
+            task_HIGH_priority = sergeant.objects.Task(
                 kwargs={
                     'priority': 'HIGH',
                 },
@@ -440,12 +394,12 @@ class TaskQueueTestCase:
                 number_of_tasks=2,
             )
             self.assertEqual(
-                first=[task_HIGH_priority['kwargs']['priority']] * 4,
-                second=[task['kwargs']['priority'] for task in high_priority_tasks],
+                first=[task_HIGH_priority.kwargs['priority']] * 4,
+                second=[task.kwargs['priority'] for task in high_priority_tasks],
             )
             self.assertEqual(
-                first=[task_NORMAL_priority['kwargs']['priority']] * 4,
-                second=[task['kwargs']['priority'] for task in low_priority_tasks],
+                first=[task_NORMAL_priority.kwargs['priority']] * 4,
+                second=[task.kwargs['priority'] for task in low_priority_tasks],
             )
 
     def test_get_tasks(
@@ -455,12 +409,12 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task_one',
             )
-            task_one = test_task_queue.craft_task(
+            task_one = sergeant.objects.Task(
                 kwargs={
                     'arg': 'one',
                 },
             )
-            task_two = test_task_queue.craft_task(
+            task_two = sergeant.objects.Task(
                 kwargs={
                     'arg': 'two',
                 },
@@ -493,10 +447,10 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task',
             )
-            task_one = test_task_queue.craft_task(
+            task_one = sergeant.objects.Task(
                 kwargs={},
             )
-            self.assertEqual(task_one['run_count'], 0)
+            self.assertEqual(task_one.run_count, 0)
             test_task_queue.apply_async_one(
                 task_name='test_task',
                 task=task_one,
@@ -516,7 +470,7 @@ class TaskQueueTestCase:
                 number_of_tasks=1,
             )[0]
             self.assertEqual(
-                first=task_one['run_count'],
+                first=task_one.run_count,
                 second=1,
             )
 
@@ -527,10 +481,10 @@ class TaskQueueTestCase:
             test_task_queue.purge_tasks(
                 task_name='test_task',
             )
-            task_one = test_task_queue.craft_task(
+            task_one = sergeant.objects.Task(
                 kwargs={},
             )
-            self.assertEqual(task_one['run_count'], 0)
+            self.assertEqual(task_one.run_count, 0)
             test_task_queue.apply_async_one(
                 task_name='test_task',
                 task=task_one,
@@ -550,7 +504,7 @@ class TaskQueueTestCase:
                 number_of_tasks=1,
             )[0]
             self.assertEqual(
-                first=task_one['run_count'],
+                first=task_one.run_count,
                 second=0,
             )
 
