@@ -947,7 +947,7 @@
             <span class="k">break</span>
 
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">:</span>
-            <span class="n">domain</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">][</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span>
+            <span class="n">domain</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">domain</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">statistics</span><span class="p">:</span>
                 <span class="k">continue</span>
 
@@ -955,7 +955,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">apply_async_one</span><span class="p">(</span>
                 <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
                     <span class="s1">&#39;domain&#39;</span><span class="p">:</span> <span class="n">domain</span><span class="p">,</span>
-                    <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">task</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">][</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
+                    <span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
                 <span class="p">},</span>
                 <span class="n">task_name</span><span class="o">=</span><span class="s1">&#39;filtered_task&#39;</span><span class="p">,</span>
             <span class="p">)</span>

@@ -901,7 +901,7 @@
 4
 5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retry</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">task</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
+    <span class="n">task</span><span class="p">:</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">Task</span><span class="p">,</span>
     <span class="n">priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;NORMAL&#39;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
@@ -923,7 +923,7 @@
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">task</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_to_crawl</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="o">.</span><span class="n">ok</span><span class="p">:</span>
@@ -955,7 +955,7 @@
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">task</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_to_crawl</span><span class="p">)</span>
     <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>

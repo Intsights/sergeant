@@ -911,7 +911,7 @@
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">task</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+    <span class="n">url_to_crawl</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
 
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_to_crawl</span><span class="p">)</span>
     <span class="n">blocked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">are_we_blocked</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
