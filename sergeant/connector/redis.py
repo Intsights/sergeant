@@ -29,9 +29,7 @@ class Connector(
             for node in nodes
         ]
         self.number_of_connections = len(self.connections)
-        self.current_connection_index = 0
-
-        random.shuffle(self.connections)
+        self.current_connection_index = random.randint(0, self.number_of_connections - 1)
 
     @property
     def next_connection(
