@@ -1,15 +1,18 @@
 import pymongo
 import typing
 
+from . import _connector
 
-class Connector:
-    name = 'mongo'
+
+class Connector(
+    _connector.Connector,
+):
+    name: str = 'mongo'
 
     def __init__(
         self,
         mongodb_uri: str,
     ) -> None:
-        self.mongodb_uri = mongodb_uri
         self.connection = pymongo.MongoClient(
             host=mongodb_uri,
         )

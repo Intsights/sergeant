@@ -3,17 +3,19 @@ import types
 import os
 import signal
 
+from . import _executor
 from .. import killer
 from .. import worker
 
 
-class SerialExecutor:
+class SerialExecutor(
+    _executor.Executor,
+):
     def __init__(
         self,
         worker: worker.Worker,
     ) -> None:
         self.worker = worker
-
         self.currently_working = False
 
         has_soft_timeout = self.worker.config.timeouts.soft_timeout > 0

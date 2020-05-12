@@ -1,6 +1,7 @@
 import threading
 import time
 import ctypes
+import typing
 
 
 class KillerThread(
@@ -10,7 +11,7 @@ class KillerThread(
         self,
         thread_id: int,
         timeout: float,
-        exception: Exception,
+        exception: typing.Type[BaseException],
         sleep_interval: float = 0.1,
     ) -> None:
         super().__init__()
@@ -56,7 +57,7 @@ class Killer:
         self,
         thread_id: int,
         timeout: float,
-        exception: Exception,
+        exception: typing.Type[BaseException],
         sleep_interval: float = 0.1,
     ) -> None:
         self.killer_thread = KillerThread(

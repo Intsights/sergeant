@@ -11,10 +11,10 @@ class CompressorsTestCase(
     def test_bzip2(
         self,
     ):
-        compressed_object = sergeant.encoder.compressor.bzip2.Compressor.compress(
+        compressed_object = sergeant.encoder.compressor.bzip2.Compressor().compress(
             data=self.obj_to_compress,
         )
-        uncompressed_object = sergeant.encoder.compressor.bzip2.Compressor.decompress(
+        uncompressed_object = sergeant.encoder.compressor.bzip2.Compressor().decompress(
             data=compressed_object,
         )
 
@@ -26,10 +26,10 @@ class CompressorsTestCase(
     def test_gzip(
         self,
     ):
-        compressed_object = sergeant.encoder.compressor.gzip.Compressor.compress(
+        compressed_object = sergeant.encoder.compressor.gzip.Compressor().compress(
             data=self.obj_to_compress,
         )
-        uncompressed_object = sergeant.encoder.compressor.gzip.Compressor.decompress(
+        uncompressed_object = sergeant.encoder.compressor.gzip.Compressor().decompress(
             data=compressed_object,
         )
 
@@ -41,10 +41,10 @@ class CompressorsTestCase(
     def test_lzma(
         self,
     ):
-        compressed_object = sergeant.encoder.compressor.lzma.Compressor.compress(
+        compressed_object = sergeant.encoder.compressor.lzma.Compressor().compress(
             data=self.obj_to_compress,
         )
-        uncompressed_object = sergeant.encoder.compressor.lzma.Compressor.decompress(
+        uncompressed_object = sergeant.encoder.compressor.lzma.Compressor().decompress(
             data=compressed_object,
         )
 
@@ -56,10 +56,10 @@ class CompressorsTestCase(
     def test_zlib(
         self,
     ):
-        compressed_object = sergeant.encoder.compressor.zlib.Compressor.compress(
+        compressed_object = sergeant.encoder.compressor.zlib.Compressor().compress(
             data=self.obj_to_compress,
         )
-        uncompressed_object = sergeant.encoder.compressor.zlib.Compressor.decompress(
+        uncompressed_object = sergeant.encoder.compressor.zlib.Compressor().decompress(
             data=compressed_object,
         )
 

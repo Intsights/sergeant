@@ -141,7 +141,7 @@ class KillerServer(
     ) -> bool:
         if not process.is_running():
             self.logger.info(
-                msg=f'process status: not running',
+                msg='process status: not running',
             )
 
             return False

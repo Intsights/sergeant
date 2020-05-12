@@ -1,19 +1,23 @@
 import lzma
 
+from . import _compressor
 
-class Compressor:
-    name = 'lzma'
 
-    @staticmethod
+class Compressor(
+    _compressor.Compressor,
+):
+    name: str = 'lzma'
+
     def compress(
+        self,
         data: bytes,
     ) -> bytes:
         compressed_object = lzma.compress(data)
 
         return compressed_object
 
-    @staticmethod
     def decompress(
+        self,
         data: bytes,
     ) -> bytes:
         decompressed_object = lzma.decompress(data)

@@ -6,8 +6,8 @@ import typing
 from . import config
 from . import connector
 from . import encoder
-from . import task_queue
 from . import executor
+from . import task_queue
 
 
 class Worker:

@@ -2,9 +2,13 @@ import typing
 import msgpack
 import datetime
 
+from . import _serializer
 
-class Serializer:
-    name = 'msgpack'
+
+class Serializer(
+    _serializer.Serializer,
+):
+    name: str = 'msgpack'
 
     def __init__(
         self,

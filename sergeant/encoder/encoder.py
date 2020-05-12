@@ -5,17 +5,27 @@ from . import serializer
 
 
 class Encoder:
+    serializers: typing.Dict[str, typing.Type[serializer._serializer.Serializer]] = {
+        serializer.msgpack.Serializer.name: serializer.msgpack.Serializer,
+        serializer.pickle.Serializer.name: serializer.pickle.Serializer,
+    }
+    compressors: typing.Dict[str, typing.Type[compressor._compressor.Compressor]] = {
+        compressor.bzip2.Compressor.name: compressor.bzip2.Compressor,
+        compressor.gzip.Compressor.name: compressor.gzip.Compressor,
+        compressor.lzma.Compressor.name: compressor.lzma.Compressor,
+        compressor.zlib.Compressor.name: compressor.zlib.Compressor,
+    }
+
     def __init__(
         self,
         compressor_name: typing.Optional[str],
         serializer_name: str,
     ) -> None:
+        self.compressor = None
         if compressor_name:
-            self.compressor = compressor.__compressors__[compressor_name]()
-        else:
-            self.compressor = None
+            self.compressor = self.compressors[compressor_name]()
 
-        self.serializer = serializer.__serializers__[serializer_name]()
+        self.serializer = self.serializers[serializer_name]()
 
     def encode(
         self,

@@ -1,9 +1,13 @@
 import typing
 import pickle
 
+from . import _serializer
 
-class Serializer:
-    name = 'pickle'
+
+class Serializer(
+    _serializer.Serializer,
+):
+    name: str = 'pickle'
 
     def serialize(
         self,

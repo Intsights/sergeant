@@ -154,9 +154,9 @@ class WorkerInitializersTestCase(
             cls=sergeant.encoder.serializer.pickle.Serializer,
         )
 
-        compressor_names = list(sergeant.encoder.compressor.__compressors__.keys())
+        compressor_names = list(sergeant.encoder.encoder.Encoder.compressors.keys())
         compressor_names.append(None)
-        serializer_names = sergeant.encoder.serializer.__serializers__.keys()
+        serializer_names = sergeant.encoder.encoder.Encoder.serializers.keys()
         for compressor_name in compressor_names:
             for serializer_name in serializer_names:
                 worker.config = sergeant.config.WorkerConfig(

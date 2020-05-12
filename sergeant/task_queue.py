@@ -2,12 +2,15 @@ import typing
 import time
 import datetime
 
+from . import encoder
+from . import connector
+
 
 class TaskQueue:
     def __init__(
         self,
-        connector,
-        encoder,
+        connector: connector._connector.Connector,
+        encoder: encoder.encoder.Encoder,
     ) -> None:
         self.connector = connector
         self.encoder = encoder

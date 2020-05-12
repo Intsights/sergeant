@@ -2,11 +2,14 @@ import typing
 import threading
 import concurrent.futures
 
-from .. import worker
+from . import _executor
 from .. import killer
+from .. import worker
 
 
-class ThreadedExecutor:
+class ThreadedExecutor(
+    _executor.Executor,
+):
     def __init__(
         self,
         worker: worker.Worker,

@@ -148,17 +148,17 @@ class Supervisor:
 
                 time.sleep(0.5)
 
-            self.logger.info(f'no more workers to supervise')
+            self.logger.info('no more workers to supervise')
         except KeyboardInterrupt:
             pass
         except Exception as exception:
-            self.logger.error(f'the supervisor encountered an exception: {exception}')
+            self.logger.critical(f'the supervisor encountered an exception: {exception}')
         finally:
             for worker in self.current_workers:
                 self.logger.info(f'killing a worker: {worker.process.pid}')
                 worker.kill()
 
-            self.logger.info(f'exiting...')
+            self.logger.info('exiting...')
             sys.exit(0)
 
     def supervise_worker(
@@ -177,29 +177,29 @@ class Supervisor:
 
             if worker.process.returncode == 0:
                 if worker_summary:
-                    self.logger.debug(f'worker summary: {worker_summary}')
+                    self.logger.info(f'worker summary: {worker_summary}')
                 else:
-                    self.logger.error(f'worker summary is unavailable')
+                    self.logger.error('worker summary is unavailable')
             elif worker.process.returncode == 1:
-                self.logger.error(f'worker execution has failed')
+                self.logger.critical('worker execution has failed')
 
                 if worker_summary:
-                    self.logger.error(f'exception: {worker_summary["exception"]}')
-                    self.logger.error(f'traceback: {worker_summary["traceback"]}')
+                    self.logger.critical(f'exception: {worker_summary["exception"]}')
+                    self.logger.critical(f'traceback: {worker_summary["traceback"]}')
                 else:
-                    self.logger.error(f'exception and tracback are unavailable')
+                    self.logger.critical('exception and tracback are unavailable')
             elif worker.process.returncode == 2:
-                self.logger.error(f'could not load worker module: {self.worker_module_name}')
+                self.logger.critical(f'could not load worker module: {self.worker_module_name}')
 
                 sys.exit(1)
             elif worker.process.returncode == 3:
-                self.logger.error(f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}')
+                self.logger.critical(f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}')
 
                 sys.exit(1)
             elif worker.process.returncode == 4:
-                self.logger.info(f'worker has requested to respawn')
+                self.logger.info('worker has requested to respawn')
             elif worker.process.returncode == 5:
-                self.logger.info(f'worker has requested to stop')
+                self.logger.info('worker has requested to stop')
 
                 self.stop_a_worker(
                     worker=worker,
@@ -213,7 +213,7 @@ class Supervisor:
 
         if self.max_worker_memory_usage:
             if worker.get_rss_memory() > self.max_worker_memory_usage:
-                self.logger.info(f'worker exceeded the maximum memory limit: pid: {worker.process.pid}, rss: {worker.get_rss_memory()}')
+                self.logger.warning(f'worker exceeded the maximum memory limit: pid: {worker.process.pid}, rss: {worker.get_rss_memory()}')
                 self.respawn_a_worker(
                     worker=worker,
                 )

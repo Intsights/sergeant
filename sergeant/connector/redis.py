@@ -3,16 +3,18 @@ import random
 import binascii
 import typing
 
+from . import _connector
 
-class Connector:
-    name = 'redis'
+
+class Connector(
+    _connector.Connector,
+):
+    name: str = 'redis'
 
     def __init__(
         self,
         nodes: typing.List[typing.Dict[str, typing.Any]],
     ) -> None:
-        self.nodes = nodes
-
         self.connections = [
             redis.Redis(
                 host=node['host'],
@@ -27,10 +29,9 @@ class Connector:
             for node in nodes
         ]
         self.number_of_connections = len(self.connections)
+        self.current_connection_index = 0
 
         random.shuffle(self.connections)
-
-        self.current_connection_index = 0
 
     @property
     def next_connection(
@@ -45,7 +46,7 @@ class Connector:
         self,
         key: str,
         value: bytes,
-    ) -> None:
+    ) -> bool:
         key_server_location = binascii.crc32(key.encode()) % self.number_of_connections
 
         old_value = self.connections[key_server_location].getset(

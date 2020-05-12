@@ -1,19 +1,23 @@
 import gzip
 
+from . import _compressor
 
-class Compressor:
-    name = 'gzip'
 
-    @staticmethod
+class Compressor(
+    _compressor.Compressor,
+):
+    name: str = 'gzip'
+
     def compress(
+        self,
         data: bytes,
     ) -> bytes:
         compressed_object = gzip.compress(data)
 
         return compressed_object
 
-    @staticmethod
     def decompress(
+        self,
         data: bytes,
     ) -> bytes:
         decompressed_object = gzip.decompress(data)

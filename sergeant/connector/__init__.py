@@ -1,3 +1,5 @@
+from . import _connector
+
 from . import mongo
 from . import redis
 
