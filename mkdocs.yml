@@ -48,6 +48,7 @@ nav:
       - 'examples/single_producer_consumer.md'
       - 'examples/worker_with_apm.md'
       - 'examples/base_worker.md'
+      - 'examples/supervisor_with_custom_logger.md'
 theme:
   name: material
   logo: images/logo_icon.png

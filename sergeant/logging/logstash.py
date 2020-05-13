@@ -23,6 +23,28 @@ class LogstashHandler(
             self.host,
             self.port,
         )
+        self.logrecord_attributes = {
+            'args',
+            'created',
+            'exc_info',
+            'exc_text',
+            'filename',
+            'funcName',
+            'levelname',
+            'levelno',
+            'lineno',
+            'module',
+            'msecs',
+            'msg',
+            'name',
+            'pathname',
+            'process',
+            'processName',
+            'relativeCreated',
+            'stack_info',
+            'thread',
+            'threadName',
+        }
 
     def emit(
         self,
@@ -42,7 +64,7 @@ class LogstashHandler(
                 'function': record.funcName,
                 'line': record.lineno,
             },
-            'task': getattr(record, 'task', None),
+            'extra': {},
         }
 
         last_exception_type, last_exception_object, last_exception_tb = sys.exc_info()
@@ -57,6 +79,10 @@ class LogstashHandler(
                 'message': str(last_exception_object),
                 'stacktrace': ''.join(extracted_stacktrace),
             }
+
+        for attribute_name, attribute_value in record.__dict__.items():
+            if attribute_name not in self.logrecord_attributes:
+                message['extra'][attribute_name] = attribute_value
 
         encoded_message = orjson.dumps(
             obj=message,

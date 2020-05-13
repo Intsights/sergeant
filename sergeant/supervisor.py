@@ -16,10 +16,9 @@ class SupervisedWorker:
         self,
         worker_module_name: str,
         worker_class_name: str,
+        logger: logging.Logger,
     ):
-        self.logger = logging.getLogger(
-            name='SupervisedWorker',
-        )
+        self.logger = logger
 
         pipe = multiprocessing.Pipe()
 
@@ -55,14 +54,9 @@ class SupervisedWorker:
     def get_summary(
         self,
     ) -> typing.Optional[typing.Dict[str, typing.Any]]:
-        try:
-            if self.parent_pipe.poll():
-                return self.parent_pipe.recv()
-            else:
-                return None
-        except Exception as exception:
-            self.logger.error(f'could not receive supervised_worker\'s summary: {exception}')
-
+        if self.parent_pipe.poll():
+            return self.parent_pipe.recv()
+        else:
             return None
 
     def kill(
@@ -100,24 +94,37 @@ class Supervisor:
         worker_class_name: str,
         concurrent_workers: int,
         max_worker_memory_usage: typing.Optional[int] = None,
+        logger: typing.Optional[logging.Logger] = None,
     ):
         self.worker_module_name = worker_module_name
         self.worker_class_name = worker_class_name
         self.concurrent_workers = concurrent_workers
         self.max_worker_memory_usage = max_worker_memory_usage
 
-        self.logger = logging.getLogger(
-            name='Supervisor',
-        )
+        self.extra_signature = {
+            'supervisor': {
+                'worker_module_name': self.worker_module_name,
+                'worker_class_name': self.worker_class_name,
+                'concurrent_workers': self.concurrent_workers,
+                'max_worker_memory_usage': self.max_worker_memory_usage,
+            },
+        }
 
-        formatter = logging.Formatter(
-            fmt='%(asctime)s %(name)-12s %(process)d %(levelname)-8s %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S',
-        )
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        self.logger.addHandler(stream_handler)
-        self.logger.setLevel(logging.INFO)
+        if logger:
+            self.logger = logger
+        else:
+            self.logger = logging.getLogger(
+                name='Supervisor',
+            )
+
+            formatter = logging.Formatter(
+                fmt='%(asctime)s %(name)-12s %(process)d %(levelname)-8s %(message)s',
+                datefmt='%Y-%m-%d %H:%M:%S',
+            )
+            stream_handler = logging.StreamHandler()
+            stream_handler.setFormatter(formatter)
+            self.logger.addHandler(stream_handler)
+            self.logger.setLevel(logging.INFO)
 
         self.current_workers: typing.List[SupervisedWorker] = []
 
@@ -128,8 +135,12 @@ class Supervisor:
             worker = SupervisedWorker(
                 worker_module_name=self.worker_module_name,
                 worker_class_name=self.worker_class_name,
+                logger=self.logger,
             )
-            self.logger.info(f'spawned a new worker at pid: {worker.process.pid}')
+            self.logger.info(
+                msg=f'spawned a new worker at pid: {worker.process.pid}',
+                extra=self.extra_signature,
+            )
 
             self.current_workers.append(worker)
 
@@ -148,17 +159,29 @@ class Supervisor:
 
                 time.sleep(0.5)
 
-            self.logger.info('no more workers to supervise')
+            self.logger.info(
+                msg='no more workers to supervise',
+                extra=self.extra_signature,
+            )
         except KeyboardInterrupt:
             pass
         except Exception as exception:
-            self.logger.critical(f'the supervisor encountered an exception: {exception}')
+            self.logger.critical(
+                msg=f'the supervisor encountered an exception: {exception}',
+                extra=self.extra_signature,
+            )
         finally:
             for worker in self.current_workers:
-                self.logger.info(f'killing a worker: {worker.process.pid}')
+                self.logger.info(
+                    msg=f'killing a worker: {worker.process.pid}',
+                    extra=self.extra_signature,
+                )
                 worker.kill()
 
-            self.logger.info('exiting...')
+            self.logger.info(
+                msg='exiting...',
+                extra=self.extra_signature,
+            )
             sys.exit(0)
 
     def supervise_worker(
@@ -166,9 +189,19 @@ class Supervisor:
         worker: SupervisedWorker,
     ) -> None:
         if worker.process.poll() is not None:
-            worker_summary = worker.get_summary()
+            try:
+                worker_summary = worker.get_summary()
+            except Exception as exception:
+                self.logger.error(
+                    msg=f'could not receive supervised_worker\'s summary: {exception}',
+                    extra=self.extra_signature,
+                )
+                worker_summary = None
 
-            self.logger.info(f'a worker has exited with error code: {worker.process.returncode}')
+            self.logger.info(
+                msg=f'a worker has exited with error code: {worker.process.returncode}',
+                extra=self.extra_signature,
+            )
 
             try:
                 os.waitpid(worker.process.pid, 0)
@@ -177,29 +210,61 @@ class Supervisor:
 
             if worker.process.returncode == 0:
                 if worker_summary:
-                    self.logger.info(f'worker summary: {worker_summary}')
+                    extra_signature = self.extra_signature.copy()
+                    extra_signature['summary'] = worker_summary
+                    self.logger.info(
+                        msg='worker summary',
+                        extra=extra_signature,
+                    )
                 else:
-                    self.logger.error('worker summary is unavailable')
+                    self.logger.error(
+                        msg='worker summary is unavailable',
+                        extra=self.extra_signature,
+                    )
             elif worker.process.returncode == 1:
-                self.logger.critical('worker execution has failed')
+                self.logger.critical(
+                    msg='worker execution has failed',
+                    extra=self.extra_signature,
+                )
 
                 if worker_summary:
-                    self.logger.critical(f'exception: {worker_summary["exception"]}')
-                    self.logger.critical(f'traceback: {worker_summary["traceback"]}')
+                    self.logger.critical(
+                        msg=f'exception: {worker_summary["exception"]}',
+                        extra=self.extra_signature,
+                    )
+                    self.logger.critical(
+                        msg=f'traceback: {worker_summary["traceback"]}',
+                        extra=self.extra_signature,
+                    )
                 else:
-                    self.logger.critical('exception and tracback are unavailable')
+                    self.logger.critical(
+                        msg='exception and tracback are unavailable',
+                        extra=self.extra_signature,
+                    )
             elif worker.process.returncode == 2:
-                self.logger.critical(f'could not load worker module: {self.worker_module_name}')
+                self.logger.critical(
+                    msg=f'could not load worker module: {self.worker_module_name}',
+                    extra=self.extra_signature,
+                )
 
                 sys.exit(1)
             elif worker.process.returncode == 3:
-                self.logger.critical(f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}')
+                self.logger.critical(
+                    msg=f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}',
+                    extra=self.extra_signature,
+                )
 
                 sys.exit(1)
             elif worker.process.returncode == 4:
-                self.logger.info('worker has requested to respawn')
+                self.logger.info(
+                    msg='worker has requested to respawn',
+                    extra=self.extra_signature,
+                )
             elif worker.process.returncode == 5:
-                self.logger.info('worker has requested to stop')
+                self.logger.info(
+                    msg='worker has requested to stop',
+                    extra=self.extra_signature,
+                )
 
                 self.stop_a_worker(
                     worker=worker,
@@ -213,7 +278,10 @@ class Supervisor:
 
         if self.max_worker_memory_usage:
             if worker.get_rss_memory() > self.max_worker_memory_usage:
-                self.logger.warning(f'worker exceeded the maximum memory limit: pid: {worker.process.pid}, rss: {worker.get_rss_memory()}')
+                self.logger.warning(
+                    msg=f'worker exceeded the maximum memory limit: pid: {worker.process.pid}, rss: {worker.get_rss_memory()}',
+                    extra=self.extra_signature,
+                )
                 self.respawn_a_worker(
                     worker=worker,
                 )
@@ -227,8 +295,12 @@ class Supervisor:
         new_worker = SupervisedWorker(
             worker_module_name=self.worker_module_name,
             worker_class_name=self.worker_class_name,
+            logger=self.logger,
         )
-        self.logger.info(f'spawned a new worker at pid: {new_worker.process.pid}')
+        self.logger.info(
+            msg=f'spawned a new worker at pid: {new_worker.process.pid}',
+            extra=self.extra_signature,
+        )
         self.current_workers.append(new_worker)
 
     def stop_a_worker(
@@ -237,7 +309,10 @@ class Supervisor:
     ) -> None:
         worker.kill()
         self.current_workers.remove(worker)
-        self.logger.info(f'worker has stopped: {worker.process.pid}')
+        self.logger.info(
+            msg=f'worker has stopped: {worker.process.pid}',
+            extra=self.extra_signature,
+        )
 
 
 def main() -> None:

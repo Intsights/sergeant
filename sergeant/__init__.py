@@ -5,4 +5,5 @@ from . import executor
 from . import killer
 from . import logging
 from . import objects
+from . import supervisor
 from . import worker

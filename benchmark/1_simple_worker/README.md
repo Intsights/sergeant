@@ -54,11 +54,18 @@ python3 -m benchmark.1_simple_worker.sergeant.producer_apply_async_many
 
 
 ### Spawn a supervisor to spawn the consumers
+
+Spawning using sergeant.supervisor module invocation
 ```shell
 python3 -m sergeant.supervisor \
     --worker-module=benchmark.1_simple_worker.sergeant.consumer \
     --worker-class=Worker \
     --concurrent-worker=1
+```
+
+Spawning programatically
+```shell
+python3 -m benchmark.1_simple_worker.sergeant.supervisor
 ```
 
 
