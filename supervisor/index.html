@@ -739,6 +739,39 @@
     Command Line
   </a>
   
+    <nav class="md-nav" aria-label="Command Line">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programatically" class="md-nav__link">
+    Programatically
+  </a>
+  
+    <nav class="md-nav" aria-label="Programatically">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -809,6 +842,18 @@
   </li>
 
         
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../examples/supervisor_with_custom_logger/" title="Supervisor With Custom Logger" class="md-nav__link">
+      Supervisor With Custom Logger
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -844,6 +889,39 @@
     Command Line
   </a>
   
+    <nav class="md-nav" aria-label="Command Line">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programatically" class="md-nav__link">
+    Programatically
+  </a>
+  
+    <nav class="md-nav" aria-label="Programatically">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -868,6 +946,13 @@
                 
                 <h1 id="supervisor">Supervisor<a class="headerlink" href="#supervisor" title="Permanent link">#</a></h1>
 <p>The supervisor is the main application that take the <code>Worker</code> class and supervise it.</p>
+<ul>
+<li><code>concurrent-workers</code> - How many subprocesses the supervisor should spawn and supervise.</li>
+<li><code>worker-module</code> - The worker module in a dotted notation path.</li>
+<li><code>worker-class</code> - The worker class name inside the module file - usually <code>Worker</code>.</li>
+<li><code>max-worker-memory-usage</code> [optional] - How much RSS memory in bytes a subprocess-worker can use before the supervisor terminates it and respawn a new one instead.</li>
+<li><code>logger</code> [optional - programatically only] - One can supply a custom logger to pipe all the supervisor logs to this logger.</li>
+</ul>
 <h2 id="command-line">Command Line<a class="headerlink" href="#command-line" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
@@ -909,13 +994,7 @@ optional arguments:
 </code></pre></div>
 </td></tr></table>
 
-<ul>
-<li><code>concurrent-workers</code> - How many subprocesses the supervisor should spawn and supervise.</li>
-<li><code>worker-module</code> - The worker module in a dotted notation path.</li>
-<li><code>worker-class</code> - The worker class name inside the module file - usually <code>Worker</code>.</li>
-<li><code>max-worker-memory-usage</code> [optional] - How much RSS memory in bytes a subprocess-worker can use before the supervisor terminates it and respawn a new one instead.</li>
-</ul>
-<h1 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h1>
+<h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h3>
 <p>Assuming a <code>Supervisor</code> with concurrency level of 4
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -933,6 +1012,41 @@ optional arguments:
     Supervisor --&gt; crawl_worker-4</div>
 
 <p>When a worker reaches its end of life - at the moment it finished <code>max_tasks_per_run</code> tasks, it will exit, and a new worker will be created by the supervisor.</p>
+<h2 id="programatically">Programatically<a class="headerlink" href="#programatically" title="Permanent link">#</a></h2>
+<p>It is possilbe to programatically invoke a <code>Supervisor</code> if you would like to document your supervisor parameters or if you would like to attach another logger.</p>
+<h3 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">#</a></h3>
+<p>Pay attention to the <code>worker_module_name</code> parameter. The way python find the module name depends on the command line CWD. Look at <code>benchmark/1_simple_worker/sergeant/supervisor.py</code> to see how to work with module names if the supervisor.py file lays aside the worker module.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">sergeant</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">supervisor</span> <span class="o">=</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">supervisor</span><span class="o">.</span><span class="n">Supervisor</span><span class="p">(</span>
+        <span class="n">worker_module_name</span><span class="o">=</span><span class="s1">&#39;consumer&#39;</span><span class="p">,</span>
+        <span class="n">worker_class_name</span><span class="o">=</span><span class="s1">&#39;Worker&#39;</span><span class="p">,</span>
+        <span class="n">concurrent_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">max_worker_memory_usage</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">supervisor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+</td></tr></table>
                 
               
               
