@@ -46,6 +46,9 @@ Both files should be in the same directory to work
         if '.' in __loader__.name:
             parent_package_path = __loader__.name.rsplit('.', 1)[0]
 
+        if __loader__.name == '__main__':
+            parent_package_path = os.path.dirname(__loader__.path).replace('/', '.').replace('\\', '.')
+
         logger = logging.getLogger(
             name='Supervisor',
         )
