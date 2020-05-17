@@ -2,45 +2,45 @@ import unittest
 import unittest.mock
 import threading
 
-import sergeant.task_queue
+import sergeant.broker
 import sergeant.connector
 import sergeant.encoder
 import sergeant.objects
 
 
-class TaskQueueTestCase:
+class BrokerTestCase:
     order_matters = True
 
     def test_purge_tasks(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=0,
             )
             task = sergeant.objects.Task()
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task,
                 priority='NORMAL',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=1,
             )
-            test_task_queue.purge_tasks(
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=0,
@@ -49,54 +49,54 @@ class TaskQueueTestCase:
     def test_number_of_enqueued_tasks(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=0,
             )
             task = sergeant.objects.Task()
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task,
                 priority='NORMAL',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=1,
             )
-            test_task_queue.purge_tasks(
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=0,
             )
 
-            test_task_queue.apply_async_many(
+            test_broker.apply_async_many(
                 task_name='test_task',
                 tasks=[task] * 100,
                 priority='NORMAL',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=100,
             )
-            test_task_queue.purge_tasks(
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=0,
@@ -105,25 +105,25 @@ class TaskQueueTestCase:
     def test_wait_queue_empty(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             self.assertTrue(
-                expr=test_task_queue.wait_queue_empty(
+                expr=test_broker.wait_queue_empty(
                     task_name='test_task',
                     sample_interval=0.1,
                 ),
             )
 
             task = sergeant.objects.Task()
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task,
                 priority='NORMAL',
             )
             self.assertFalse(
-                expr=test_task_queue.wait_queue_empty(
+                expr=test_broker.wait_queue_empty(
                     task_name='test_task',
                     sample_interval=0.01,
                     timeout=0.1,
@@ -132,7 +132,7 @@ class TaskQueueTestCase:
 
             purge_tasks_timer = threading.Timer(
                 interval=0.1,
-                function=test_task_queue.purge_tasks,
+                function=test_broker.purge_tasks,
                 args=(
                     'test_task',
                 ),
@@ -140,7 +140,7 @@ class TaskQueueTestCase:
             purge_tasks_timer.start()
 
             self.assertTrue(
-                expr=test_task_queue.wait_queue_empty(
+                expr=test_broker.wait_queue_empty(
                     task_name='test_task',
                     sample_interval=0.1,
                 ),
@@ -149,8 +149,8 @@ class TaskQueueTestCase:
     def test_apply_async_one(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             task_one = sergeant.objects.Task(
@@ -167,34 +167,34 @@ class TaskQueueTestCase:
                 kwargs={},
             )
 
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_two,
                 priority='NORMAL',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_three,
                 priority='NORMAL',
             )
-            task_one_test = test_task_queue.get_tasks(
+            task_one_test = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
-            task_two_test = test_task_queue.get_tasks(
+            task_two_test = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
-            task_three_test = test_task_queue.get_tasks(
+            task_three_test = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
-            empty_list = test_task_queue.get_tasks(
+            empty_list = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )
@@ -244,8 +244,8 @@ class TaskQueueTestCase:
     def test_apply_async_many(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task_one',
             )
             task_one = sergeant.objects.Task(
@@ -258,7 +258,7 @@ class TaskQueueTestCase:
                     'arg': 'two',
                 },
             )
-            test_task_queue.apply_async_many(
+            test_broker.apply_async_many(
                 task_name='test_task_one',
                 tasks=[
                     task_one,
@@ -266,11 +266,11 @@ class TaskQueueTestCase:
                 ],
                 priority='NORMAL',
             )
-            task_one_test = test_task_queue.get_tasks(
+            task_one_test = test_broker.get_tasks(
                 task_name='test_task_one',
                 number_of_tasks=1,
             )[0]
-            task_two_test = test_task_queue.get_tasks(
+            task_two_test = test_broker.get_tasks(
                 task_name='test_task_one',
                 number_of_tasks=1,
             )[0]
@@ -312,8 +312,8 @@ class TaskQueueTestCase:
     def test_queue_priority(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             task_NORMAL_priority = sergeant.objects.Task(
@@ -326,70 +326,70 @@ class TaskQueueTestCase:
                     'priority': 'HIGH',
                 },
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
             self.assertEqual(
-                first=test_task_queue.number_of_enqueued_tasks(
+                first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
                 ),
                 second=8,
             )
 
-            high_priority_tasks = test_task_queue.get_tasks(
+            high_priority_tasks = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            high_priority_tasks += test_task_queue.get_tasks(
+            high_priority_tasks += test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            low_priority_tasks = test_task_queue.get_tasks(
+            low_priority_tasks = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            low_priority_tasks += test_task_queue.get_tasks(
+            low_priority_tasks += test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            low_priority_tasks += test_task_queue.get_tasks(
+            low_priority_tasks += test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
@@ -405,8 +405,8 @@ class TaskQueueTestCase:
     def test_get_tasks(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task_one',
             )
             task_one = sergeant.objects.Task(
@@ -419,7 +419,7 @@ class TaskQueueTestCase:
                     'arg': 'two',
                 },
             )
-            test_task_queue.apply_async_many(
+            test_broker.apply_async_many(
                 task_name='test_task_one',
                 tasks=[
                     task_one,
@@ -427,7 +427,7 @@ class TaskQueueTestCase:
                 ],
                 priority='NORMAL',
             )
-            tasks = test_task_queue.get_tasks(
+            tasks = test_broker.get_tasks(
                 task_name='test_task_one',
                 number_of_tasks=3,
             )
@@ -443,29 +443,29 @@ class TaskQueueTestCase:
     def test_retry(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             task_one = sergeant.objects.Task(
                 kwargs={},
             )
             self.assertEqual(task_one.run_count, 0)
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
             )
-            task_one = test_task_queue.get_tasks(
+            task_one = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
 
-            test_task_queue.retry(
+            test_broker.retry(
                 task_name='test_task',
                 task=task_one,
             )
-            task_one = test_task_queue.get_tasks(
+            task_one = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
@@ -477,29 +477,29 @@ class TaskQueueTestCase:
     def test_requeue(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.purge_tasks(
+        for test_broker in self.test_brokers:
+            test_broker.purge_tasks(
                 task_name='test_task',
             )
             task_one = sergeant.objects.Task(
                 kwargs={},
             )
             self.assertEqual(task_one.run_count, 0)
-            test_task_queue.apply_async_one(
+            test_broker.apply_async_one(
                 task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
             )
-            task_one = test_task_queue.get_tasks(
+            task_one = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
 
-            test_task_queue.requeue(
+            test_broker.requeue(
                 task_name='test_task',
                 task=task_one,
             )
-            task_one = test_task_queue.get_tasks(
+            task_one = test_broker.get_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
@@ -511,19 +511,19 @@ class TaskQueueTestCase:
     def test_get_set_key(
         self,
     ):
-        for test_task_queue in self.test_task_queues:
-            test_task_queue.delete_key(
+        for test_broker in self.test_brokers:
+            test_broker.delete_key(
                 name='key_name',
             )
 
-            test_key_value = test_task_queue.get_key(
+            test_key_value = test_broker.get_key(
                 name='key_name',
             )
             self.assertIsNone(
                 obj=test_key_value,
             )
 
-            key_was_set = test_task_queue.set_key(
+            key_was_set = test_broker.set_key(
                 name='key_name',
                 value={
                     'key': 'value',
@@ -533,7 +533,7 @@ class TaskQueueTestCase:
                 expr=key_was_set,
             )
 
-            key_was_set = test_task_queue.set_key(
+            key_was_set = test_broker.set_key(
                 name='key_name',
                 value={
                     'key': 'value',
@@ -543,7 +543,7 @@ class TaskQueueTestCase:
                 expr=key_was_set,
             )
 
-            test_key_value = test_task_queue.get_key(
+            test_key_value = test_broker.get_key(
                 name='key_name',
             )
             self.assertEqual(
@@ -553,23 +553,76 @@ class TaskQueueTestCase:
                 },
             )
 
-            key_was_deleted = test_task_queue.delete_key(
+            key_was_deleted = test_broker.delete_key(
                 name='key_name',
             )
             self.assertTrue(
                 expr=key_was_deleted,
             )
 
-            test_key_value = test_task_queue.get_key(
+            test_key_value = test_broker.get_key(
                 name='key_name',
             )
             self.assertIsNone(
                 obj=test_key_value,
             )
 
+    def test_lock(
+        self,
+    ):
+        for test_broker in self.test_brokers:
+            lock = test_broker.lock(
+                name='test_lock',
+            )
+            lock.release()
 
-class RedisSingleServerTaskQueueTestCase(
-    TaskQueueTestCase,
+            self.assertFalse(
+                expr=lock.is_locked(),
+            )
+
+            self.assertTrue(
+                expr=lock.acquire(
+                    timeout=0,
+                ),
+            )
+            self.assertFalse(
+                expr=lock.acquire(
+                    timeout=0,
+                ),
+            )
+            self.assertTrue(
+                expr=lock.release(),
+            )
+            self.assertFalse(
+                expr=lock.release(),
+            )
+
+            self.assertIsNone(
+                obj=lock.get_ttl(),
+            )
+            self.assertTrue(
+                expr=lock.acquire(
+                    timeout=0,
+                    ttl=60,
+                ),
+            )
+            self.assertEqual(
+                first=lock.get_ttl(),
+                second=60,
+            )
+            self.assertTrue(
+                expr=lock.set_ttl(
+                    ttl=30,
+                ),
+            )
+            self.assertEqual(
+                first=lock.get_ttl(),
+                second=30,
+            )
+
+
+class RedisSingleServerBrokerTestCase(
+    BrokerTestCase,
     unittest.TestCase,
 ):
     order_matters = True
@@ -577,7 +630,7 @@ class RedisSingleServerTaskQueueTestCase(
     def setUp(
         self,
     ):
-        self.test_task_queues = []
+        self.test_brokers = []
 
         connector_obj = sergeant.connector.redis.Connector(
             nodes=[
@@ -599,16 +652,16 @@ class RedisSingleServerTaskQueueTestCase(
                     compressor_name=compressor_name,
                     serializer_name=serializer_name,
                 )
-                self.test_task_queues.append(
-                    sergeant.task_queue.TaskQueue(
+                self.test_brokers.append(
+                    sergeant.broker.Broker(
                         connector=connector_obj,
                         encoder=encoder_obj,
                     )
                 )
 
 
-class RedisMultipleServerTaskQueueTestCase(
-    TaskQueueTestCase,
+class RedisMultipleServerBrokerTestCase(
+    BrokerTestCase,
     unittest.TestCase,
 ):
     order_matters = False
@@ -616,7 +669,7 @@ class RedisMultipleServerTaskQueueTestCase(
     def setUp(
         self,
     ):
-        self.test_task_queues = []
+        self.test_brokers = []
 
         connector_obj = sergeant.connector.redis.Connector(
             nodes=[
@@ -644,16 +697,16 @@ class RedisMultipleServerTaskQueueTestCase(
                     compressor_name=compressor_name,
                     serializer_name=serializer_name,
                 )
-                self.test_task_queues.append(
-                    sergeant.task_queue.TaskQueue(
+                self.test_brokers.append(
+                    sergeant.broker.Broker(
                         connector=connector_obj,
                         encoder=encoder_obj,
                     )
                 )
 
 
-class MongoTaskQueueTestCase(
-    TaskQueueTestCase,
+class MongoBrokerTestCase(
+    BrokerTestCase,
     unittest.TestCase,
 ):
     order_matters = False
@@ -661,7 +714,7 @@ class MongoTaskQueueTestCase(
     def setUp(
         self,
     ):
-        self.test_task_queues = []
+        self.test_brokers = []
 
         connector_obj = sergeant.connector.mongo.Connector(
             mongodb_uri='mongodb://localhost:27017/',
@@ -676,8 +729,8 @@ class MongoTaskQueueTestCase(
                     compressor_name=compressor_name,
                     serializer_name=serializer_name,
                 )
-                self.test_task_queues.append(
-                    sergeant.task_queue.TaskQueue(
+                self.test_brokers.append(
+                    sergeant.broker.Broker(
                         connector=connector_obj,
                         encoder=encoder_obj,
                     )

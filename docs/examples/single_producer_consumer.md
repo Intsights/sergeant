@@ -57,7 +57,7 @@ graph LR
 
 
     worker = consumer.Worker()
-    worker.init_task_queue()
+    worker.init_broker()
     worker.purge_tasks()
     worker.apply_async_one(
         kwargs={
@@ -82,7 +82,7 @@ For each consumed task, the `work` method is invoked. The parameters are passed 
 
 The producer first loads the consumer module. The reason for that is that once instantiating a `Worker`, you can use its configuration. The producer uses the `Worker` instance so it will have a connection to the broker.
 
-Later, we call to `init_task_queue` so we will create the connection to the task queue inside the Worker instance. We call `purge_tasks` to assure no leftover tasks exist in the queue.
+Later, we call to `init_broker` so we will create the connection to the task queue inside the Worker instance. We call `purge_tasks` to assure no leftover tasks exist in the queue.
 `apply_async_one` is the function that compose a task object, and pushes it to the queue.
 
 

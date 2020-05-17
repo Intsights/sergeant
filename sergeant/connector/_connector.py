@@ -1,6 +1,37 @@
 import typing
 
 
+class Lock:
+    def acquire(
+        self,
+        timeout: typing.Optional[float] = None,
+        check_interval: float = 1.0,
+        ttl: int = 60,
+    ) -> bool:
+        raise NotImplementedError()
+
+    def release(
+        self,
+    ) -> bool:
+        raise NotImplementedError()
+
+    def is_locked(
+        self,
+    ) -> bool:
+        raise NotImplementedError()
+
+    def set_ttl(
+        self,
+        ttl: int,
+    ) -> bool:
+        raise NotImplementedError()
+
+    def get_ttl(
+        self,
+    ) -> typing.Optional[int]:
+        raise NotImplementedError()
+
+
 class Connector:
     name: str
 
@@ -62,4 +93,10 @@ class Connector:
         self,
         queue_name: str,
     ) -> bool:
+        raise NotImplementedError()
+
+    def lock(
+        self,
+        name: str,
+    ) -> Lock:
         raise NotImplementedError()

@@ -7,10 +7,10 @@ from . import encoder
 from . import connector
 
 
-class TaskQueue:
+class Broker:
     def __init__(
         self,
-        connector: connector._connector.Connector,
+        connector: typing.Union[connector.mongo.Connector, connector.redis.Connector],
         encoder: encoder.encoder.Encoder,
     ) -> None:
         self.connector = connector
@@ -192,3 +192,11 @@ class TaskQueue:
         )
 
         return key_was_set
+
+    def lock(
+        self,
+        name: str,
+    ) -> typing.Union[connector.mongo.Lock, connector.redis.Lock]:
+        return self.connector.lock(
+            name=name,
+        )

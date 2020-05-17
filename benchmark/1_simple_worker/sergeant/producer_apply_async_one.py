@@ -3,7 +3,7 @@ from . import consumer
 
 def main():
     worker = consumer.Worker()
-    worker.init_task_queue()
+    worker.init_broker()
     worker.purge_tasks()
 
     worker.apply_async_one(

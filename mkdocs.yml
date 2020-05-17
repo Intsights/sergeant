@@ -43,6 +43,13 @@ nav:
         - get_next_tasks: 'worker/methods/get_next_tasks.md'
         - number_of_enqueued_tasks: 'worker/methods/number_of_enqueued_tasks.md'
         - purge_tasks: 'worker/methods/purge_tasks.md'
+        - lock: 'worker/methods/lock.md'
+      - Lock:
+        - acquire: 'worker/lock/acquire.md'
+        - release: 'worker/lock/release.md'
+        - is_locked: 'worker/lock/is_locked.md'
+        - get_ttl: 'worker/lock/get_ttl.md'
+        - set_ttl: 'worker/lock/set_ttl.md'
     - Supervisor: "supervisor.md"
     - Examples:
       - 'examples/single_producer_consumer.md'

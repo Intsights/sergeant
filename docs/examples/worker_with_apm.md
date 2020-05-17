@@ -103,7 +103,7 @@ This example demonstrates how to integrate with an APM solution. In this case, `
         worker = consumer.Worker()
 
         # Init the worker task queue so we would be able to push tasks to the broker
-        worker.init_task_queue()
+        worker.init_broker()
 
         # Make sure the queue is empty
         worker.purge_tasks()

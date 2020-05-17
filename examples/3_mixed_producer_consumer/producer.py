@@ -6,7 +6,7 @@ def main():
     worker = consumer_a.Worker()
 
     # Init the worker task queue so we would be able to push tasks to the broker
-    worker.init_task_queue()
+    worker.init_broker()
 
     # Make sure the queue is empty
     worker.purge_tasks()

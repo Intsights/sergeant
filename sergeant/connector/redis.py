@@ -2,8 +2,94 @@ import redis
 import random
 import binascii
 import typing
+import time
 
 from . import _connector
+
+
+class Lock(
+    _connector.Lock,
+):
+    def __init__(
+        self,
+        redis_connection: redis.Redis,
+        name: str,
+    ) -> None:
+        self.redis_connection = redis_connection
+        self.name = f'__lock__.{name}'
+
+        self.acquired = False
+
+    def acquire(
+        self,
+        timeout: typing.Optional[float] = None,
+        check_interval: float = 1.0,
+        ttl: int = 60,
+    ) -> bool:
+        if timeout is not None:
+            time_to_stop = time.time() + timeout
+
+        while True:
+            if self.redis_connection.set(
+                self.name,
+                b'',
+                nx=True,
+                ex=ttl,
+            ):
+                self.acquired = True
+
+                return True
+
+            if timeout is not None and time.time() > time_to_stop:
+                return False
+
+            time.sleep(check_interval)
+
+    def release(
+        self,
+    ) -> bool:
+        if self.acquired:
+            keys_removed = self.redis_connection.delete(self.name)
+
+            self.acquired = False
+
+            return keys_removed == 1
+        else:
+            return False
+
+    def is_locked(
+        self,
+    ) -> bool:
+        number_of_existing_keys = self.redis_connection.exists(self.name)
+
+        return number_of_existing_keys == 1
+
+    def set_ttl(
+        self,
+        ttl: int,
+    ) -> bool:
+        timeout_was_set = self.redis_connection.expire(
+            name=self.name,
+            time=ttl,
+        ) == 1
+
+        return timeout_was_set
+
+    def get_ttl(
+        self,
+    ) -> typing.Optional[int]:
+        ttl_in_seconds = self.redis_connection.ttl(
+            name=self.name,
+        )
+        if ttl_in_seconds >= 0:
+            return ttl_in_seconds
+        else:
+            return None
+
+    def __del__(
+        self,
+    ) -> None:
+        self.release()
 
 
 class Connector(
@@ -159,3 +245,15 @@ class Connector(
             deleted_count += connection.delete(queue_name)
 
         return deleted_count > 0
+
+    def lock(
+        self,
+        name: str,
+    ) -> Lock:
+        key_server_location = binascii.crc32(name.encode()) % self.number_of_connections
+        redis_connection = self.connections[key_server_location]
+
+        return Lock(
+            redis_connection=redis_connection,
+            name=name,
+        )

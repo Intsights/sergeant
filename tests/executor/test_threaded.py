@@ -5,7 +5,6 @@ import threading
 
 import sergeant.worker
 import sergeant.executor
-import sergeant.task_queue
 import sergeant.killer
 
 

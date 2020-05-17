@@ -33,7 +33,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         task = sergeant.objects.Task()
 
@@ -153,7 +153,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         task = sergeant.objects.Task()
 
@@ -271,7 +271,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         task = sergeant.objects.Task()
 
@@ -384,7 +384,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         task = sergeant.objects.Task()
 
@@ -497,7 +497,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         task = sergeant.objects.Task()
 
@@ -610,7 +610,7 @@ class WorkerHandlersTestCase(
                 ),
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         task = sergeant.objects.Task()
 
@@ -828,7 +828,7 @@ class WorkerHandlersTestCase(
             ),
             max_retries=3,
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         task = sergeant.objects.Task()
 

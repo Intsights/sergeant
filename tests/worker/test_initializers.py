@@ -52,7 +52,7 @@ class WorkerInitializersTestCase(
             cls=sergeant.logging.logstash.LogstashHandler,
         )
 
-    def test_init_task_queue(
+    def test_init_broker(
         self,
     ):
         worker = sergeant.worker.Worker()
@@ -72,20 +72,20 @@ class WorkerInitializersTestCase(
                 },
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
         self.assertIsInstance(
-            obj=worker.task_queue,
-            cls=sergeant.task_queue.TaskQueue,
+            obj=worker.broker,
+            cls=sergeant.broker.Broker,
         )
         self.assertIsInstance(
-            obj=worker.task_queue.connector,
+            obj=worker.broker.connector,
             cls=sergeant.connector.redis.Connector,
         )
         self.assertIsNone(
-            obj=worker.task_queue.encoder.compressor,
+            obj=worker.broker.encoder.compressor,
         )
         self.assertIsInstance(
-            obj=worker.task_queue.encoder.serializer,
+            obj=worker.broker.encoder.serializer,
             cls=sergeant.encoder.serializer.pickle.Serializer,
         )
 
@@ -111,20 +111,20 @@ class WorkerInitializersTestCase(
                 },
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
         self.assertIsInstance(
-            obj=worker.task_queue,
-            cls=sergeant.task_queue.TaskQueue,
+            obj=worker.broker,
+            cls=sergeant.broker.Broker,
         )
         self.assertIsInstance(
-            obj=worker.task_queue.connector,
+            obj=worker.broker.connector,
             cls=sergeant.connector.redis.Connector,
         )
         self.assertIsNone(
-            obj=worker.task_queue.encoder.compressor,
+            obj=worker.broker.encoder.compressor,
         )
         self.assertIsInstance(
-            obj=worker.task_queue.encoder.serializer,
+            obj=worker.broker.encoder.serializer,
             cls=sergeant.encoder.serializer.pickle.Serializer,
         )
 
@@ -137,20 +137,20 @@ class WorkerInitializersTestCase(
                 },
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
         self.assertIsInstance(
-            obj=worker.task_queue,
-            cls=sergeant.task_queue.TaskQueue,
+            obj=worker.broker,
+            cls=sergeant.broker.Broker,
         )
         self.assertIsInstance(
-            obj=worker.task_queue.connector,
+            obj=worker.broker.connector,
             cls=sergeant.connector.mongo.Connector,
         )
         self.assertIsNone(
-            obj=worker.task_queue.encoder.compressor,
+            obj=worker.broker.encoder.compressor,
         )
         self.assertIsInstance(
-            obj=worker.task_queue.encoder.serializer,
+            obj=worker.broker.encoder.serializer,
             cls=sergeant.encoder.serializer.pickle.Serializer,
         )
 
@@ -179,26 +179,26 @@ class WorkerInitializersTestCase(
                         serializer=serializer_name,
                     ),
                 )
-                worker.init_task_queue()
+                worker.init_broker()
                 self.assertIsInstance(
-                    obj=worker.task_queue,
-                    cls=sergeant.task_queue.TaskQueue,
+                    obj=worker.broker,
+                    cls=sergeant.broker.Broker,
                 )
                 self.assertIsInstance(
-                    obj=worker.task_queue.connector,
+                    obj=worker.broker.connector,
                     cls=sergeant.connector.redis.Connector,
                 )
                 if compressor_name:
                     self.assertEqual(
-                        first=worker.task_queue.encoder.compressor.name,
+                        first=worker.broker.encoder.compressor.name,
                         second=compressor_name,
                     )
                 else:
                     self.assertIsNone(
-                        obj=worker.task_queue.encoder.compressor,
+                        obj=worker.broker.encoder.compressor,
                     )
                 self.assertEqual(
-                    first=worker.task_queue.encoder.serializer.name,
+                    first=worker.broker.encoder.serializer.name,
                     second=serializer_name,
                 )
 

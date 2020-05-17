@@ -4,7 +4,7 @@ import unittest.mock
 import sergeant.worker
 
 
-class WorkerTaskQueueTestCase(
+class WorkerBrokerTestCase(
     unittest.TestCase,
 ):
     def test_actions(
@@ -27,7 +27,7 @@ class WorkerTaskQueueTestCase(
                 },
             ),
         )
-        worker.init_task_queue()
+        worker.init_broker()
 
         worker.purge_tasks()
         self.assertEqual(
@@ -134,4 +134,53 @@ class WorkerTaskQueueTestCase(
                 task_name='other_worker',
             ),
             second=0,
+        )
+
+        lock = worker.lock(
+            name='test_lock',
+        )
+        lock.release()
+
+        self.assertFalse(
+            expr=lock.is_locked(),
+        )
+
+        self.assertTrue(
+            expr=lock.acquire(
+                timeout=0,
+            ),
+        )
+        self.assertFalse(
+            expr=lock.acquire(
+                timeout=0,
+            ),
+        )
+        self.assertTrue(
+            expr=lock.release(),
+        )
+        self.assertFalse(
+            expr=lock.release(),
+        )
+
+        self.assertIsNone(
+            obj=lock.get_ttl(),
+        )
+        self.assertTrue(
+            expr=lock.acquire(
+                timeout=0,
+                ttl=60,
+            ),
+        )
+        self.assertEqual(
+            first=lock.get_ttl(),
+            second=60,
+        )
+        self.assertTrue(
+            expr=lock.set_ttl(
+                ttl=30,
+            ),
+        )
+        self.assertEqual(
+            first=lock.get_ttl(),
+            second=30,
         )

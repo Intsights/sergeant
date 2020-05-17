@@ -5,7 +5,6 @@ import time
 import sergeant.worker
 import sergeant.executor
 import sergeant.config
-import sergeant.task_queue
 
 
 class SerialTestCase(

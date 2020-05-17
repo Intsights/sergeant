@@ -359,6 +359,58 @@ class ConnectorTestCase:
             ] * 50,
         )
 
+    def test_lock(
+        self,
+    ):
+        lock = self.connector.lock(
+            name='test_lock',
+        )
+        lock.release()
+
+        self.assertFalse(
+            expr=lock.is_locked(),
+        )
+
+        self.assertTrue(
+            expr=lock.acquire(
+                timeout=0,
+            ),
+        )
+        self.assertFalse(
+            expr=lock.acquire(
+                timeout=0,
+            ),
+        )
+        self.assertTrue(
+            expr=lock.release(),
+        )
+        self.assertFalse(
+            expr=lock.release(),
+        )
+
+        self.assertIsNone(
+            obj=lock.get_ttl(),
+        )
+        self.assertTrue(
+            expr=lock.acquire(
+                timeout=0,
+                ttl=60,
+            ),
+        )
+        self.assertEqual(
+            first=lock.get_ttl(),
+            second=60,
+        )
+        self.assertTrue(
+            expr=lock.set_ttl(
+                ttl=30,
+            ),
+        )
+        self.assertEqual(
+            first=lock.get_ttl(),
+            second=30,
+        )
+
 
 class RedisSingleServerConnectorTestCase(
     ConnectorTestCase,

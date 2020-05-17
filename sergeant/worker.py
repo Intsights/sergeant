@@ -3,12 +3,12 @@ import datetime
 import logging
 import typing
 
+from . import broker
 from . import config
 from . import connector
 from . import encoder
 from . import executor
 from . import objects
-from . import task_queue
 
 
 class Worker:
@@ -23,7 +23,7 @@ class Worker:
     def init_worker(
         self,
     ) -> None:
-        self.init_task_queue()
+        self.init_broker()
         self.init_logger()
         self.init_executor()
 
@@ -55,7 +55,7 @@ class Worker:
                 hdlr=handler,
             )
 
-    def init_task_queue(
+    def init_broker(
         self,
     ) -> None:
         encoder_obj = encoder.encoder.Encoder(
@@ -64,7 +64,7 @@ class Worker:
         )
         connector_class = connector.__connectors__[self.config.connector.type]
         connector_obj = connector_class(**self.config.connector.params)
-        self.task_queue = task_queue.TaskQueue(
+        self.broker = broker.Broker(
             connector=connector_obj,
             encoder=encoder_obj,
         )
@@ -87,7 +87,7 @@ class Worker:
         task_name: typing.Optional[str] = None,
     ) -> bool:
         try:
-            return self.task_queue.purge_tasks(
+            return self.broker.purge_tasks(
                 task_name=task_name if task_name else self.config.name,
             )
         except Exception as exception:
@@ -102,7 +102,7 @@ class Worker:
         task_name: typing.Optional[str] = None,
     ) -> typing.Optional[int]:
         try:
-            return self.task_queue.number_of_enqueued_tasks(
+            return self.broker.number_of_enqueued_tasks(
                 task_name=task_name if task_name else self.config.name,
             )
         except Exception as exception:
@@ -123,7 +123,7 @@ class Worker:
                 kwargs=kwargs,
             )
 
-            self.task_queue.apply_async_one(
+            self.broker.apply_async_one(
                 task_name=task_name if task_name else self.config.name,
                 task=task,
                 priority=priority,
@@ -151,7 +151,7 @@ class Worker:
                 for kwargs in kwargs_list
             ]
 
-            return self.task_queue.apply_async_many(
+            return self.broker.apply_async_many(
                 task_name=task_name if task_name else self.config.name,
                 tasks=tasks,
                 priority=priority,
@@ -169,7 +169,7 @@ class Worker:
         task_name: typing.Optional[str] = None,
     ) -> typing.List[objects.Task]:
         try:
-            return self.task_queue.get_tasks(
+            return self.broker.get_tasks(
                 task_name=task_name if task_name else self.config.name,
                 number_of_tasks=number_of_tasks,
             )
@@ -179,6 +179,21 @@ class Worker:
             )
 
             return []
+
+    def lock(
+        self,
+        name: str,
+    ) -> typing.Union[connector.mongo.Lock, connector.redis.Lock]:
+        try:
+            return self.broker.lock(
+                name=name,
+            )
+        except Exception as exception:
+            self.logger.error(
+                msg=f'could not create a lock: {exception}',
+            )
+
+            raise exception
 
     def iterate_tasks(
         self,
@@ -301,7 +316,7 @@ class Worker:
         if self.config.max_retries > 0 and self.config.max_retries <= task.run_count:
             raise WorkerMaxRetries()
         else:
-            self.task_queue.retry(
+            self.broker.retry(
                 task_name=self.config.name,
                 task=task,
                 priority=priority,
@@ -314,7 +329,7 @@ class Worker:
         task: objects.Task,
         priority: str = 'NORMAL',
     ) -> None:
-        self.task_queue.requeue(
+        self.broker.requeue(
             task_name=self.config.name,
             task=task,
             priority=priority,
