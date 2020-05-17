@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/worker/initialize/">
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/methods/lock/">
       
       
         <meta name="author" content="Gal Ben David">
@@ -19,7 +19,7 @@
     
     
       
-        <title>initialize - Sergeant</title>
+        <title>lock - Sergeant</title>
       
     
     
@@ -52,7 +52,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#worker-initialize" class="md-skip">
+        <a href="#worker-lock" class="md-skip">
           Skip to content
         </a>
       
@@ -79,7 +79,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              initialize
+              lock
             
           </span>
         </div>
@@ -467,12 +467,10 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" checked>
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
     
     <label class="md-nav__link" for="nav-2-3">
       Worker
@@ -494,6 +492,206 @@
           
           
 
+
+  <li class="md-nav__item">
+    <a href="../../worker/initialize/" title="initialize" class="md-nav__link">
+      initialize
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../worker/finalize/" title="finalize" class="md-nav__link">
+      finalize
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../worker/pre_work/" title="pre_work" class="md-nav__link">
+      pre_work
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../worker/post_work/" title="post_work" class="md-nav__link">
+      post_work
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../worker/work/" title="work" class="md-nav__link">
+      work
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4" checked>
+    
+    <label class="md-nav__link" for="nav-2-4">
+      Methods
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Methods" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-4">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Methods
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../retry/" title="retry" class="md-nav__link">
+      retry
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../requeue/" title="requeue" class="md-nav__link">
+      requeue
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../stop/" title="stop" class="md-nav__link">
+      stop
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../respawn/" title="respawn" class="md-nav__link">
+      respawn
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../apply_async_one/" title="apply_async_one" class="md-nav__link">
+      apply_async_one
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../apply_async_many/" title="apply_async_many" class="md-nav__link">
+      apply_async_many
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../get_next_tasks/" title="get_next_tasks" class="md-nav__link">
+      get_next_tasks
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../number_of_enqueued_tasks/" title="number_of_enqueued_tasks" class="md-nav__link">
+      number_of_enqueued_tasks
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../purge_tasks/" title="purge_tasks" class="md-nav__link">
+      purge_tasks
+    </a>
+  </li>
+
+        
+          
+          
+          
+
   
 
 
@@ -505,14 +703,14 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        initialize
+        lock
         <span class="md-nav__icon md-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
         </span>
       </label>
     
-    <a href="./" title="initialize" class="md-nav__link md-nav__link--active">
-      initialize
+    <a href="./" title="lock" class="md-nav__link md-nav__link--active">
+      lock
     </a>
     
       
@@ -548,204 +746,6 @@
   
 </nav>
     
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../finalize/" title="finalize" class="md-nav__link">
-      finalize
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../pre_work/" title="pre_work" class="md-nav__link">
-      pre_work
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../post_work/" title="post_work" class="md-nav__link">
-      post_work
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../work/" title="work" class="md-nav__link">
-      work
-    </a>
-  </li>
-
-        
-      </ul>
-    </nav>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
-    
-    <label class="md-nav__link" for="nav-2-4">
-      Methods
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
-      </span>
-    </label>
-    <nav class="md-nav" aria-label="Methods" data-md-level="2">
-      <label class="md-nav__title" for="nav-2-4">
-        <span class="md-nav__icon md-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-        </span>
-        Methods
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/retry/" title="retry" class="md-nav__link">
-      retry
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/requeue/" title="requeue" class="md-nav__link">
-      requeue
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/stop/" title="stop" class="md-nav__link">
-      stop
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/respawn/" title="respawn" class="md-nav__link">
-      respawn
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/apply_async_one/" title="apply_async_one" class="md-nav__link">
-      apply_async_one
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/apply_async_many/" title="apply_async_many" class="md-nav__link">
-      apply_async_many
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/get_next_tasks/" title="get_next_tasks" class="md-nav__link">
-      get_next_tasks
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/number_of_enqueued_tasks/" title="number_of_enqueued_tasks" class="md-nav__link">
-      number_of_enqueued_tasks
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/purge_tasks/" title="purge_tasks" class="md-nav__link">
-      purge_tasks
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../methods/lock/" title="lock" class="md-nav__link">
-      lock
-    </a>
   </li>
 
         
@@ -990,7 +990,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/worker/initialize.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/methods/lock.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -998,29 +998,57 @@
                   
                 
                 
-                <h1 id="worker-initialize">Worker - initialize<a class="headerlink" href="#worker-initialize" title="Permanent link">#</a></h1>
-<p>The <code>initialize</code> method is invoked by the worker once at the moment the worker is spawned by the <code>supervisor</code>. This method allows to implement an initialization of object that will live for the whole lifespan of the worker. A good usage example is to initialize a <code>Logger</code> object or an <code>APM</code> object.</p>
+                <h1 id="worker-lock">Worker - lock<a class="headerlink" href="#worker-lock" title="Permanent link">#</a></h1>
+<p>The <code>lock</code> method creates a distributed lock in the broker. This way multiple workers can synchronize work with the help of a distributed lock. Many use cases of a distributed lock are available such as lock an access to a throttled resource to avoid exceeding its rate limit.</p>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">lock</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">connector</span><span class="o">.</span><span class="n">mongo</span><span class="o">.</span><span class="n">Lock</span><span class="p">,</span> <span class="n">connector</span><span class="o">.</span><span class="n">redis</span><span class="o">.</span><span class="n">Lock</span><span class="p">]:</span>
 </code></pre></div>
 </td></tr></table>
 
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
+<div class="tabbed-set" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Simple</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">my_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">apm_client</span> <span class="o">=</span> <span class="n">elasticapm</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+    <span class="n">single_access_api_url</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;single_access_api_url&#39;</span><span class="p">]</span>
+
+    <span class="n">lock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span><span class="s1">&#39;single_access_api&#39;</span><span class="p">)</span>
+    <span class="n">acquired</span> <span class="o">=</span> <span class="n">lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+        <span class="n">ttl</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">acquired</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">single_access_api_url</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 </code></pre></div>
 </td></tr></table>
+
+</div>
+</div>
                 
               
               
@@ -1039,7 +1067,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../../handlers/on_starvation/" title="on_starvation" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../purge_tasks/" title="purge_tasks" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -1048,19 +1076,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                on_starvation
+                purge_tasks
               </div>
             </div>
           </a>
         
         
-          <a href="../finalize/" title="finalize" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../../lock/acquire/" title="acquire" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                finalize
+                acquire
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">

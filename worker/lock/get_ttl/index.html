@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/worker/initialize/">
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/lock/get_ttl/">
       
       
         <meta name="author" content="Gal Ben David">
@@ -19,7 +19,7 @@
     
     
       
-        <title>initialize - Sergeant</title>
+        <title>get_ttl - Sergeant</title>
       
     
     
@@ -52,7 +52,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#worker-initialize" class="md-skip">
+        <a href="#worker-get_ttl" class="md-skip">
           Skip to content
         </a>
       
@@ -79,7 +79,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              initialize
+              get_ttl
             
           </span>
         </div>
@@ -467,12 +467,10 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" checked>
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
     
     <label class="md-nav__link" for="nav-2-3">
       Worker
@@ -494,60 +492,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        initialize
-        <span class="md-nav__icon md-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
-        </span>
-      </label>
-    
-    <a href="./" title="initialize" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../../worker/initialize/" title="initialize" class="md-nav__link">
       initialize
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-      </span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#definition" class="md-nav__link">
-    Definition
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
         
@@ -557,7 +506,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../finalize/" title="finalize" class="md-nav__link">
+    <a href="../../worker/finalize/" title="finalize" class="md-nav__link">
       finalize
     </a>
   </li>
@@ -569,7 +518,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../pre_work/" title="pre_work" class="md-nav__link">
+    <a href="../../worker/pre_work/" title="pre_work" class="md-nav__link">
       pre_work
     </a>
   </li>
@@ -581,7 +530,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../post_work/" title="post_work" class="md-nav__link">
+    <a href="../../worker/post_work/" title="post_work" class="md-nav__link">
       post_work
     </a>
   </li>
@@ -593,7 +542,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../work/" title="work" class="md-nav__link">
+    <a href="../../worker/work/" title="work" class="md-nav__link">
       work
     </a>
   </li>
@@ -758,10 +707,12 @@
           
           
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5" checked>
     
     <label class="md-nav__link" for="nav-2-5">
       Lock
@@ -785,7 +736,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../lock/acquire/" title="acquire" class="md-nav__link">
+    <a href="../acquire/" title="acquire" class="md-nav__link">
       acquire
     </a>
   </li>
@@ -797,7 +748,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../lock/release/" title="release" class="md-nav__link">
+    <a href="../release/" title="release" class="md-nav__link">
       release
     </a>
   </li>
@@ -809,7 +760,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../lock/is_locked/" title="is_locked" class="md-nav__link">
+    <a href="../is_locked/" title="is_locked" class="md-nav__link">
       is_locked
     </a>
   </li>
@@ -819,11 +770,60 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../../lock/get_ttl/" title="get_ttl" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        get_ttl
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="get_ttl" class="md-nav__link md-nav__link--active">
       get_ttl
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definition" class="md-nav__link">
+    Definition
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -833,7 +833,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../../lock/set_ttl/" title="set_ttl" class="md-nav__link">
+    <a href="../set_ttl/" title="set_ttl" class="md-nav__link">
       set_ttl
     </a>
   </li>
@@ -990,7 +990,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/worker/initialize.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/lock/get_ttl.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -998,29 +998,41 @@
                   
                 
                 
-                <h1 id="worker-initialize">Worker - initialize<a class="headerlink" href="#worker-initialize" title="Permanent link">#</a></h1>
-<p>The <code>initialize</code> method is invoked by the worker once at the moment the worker is spawned by the <code>supervisor</code>. This method allows to implement an initialization of object that will live for the whole lifespan of the worker. A good usage example is to initialize a <code>Logger</code> object or an <code>APM</code> object.</p>
+                <h1 id="worker-get_ttl">Worker - get_ttl<a class="headerlink" href="#worker-get_ttl" title="Permanent link">#</a></h1>
+<p>The <code>get_ttl</code> method return how much time is seconds left until the lock will expire. An expired lock is not necessarily a lockable lock. There might be other worker that are waiting for the lock to expire. It is an idication thoguh, to decide whether we want to wait or skip to the next task. Return the number of seconds until the lock expires, or None if there is no lock or it has already expired.</p>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_ttl</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 </code></pre></div>
 </td></tr></table>
 
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
+<div class="tabbed-set" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Simple</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
+    <span class="n">task</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">my_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">apm_client</span> <span class="o">=</span> <span class="n">elasticapm</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
+    <span class="n">single_access_api_url</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;single_access_api_url&#39;</span><span class="p">]</span>
+
+    <span class="n">lock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">(</span><span class="s1">&#39;single_access_api&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lock</span><span class="o">.</span><span class="n">get_ttl</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">requeue</span><span class="p">()</span>
 </code></pre></div>
 </td></tr></table>
+
+</div>
+</div>
                 
               
               
@@ -1039,7 +1051,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../../handlers/on_starvation/" title="on_starvation" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../is_locked/" title="is_locked" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -1048,19 +1060,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                on_starvation
+                is_locked
               </div>
             </div>
           </a>
         
         
-          <a href="../finalize/" title="finalize" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../set_ttl/" title="set_ttl" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                finalize
+                set_ttl
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
