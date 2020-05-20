@@ -28,7 +28,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install Ubuntu packages
       run: >-
-        sudo apt install librocksdb-dev libsnappy-dev liblz4-dev;
         python -m pip install --user --upgrade -r requirements.txt;
     - name: Test module
       run: >-

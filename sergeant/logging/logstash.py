@@ -85,7 +85,7 @@ class LogstashHandler(
                 message['extra'][attribute_name] = attribute_value
 
         encoded_message = orjson.dumps(
-            obj=message,
+            message,
             default=repr,
         )
 
