@@ -1,7 +1,8 @@
-import logging
-import socket
+import dataclasses
 import datetime
+import logging
 import orjson
+import socket
 import sys
 import traceback
 
@@ -82,6 +83,11 @@ class LogstashHandler(
 
         for attribute_name, attribute_value in record.__dict__.items():
             if attribute_name not in self.logrecord_attributes:
+                if dataclasses.is_dataclass(attribute_value):
+                    attribute_value = dataclasses.asdict(
+                        attribute_value,
+                    )
+
                 message['extra'][attribute_name] = attribute_value
 
         encoded_message = orjson.dumps(
