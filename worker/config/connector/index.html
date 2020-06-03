@@ -999,7 +999,7 @@
                 
                 
                 <h1 id="worker-config-connector">Worker Config - connector<a class="headerlink" href="#worker-config-connector" title="Permanent link">#</a></h1>
-<p>The <code>connector</code> parameter controlls the connection to the broker.</p>
+<p>The <code>connector</code> parameter controlls the connection to the broker. It is important to note that the broker does not guarantee tasks order. Two consecutive tasks can be pushed to the queue and consumed in a different order. If order does matter to your application, use only one instance of broker, either <code>redis</code> or <code>mongo</code> based, and order would be consistent.</p>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -1018,11 +1018,11 @@
 <p>The <code>type</code> parameter defines the type of the connector. The library currently supports the following types:</p>
 <ul>
 <li><code>redis</code> - A Single/Multiple redis instances that are not cluster-connected. The library manages the distribution of tasks on the client side by shuffling the list of connections and push/pull from each of them at different times. Order of tasks is not guaranteed.</li>
-<li><code>mongo</code> - Using a mongodb server to hold the tasks. This is a great option for persistent tasks.</li>
+<li><code>mongo</code> - A Single/Multiple MongoDB instances that are not cluster-connected. Each of the servers must be configured as a replica set. The library would take care of the replica-set instantiation. This is a great option for persistent tasks.</li>
 </ul>
-<p>The <code>param</code> parameter is being passed to the connector directly as <code>**kwargs</code>.</p>
+<p>The <code>params</code> parameter is being passed to the connector directly as <code>**kwargs</code>.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
-<div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">redis-single</label><div class="tabbed-content">
+<div class="tabbed-set" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">redis-single</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -1094,16 +1094,66 @@
 </td></tr></table>
 
 </div>
-<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">mongo</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
+<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">mongo-single</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
     <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mongo&#39;</span><span class="p">,</span>
     <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;mongodb_uri&#39;</span><span class="p">:</span> <span class="s1">&#39;mongodb://localhost:27017/&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">27017</span><span class="p">,</span>
+                <span class="s1">&#39;replica_set&#39;</span><span class="p">:</span> <span class="s1">&#39;replica_set_name&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+
+</div>
+<input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><label for="__tabbed_1_4">mongo-multi</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mongo&#39;</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">27017</span><span class="p">,</span>
+                <span class="s1">&#39;replica_set&#39;</span><span class="p">:</span> <span class="s1">&#39;replica_set_name&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">27018</span><span class="p">,</span>
+                <span class="s1">&#39;replica_set&#39;</span><span class="p">:</span> <span class="s1">&#39;replica_set_name&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">],</span>
     <span class="p">},</span>
 <span class="p">)</span>
 </code></pre></div>
