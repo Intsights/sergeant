@@ -705,7 +705,45 @@ class RedisMultipleServerBrokerTestCase(
                 )
 
 
-class MongoBrokerTestCase(
+class MongoSingleServerConnectorTestCase(
+    BrokerTestCase,
+    unittest.TestCase,
+):
+    order_matters = True
+
+    def setUp(
+        self,
+    ):
+        self.test_brokers = []
+
+        connector_obj = sergeant.connector.mongo.Connector(
+            nodes=[
+                {
+                    'host': 'localhost',
+                    'port': 27017,
+                    'replica_set': 'test_replica_set',
+                },
+            ],
+        )
+
+        compressor_names = list(sergeant.encoder.encoder.Encoder.compressors.keys())
+        compressor_names.append(None)
+        serializer_names = sergeant.encoder.encoder.Encoder.serializers.keys()
+        for compressor_name in compressor_names:
+            for serializer_name in serializer_names:
+                encoder_obj = sergeant.encoder.encoder.Encoder(
+                    compressor_name=compressor_name,
+                    serializer_name=serializer_name,
+                )
+                self.test_brokers.append(
+                    sergeant.broker.Broker(
+                        connector=connector_obj,
+                        encoder=encoder_obj,
+                    )
+                )
+
+
+class MongoMultipleServersConnectorTestCase(
     BrokerTestCase,
     unittest.TestCase,
 ):
@@ -717,7 +755,18 @@ class MongoBrokerTestCase(
         self.test_brokers = []
 
         connector_obj = sergeant.connector.mongo.Connector(
-            mongodb_uri='mongodb://localhost:27017/',
+            nodes=[
+                {
+                    'host': 'localhost',
+                    'port': 27017,
+                    'replica_set': 'test_replica_set',
+                },
+                {
+                    'host': 'localhost',
+                    'port': 27018,
+                    'replica_set': 'test_replica_set',
+                },
+            ],
         )
 
         compressor_names = list(sergeant.encoder.encoder.Encoder.compressors.keys())

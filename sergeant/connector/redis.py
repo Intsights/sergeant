@@ -226,14 +226,14 @@ class Connector(
         self,
         queue_name: str,
     ) -> int:
-        total_len = 0
+        queue_length = 0
 
         for connection in self.connections:
-            total_len += connection.llen(
+            queue_length += connection.llen(
                 name=queue_name,
             )
 
-        return total_len
+        return queue_length
 
     def queue_delete(
         self,

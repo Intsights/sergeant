@@ -456,7 +456,7 @@ class RedisMultipleServersConnectorTestCase(
         )
 
 
-class MongoConnectorTestCase(
+class MongoSingleServerConnectorTestCase(
     ConnectorTestCase,
     unittest.TestCase,
 ):
@@ -464,5 +464,34 @@ class MongoConnectorTestCase(
         self,
     ):
         self.connector = sergeant.connector.mongo.Connector(
-            mongodb_uri='mongodb://localhost:27017/',
+            nodes=[
+                {
+                    'host': 'localhost',
+                    'port': 27017,
+                    'replica_set': 'test_replica_set',
+                },
+            ],
+        )
+
+
+class MongoMultipleServersConnectorTestCase(
+    ConnectorTestCase,
+    unittest.TestCase,
+):
+    def setUp(
+        self,
+    ):
+        self.connector = sergeant.connector.mongo.Connector(
+            nodes=[
+                {
+                    'host': 'localhost',
+                    'port': 27017,
+                    'replica_set': 'test_replica_set',
+                },
+                {
+                    'host': 'localhost',
+                    'port': 27018,
+                    'replica_set': 'test_replica_set',
+                },
+            ],
         )

@@ -133,7 +133,13 @@ class WorkerInitializersTestCase(
             connector=sergeant.config.Connector(
                 type='mongo',
                 params={
-                    'mongodb_uri': 'mongodb://localhost:27017/',
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 27017,
+                            'replica_set': 'test_replica_set',
+                        },
+                    ],
                 },
             ),
         )

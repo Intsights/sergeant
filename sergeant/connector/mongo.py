@@ -1,8 +1,10 @@
-import pymongo
-import typing
+import binascii
 import datetime
-import time
 import math
+import pymongo
+import random
+import time
+import typing
 
 from . import _connector
 
@@ -127,61 +129,102 @@ class Connector(
 
     def __init__(
         self,
-        mongodb_uri: str,
+        nodes: typing.List[typing.Dict[str, typing.Any]],
     ) -> None:
-        self.connection = pymongo.MongoClient(
-            host=mongodb_uri,
-        )
+        self.connections = []
 
-        self.connection.sergeant.task_queue.create_index(
-            keys=[
-                (
-                    'queue_name',
-                    pymongo.DESCENDING,
-                ),
-                (
-                    'priority',
-                    pymongo.ASCENDING,
-                ),
-            ],
-            background=True,
-        )
-        self.connection.sergeant.keys.create_index(
-            keys=[
-                (
-                    'value',
-                    pymongo.ASCENDING,
-                ),
-            ],
-            background=True,
-        )
-        self.connection.sergeant.locks.create_index(
-            keys=[
-                (
-                    'name',
-                    pymongo.ASCENDING,
-                ),
-            ],
-            background=True,
-            unique=True,
-        )
-        self.connection.sergeant.locks.create_index(
-            keys=[
-                (
-                    'expireAt',
-                    pymongo.ASCENDING,
-                ),
-            ],
-            background=True,
-            expireAfterSeconds=0,
-        )
+        for node in nodes:
+            connection = pymongo.MongoClient(
+                host=node['host'],
+                port=node['port'],
+            )
+
+            try:
+                connection.admin.command(
+                    command='replSetInitiate',
+                    value={
+                        '_id': node['replica_set'],
+                        'members': [
+                            {
+                                '_id': 0,
+                                'host': f'{node["host"]}:{node["port"]}',
+                            },
+                        ],
+                    },
+                )
+            except pymongo.errors.OperationFailure:
+                pass
+
+            connection = pymongo.MongoClient(
+                host=node['host'],
+                port=node['port'],
+                replicaSet=node['replica_set'],
+            )
+            self.connections.append(connection)
+
+            connection.sergeant.task_queue.create_index(
+                keys=[
+                    (
+                        'queue_name',
+                        pymongo.DESCENDING,
+                    ),
+                    (
+                        'priority',
+                        pymongo.ASCENDING,
+                    ),
+                ],
+                background=True,
+            )
+            connection.sergeant.keys.create_index(
+                keys=[
+                    (
+                        'value',
+                        pymongo.ASCENDING,
+                    ),
+                ],
+                background=True,
+            )
+            connection.sergeant.locks.create_index(
+                keys=[
+                    (
+                        'name',
+                        pymongo.ASCENDING,
+                    ),
+                ],
+                background=True,
+                unique=True,
+            )
+            connection.sergeant.locks.create_index(
+                keys=[
+                    (
+                        'expireAt',
+                        pymongo.ASCENDING,
+                    ),
+                ],
+                background=True,
+                expireAfterSeconds=0,
+            )
+
+        self.number_of_connections = len(self.connections)
+        self.current_connection_index = random.randint(0, self.number_of_connections - 1)
+
+    @property
+    def next_connection(
+        self,
+    ) -> pymongo.MongoClient:
+        current_connection = self.connections[self.current_connection_index]
+        self.current_connection_index = (self.current_connection_index + 1) % self.number_of_connections
+
+        return current_connection
 
     def key_set(
         self,
         key: str,
         value: bytes,
     ) -> bool:
-        update_one_result = self.connection.sergeant.keys.update_one(
+        key_server_location = binascii.crc32(key.encode()) % self.number_of_connections
+
+        update_one_result = self.connections[key_server_location].sergeant.keys.update_one(
             filter={
                 'key': key,
             },
@@ -202,7 +245,9 @@ class Connector(
         self,
         key: str,
     ) -> typing.Optional[bytes]:
-        document = self.connection.sergeant.keys.find_one(
+        key_server_location = binascii.crc32(key.encode()) % self.number_of_connections
+
+        document = self.connections[key_server_location].sergeant.keys.find_one(
             filter={
                 'key': key,
             },
@@ -216,7 +261,9 @@ class Connector(
         self,
         key: str,
     ) -> bool:
-        delete_one_result = self.connection.sergeant.keys.delete_one(
+        key_server_location = binascii.crc32(key.encode()) % self.number_of_connections
+
+        delete_one_result = self.connections[key_server_location].sergeant.keys.delete_one(
             filter={
                 'key': key,
             },
@@ -228,33 +275,8 @@ class Connector(
         self,
         queue_name: str,
     ) -> typing.Optional[bytes]:
-        document = self.connection.sergeant.task_queue.find_one_and_delete(
-            filter={
-                'queue_name': queue_name,
-            },
-            projection={
-                'value': 1,
-            },
-            sort=[
-                (
-                    'priority',
-                    pymongo.ASCENDING,
-                ),
-            ],
-        )
-        if document:
-            return document['value']
-        else:
-            return None
-
-    def queue_pop_bulk(
-        self,
-        queue_name: str,
-        number_of_items: int,
-    ) -> typing.List[bytes]:
-        documents = []
-        for i in range(number_of_items):
-            document = self.connection.sergeant.task_queue.find_one_and_delete(
+        for i in range(self.number_of_connections):
+            document = self.next_connection.sergeant.task_queue.find_one_and_delete(
                 filter={
                     'queue_name': queue_name,
                 },
@@ -269,11 +291,62 @@ class Connector(
                 ],
             )
             if document:
-                documents.append(document['value'])
-            else:
-                break
+                return document['value']
 
-        return documents
+        return None
+
+    def queue_pop_bulk(
+        self,
+        queue_name: str,
+        number_of_items: int,
+    ) -> typing.List[bytes]:
+        values = []
+        current_count = number_of_items
+
+        for i in range(self.number_of_connections):
+            connection = self.next_connection
+            with connection.start_session() as mongo_session:
+                with mongo_session.start_transaction():
+                    results_cursor = connection.sergeant.task_queue.find(
+                        filter={
+                            'queue_name': queue_name,
+                        },
+                        projection={
+                            '_id': 1,
+                            'value': 1,
+                        },
+                        sort=[
+                            (
+                                'priority',
+                                pymongo.ASCENDING,
+                            ),
+                        ],
+                        session=mongo_session,
+                    ).limit(
+                        limit=current_count,
+                    )
+                    results = list(results_cursor)
+                    connection.sergeant.task_queue.delete_many(
+                        filter={
+                            '_id': {
+                                '$in': [
+                                    result['_id']
+                                    for result in results
+                                ],
+                            },
+                        },
+                        session=mongo_session,
+                    )
+
+            for result in results:
+                values.append(result['value'])
+
+            if len(values) == number_of_items:
+                return values
+
+            current_count = number_of_items - len(values)
+
+        return values
 
     def queue_push(
         self,
@@ -286,7 +359,7 @@ class Connector(
         elif priority == 'NORMAL':
             priority_value = 1
 
-        insert_one_result = self.connection.sergeant.task_queue.insert_one(
+        insert_one_result = self.next_connection.sergeant.task_queue.insert_one(
             document={
                 'queue_name': queue_name,
                 'priority': priority_value,
@@ -307,7 +380,7 @@ class Connector(
         elif priority == 'NORMAL':
             priority_value = 1
 
-        insert_many_result = self.connection.sergeant.task_queue.insert_many(
+        insert_many_result = self.next_connection.sergeant.task_queue.insert_many(
             documents=[
                 {
                     'queue_name': queue_name,
@@ -324,11 +397,14 @@ class Connector(
         self,
         queue_name: str,
     ) -> int:
-        queue_length = self.connection.sergeant.task_queue.count_documents(
-            filter={
-                'queue_name': queue_name,
-            },
-        )
+        queue_length = 0
+
+        for i in range(self.number_of_connections):
+            queue_length += self.next_connection.sergeant.task_queue.count_documents(
+                filter={
+                    'queue_name': queue_name,
+                },
+            )
 
         return queue_length
 
@@ -336,19 +412,26 @@ class Connector(
         self,
         queue_name: str,
     ) -> bool:
-        result = self.connection.sergeant.task_queue.delete_many(
-            filter={
-                'queue_name': queue_name,
-            },
-        )
+        deleted_count = 0
 
-        return result.deleted_count > 0
+        for connection in self.connections:
+            result = connection.sergeant.task_queue.delete_many(
+                filter={
+                    'queue_name': queue_name,
+                },
+            )
+            deleted_count += result.deleted_count
+
+        return deleted_count > 0
 
     def lock(
         self,
         name: str,
     ) -> Lock:
+        key_server_location = binascii.crc32(name.encode()) % self.number_of_connections
+        connection = self.connections[key_server_location]
+
         return Lock(
-            locks_collection=self.connection.sergeant.locks,
+            locks_collection=connection.sergeant.locks,
             name=name,
         )
