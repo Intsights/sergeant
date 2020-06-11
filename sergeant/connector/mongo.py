@@ -173,7 +173,6 @@ class Connector(
                         pymongo.ASCENDING,
                     ),
                 ],
-                background=True,
             )
             connection.sergeant.keys.create_index(
                 keys=[
@@ -182,7 +181,6 @@ class Connector(
                         pymongo.ASCENDING,
                     ),
                 ],
-                background=True,
             )
             connection.sergeant.locks.create_index(
                 keys=[
@@ -191,7 +189,6 @@ class Connector(
                         pymongo.ASCENDING,
                     ),
                 ],
-                background=True,
                 unique=True,
             )
             connection.sergeant.locks.create_index(
@@ -201,7 +198,6 @@ class Connector(
                         pymongo.ASCENDING,
                     ),
                 ],
-                background=True,
                 expireAfterSeconds=0,
             )
 
@@ -325,21 +321,20 @@ class Connector(
                     ).limit(
                         limit=current_count,
                     )
-                    results = list(results_cursor)
+
+                    ids = []
+                    for result in results_cursor:
+                        ids.append(result['_id'])
+                        values.append(result['value'])
+
                     connection.sergeant.task_queue.delete_many(
                         filter={
                             '_id': {
-                                '$in': [
-                                    result['_id']
-                                    for result in results
-                                ],
+                                '$in': ids,
                             },
                         },
                         session=mongo_session,
                     )
-
-            for result in results:
-                values.append(result['value'])
 
             if len(values) == number_of_items:
                 return values
@@ -388,7 +383,8 @@ class Connector(
                     'value': item,
                 }
                 for item in items
-            ]
+            ],
+            ordered=False,
         )
 
         return insert_many_result.acknowledged

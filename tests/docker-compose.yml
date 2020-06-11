@@ -1,0 +1,23 @@
+version: '3.6'
+
+services:
+    redis-node-one:
+        image: redis
+        ports:
+            - 6379:6379
+    redis-node-two:
+        image: redis
+        ports:
+            - 6380:6379
+    mongo-node-one:
+        image: mongo
+        ports:
+            - 27017:27017
+        command: >
+            mongod --port 27017 --replSet test_replica_set --bind_ip_all
+    mongo-node-two:
+        image: mongo
+        ports:
+            - 27018:27018
+        command: >
+            mongod --port 27018 --replSet test_replica_set --bind_ip_all
