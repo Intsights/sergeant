@@ -112,7 +112,7 @@ class Worker:
 
             return None
 
-    def apply_async_one(
+    def push_task(
         self,
         kwargs: typing.Dict[str, typing.Any],
         task_name: typing.Optional[str] = None,
@@ -123,7 +123,7 @@ class Worker:
                 kwargs=kwargs,
             )
 
-            self.broker.apply_async_one(
+            self.broker.push_task(
                 task_name=task_name if task_name else self.config.name,
                 task=task,
                 priority=priority,
@@ -137,7 +137,7 @@ class Worker:
 
             return False
 
-    def apply_async_many(
+    def push_tasks(
         self,
         kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
         task_name: typing.Optional[str] = None,
@@ -151,7 +151,7 @@ class Worker:
                 for kwargs in kwargs_list
             ]
 
-            return self.broker.apply_async_many(
+            return self.broker.push_tasks(
                 task_name=task_name if task_name else self.config.name,
                 tasks=tasks,
                 priority=priority,
@@ -238,7 +238,7 @@ class Worker:
                     tasks_left -= number_of_dequeued_tasks
             except Exception as exception:
                 if tasks:
-                    self.apply_async_many(
+                    self.push_tasks(
                         kwargs_list=[
                             task.kwargs
                             for task in tasks[iterated_tasks + 1:]

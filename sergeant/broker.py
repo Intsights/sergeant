@@ -56,7 +56,7 @@ class Broker:
 
         return True
 
-    def apply_async_one(
+    def push_task(
         self,
         task_name: str,
         task: objects.Task,
@@ -74,7 +74,7 @@ class Broker:
 
         return pushed
 
-    def apply_async_many(
+    def push_tasks(
         self,
         task_name: str,
         tasks: typing.Iterable[objects.Task],
@@ -133,7 +133,7 @@ class Broker:
     ) -> bool:
         task.run_count += 1
 
-        return self.apply_async_one(
+        return self.push_task(
             task_name=task_name,
             task=task,
             priority=priority,
@@ -145,7 +145,7 @@ class Broker:
         task: objects.Task,
         priority='NORMAL',
     ) -> bool:
-        return self.apply_async_one(
+        return self.push_task(
             task_name=task_name,
             task=task,
             priority=priority,

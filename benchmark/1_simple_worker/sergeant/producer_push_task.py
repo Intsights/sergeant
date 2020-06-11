@@ -6,20 +6,20 @@ def main():
     worker.init_broker()
     worker.purge_tasks()
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'phase': 'start',
         },
     )
 
     for i in range(100000):
-        worker.apply_async_one(
+        worker.push_task(
             kwargs={
                 'phase': '',
             },
         )
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'phase': 'end',
         },

@@ -1,6 +1,6 @@
-# Worker - apply_async_one
+# Worker - push_task
 
-The `apply_async_one` method pushes a task onto the queue. Unless `task_name` was specified, uses the current worker name.
+The `push_task` method pushes a task onto the queue. Unless `task_name` was specified, uses the current worker name.
 
 - `kwargs` - A dictionary of serializable arguments to pass to the worker.
 - `task_name` - The name of the task/queue to push to.
@@ -12,7 +12,7 @@ The `apply_async_one` method pushes a task onto the queue. Unless `task_name` wa
 ## Definition
 
 ```python
-def apply_async_one(
+def push_task(
     self,
     kwargs: typing.Dict[str, typing.Any],
     task_name: typing.Optional[str] = None,
@@ -35,7 +35,7 @@ def work(
     if blocked:
         self.purge_tasks()
     else:
-        self.apply_async_one(
+        self.push_task(
             kwargs={
                 'html': response.content,
             },

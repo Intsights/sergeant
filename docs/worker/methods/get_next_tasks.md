@@ -40,7 +40,7 @@ def work(
                 continue
 
             statistics[domain] += 1
-            self.apply_async_one(
+            self.push_task(
                 kwargs={
                     'domain': domain,
                     'params': task.kwargs['params']

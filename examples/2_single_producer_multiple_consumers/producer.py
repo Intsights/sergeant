@@ -12,25 +12,25 @@ def main():
     worker.purge_tasks()
 
     # Produce tasks
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'some_parameter': 'one',
         },
     )
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'some_parameter': 'two',
         },
     )
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'some_parameter': 'three',
         },
     )
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'some_parameter': 'four',
         },

@@ -13,7 +13,7 @@ def main():
 
     # Produce tasks
     for i in range(10):
-        worker.apply_async_one(
+        worker.push_task(
             kwargs={},
         )
 

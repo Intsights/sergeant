@@ -34,7 +34,7 @@ class WorkerBrokerTestCase(
             first=worker.number_of_enqueued_tasks(),
             second=0,
         )
-        worker.apply_async_one(
+        worker.push_task(
             kwargs={
                 'task': 1,
             },
@@ -43,7 +43,7 @@ class WorkerBrokerTestCase(
             first=worker.number_of_enqueued_tasks(),
             second=1,
         )
-        worker.apply_async_many(
+        worker.push_tasks(
             kwargs_list=[
                 {
                     'task': 2,
@@ -84,7 +84,7 @@ class WorkerBrokerTestCase(
             ),
             second=0,
         )
-        worker.apply_async_one(
+        worker.push_task(
             task_name='other_worker',
             kwargs={
                 'task': 1,
@@ -96,7 +96,7 @@ class WorkerBrokerTestCase(
             ),
             second=1,
         )
-        worker.apply_async_many(
+        worker.push_tasks(
             task_name='other_worker',
             kwargs_list=[
                 {

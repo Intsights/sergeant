@@ -32,7 +32,7 @@ class WorkerActionsTestCase(
         worker.init_broker()
 
         task = sergeant.objects.Task()
-        worker.broker.apply_async_one = unittest.mock.MagicMock()
+        worker.broker.push_task = unittest.mock.MagicMock()
 
         with self.assertRaises(
             expected_exception=sergeant.worker.WorkerRetry,
@@ -41,7 +41,7 @@ class WorkerActionsTestCase(
                 task=task,
             )
         self.assertEqual(
-            first=worker.broker.apply_async_one.call_count,
+            first=worker.broker.push_task.call_count,
             second=1,
         )
 
@@ -49,10 +49,10 @@ class WorkerActionsTestCase(
             expected_exception=sergeant.worker.WorkerRetry,
         ):
             worker.retry(
-                task=worker.broker.apply_async_one.call_args[1]['task'],
+                task=worker.broker.push_task.call_args[1]['task'],
             )
         self.assertEqual(
-            first=worker.broker.apply_async_one.call_count,
+            first=worker.broker.push_task.call_count,
             second=2,
         )
 
@@ -60,10 +60,10 @@ class WorkerActionsTestCase(
             expected_exception=sergeant.worker.WorkerRetry,
         ):
             worker.retry(
-                task=worker.broker.apply_async_one.call_args[1]['task'],
+                task=worker.broker.push_task.call_args[1]['task'],
             )
         self.assertEqual(
-            first=worker.broker.apply_async_one.call_count,
+            first=worker.broker.push_task.call_count,
             second=3,
         )
 
@@ -71,10 +71,10 @@ class WorkerActionsTestCase(
             expected_exception=sergeant.worker.WorkerMaxRetries,
         ):
             worker.retry(
-                task=worker.broker.apply_async_one.call_args[1]['task'],
+                task=worker.broker.push_task.call_args[1]['task'],
             )
         self.assertEqual(
-            first=worker.broker.apply_async_one.call_count,
+            first=worker.broker.push_task.call_count,
             second=3,
         )
 
@@ -86,10 +86,10 @@ class WorkerActionsTestCase(
                 expected_exception=sergeant.worker.WorkerRetry,
             ):
                 worker.retry(
-                    task=worker.broker.apply_async_one.call_args[1]['task'],
+                    task=worker.broker.push_task.call_args[1]['task'],
                 )
         self.assertEqual(
-            first=worker.broker.apply_async_one.call_count,
+            first=worker.broker.push_task.call_count,
             second=103,
         )
 
@@ -117,7 +117,7 @@ class WorkerActionsTestCase(
         worker.init_broker()
 
         task = sergeant.objects.Task()
-        worker.broker.apply_async_one = unittest.mock.MagicMock()
+        worker.broker.push_task = unittest.mock.MagicMock()
 
         with self.assertRaises(
             expected_exception=sergeant.worker.WorkerRequeue,
@@ -127,7 +127,7 @@ class WorkerActionsTestCase(
             )
 
         self.assertEqual(
-            first=worker.broker.apply_async_one.call_count,
+            first=worker.broker.push_task.call_count,
             second=1,
         )
 

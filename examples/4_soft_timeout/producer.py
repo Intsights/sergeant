@@ -12,25 +12,25 @@ def main():
     worker.purge_tasks()
 
     # Produce tasks
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'timeout': False,
         },
     )
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'timeout': True,
         },
     )
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'timeout': True,
         },
     )
 
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={
             'timeout': False,
         },

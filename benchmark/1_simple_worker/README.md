@@ -48,8 +48,8 @@ celery -A benchmark.1_simple_worker.celery.consumer worker \
 
 ### Push Tasks
 ```shell
-python3 -m benchmark.1_simple_worker.sergeant.producer_apply_async_one
-python3 -m benchmark.1_simple_worker.sergeant.producer_apply_async_many
+python3 -m benchmark.1_simple_worker.sergeant.producer_push_task
+python3 -m benchmark.1_simple_worker.sergeant.producer_push_tasks
 ```
 
 
@@ -85,8 +85,8 @@ python3 -m benchmark.1_simple_worker.sergeant.supervisor
 | Library  | #Tasks | Function | Time | Improvement Factor |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
 | [celery](https://github.com/celery/celery) | 100,002 | apply_async | 75s | 1.0x |
-| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | apply_async_one | 9.7s | 7.7x |
-| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | apply_async_many | 0.93s | 80.6x |
+| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | push_task | 9.7s | 7.7x |
+| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | push_tasks | 0.93s | 80.6x |
 
 ### Tasks Consuming
 | Library  | #Tasks | Time | Improvement Factor |

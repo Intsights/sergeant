@@ -12,7 +12,7 @@ def main():
     worker.purge_tasks()
 
     # Produce tasks
-    worker.apply_async_one(
+    worker.push_task(
         kwargs={},
     )
 

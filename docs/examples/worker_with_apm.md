@@ -110,7 +110,7 @@ This example demonstrates how to integrate with an APM solution. In this case, `
 
         # Produce tasks
         for i in range(100):
-            worker.apply_async_one(
+            worker.push_task(
                 kwargs={
                     'url': 'https://www.intsights.com/',
                 },

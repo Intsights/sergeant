@@ -25,7 +25,7 @@ class BrokerTestCase:
                 second=0,
             )
             task = sergeant.objects.Task()
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task,
                 priority='NORMAL',
@@ -60,7 +60,7 @@ class BrokerTestCase:
                 second=0,
             )
             task = sergeant.objects.Task()
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task,
                 priority='NORMAL',
@@ -81,7 +81,7 @@ class BrokerTestCase:
                 second=0,
             )
 
-            test_broker.apply_async_many(
+            test_broker.push_tasks(
                 task_name='test_task',
                 tasks=[task] * 100,
                 priority='NORMAL',
@@ -117,7 +117,7 @@ class BrokerTestCase:
             )
 
             task = sergeant.objects.Task()
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task,
                 priority='NORMAL',
@@ -146,7 +146,7 @@ class BrokerTestCase:
                 ),
             )
 
-    def test_apply_async_one(
+    def test_push_task(
         self,
     ):
         for test_broker in self.test_brokers:
@@ -167,17 +167,17 @@ class BrokerTestCase:
                 kwargs={},
             )
 
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_two,
                 priority='NORMAL',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_three,
                 priority='NORMAL',
@@ -241,7 +241,7 @@ class BrokerTestCase:
                     ],
                 )
 
-    def test_apply_async_many(
+    def test_push_tasks(
         self,
     ):
         for test_broker in self.test_brokers:
@@ -258,7 +258,7 @@ class BrokerTestCase:
                     'arg': 'two',
                 },
             )
-            test_broker.apply_async_many(
+            test_broker.push_tasks(
                 task_name='test_task_one',
                 tasks=[
                     task_one,
@@ -326,42 +326,42 @@ class BrokerTestCase:
                     'priority': 'HIGH',
                 },
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_NORMAL_priority,
                 priority='NORMAL',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
             )
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_HIGH_priority,
                 priority='HIGH',
@@ -419,7 +419,7 @@ class BrokerTestCase:
                     'arg': 'two',
                 },
             )
-            test_broker.apply_async_many(
+            test_broker.push_tasks(
                 task_name='test_task_one',
                 tasks=[
                     task_one,
@@ -451,7 +451,7 @@ class BrokerTestCase:
                 kwargs={},
             )
             self.assertEqual(task_one.run_count, 0)
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_one,
                 priority='NORMAL',
@@ -485,7 +485,7 @@ class BrokerTestCase:
                 kwargs={},
             )
             self.assertEqual(task_one.run_count, 0)
-            test_broker.apply_async_one(
+            test_broker.push_task(
                 task_name='test_task',
                 task=task_one,
                 priority='NORMAL',

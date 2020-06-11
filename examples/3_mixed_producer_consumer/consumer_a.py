@@ -34,7 +34,7 @@ class Worker(
         task,
     ):
         self.logger.info(f'I am consumer_a. Got parameter: {task.kwargs["some_parameter"]}')
-        self.apply_async_one(
+        self.push_task(
             task_name='consumer_b',
             kwargs={
                 'some_parameter': 'hello from consumer a',

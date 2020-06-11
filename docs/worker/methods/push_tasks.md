@@ -1,6 +1,6 @@
-# Worker - apply_async_many
+# Worker - push_tasks
 
-The `apply_async_many` method pushes multiple tasks onto the queue in a bulk insert. Unless `task_name` was specified, uses the current worker name. This method is similar to `apply_async_one` except it gets a list of `kwargs` and pushes much much faster.
+The `push_tasks` method pushes multiple tasks onto the queue in a bulk insert. Unless `task_name` was specified, uses the current worker name. This method is similar to `push_task` except it gets a list of `kwargs` and pushes much much faster.
 
 - `kwargs_list` - A list of dictionaries of serializable arguments to pass to the worker.
 - `task_name` - The name of the task/queue to push to.
@@ -12,7 +12,7 @@ The `apply_async_many` method pushes multiple tasks onto the queue in a bulk ins
 ## Definition
 
 ```python
-def apply_async_many(
+def push_tasks(
     self,
     kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
     task_name: typing.Optional[str] = None,
@@ -36,7 +36,7 @@ def work(
         self.purge_tasks()
 
     urls = self.extract_urls(response.content)
-    self.apply_async_many(
+    self.push_tasks(
         kwargs_list=[
             {
                 'url': url,
