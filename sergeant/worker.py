@@ -169,7 +169,7 @@ class Worker:
         task_name: typing.Optional[str] = None,
     ) -> typing.List[objects.Task]:
         try:
-            return self.broker.get_tasks(
+            return self.broker.pop_tasks(
                 task_name=task_name if task_name else self.config.name,
                 number_of_tasks=number_of_tasks,
             )

@@ -97,7 +97,7 @@ class Broker:
 
         return True
 
-    def get_tasks(
+    def pop_tasks(
         self,
         task_name: str,
         number_of_tasks: int,

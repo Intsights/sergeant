@@ -182,19 +182,19 @@ class BrokerTestCase:
                 task=task_three,
                 priority='NORMAL',
             )
-            task_one_test = test_broker.get_tasks(
+            task_one_test = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
-            task_two_test = test_broker.get_tasks(
+            task_two_test = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
-            task_three_test = test_broker.get_tasks(
+            task_three_test = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
-            empty_list = test_broker.get_tasks(
+            empty_list = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )
@@ -266,11 +266,11 @@ class BrokerTestCase:
                 ],
                 priority='NORMAL',
             )
-            task_one_test = test_broker.get_tasks(
+            task_one_test = test_broker.pop_tasks(
                 task_name='test_task_one',
                 number_of_tasks=1,
             )[0]
-            task_two_test = test_broker.get_tasks(
+            task_two_test = test_broker.pop_tasks(
                 task_name='test_task_one',
                 number_of_tasks=1,
             )[0]
@@ -373,23 +373,23 @@ class BrokerTestCase:
                 second=8,
             )
 
-            high_priority_tasks = test_broker.get_tasks(
+            high_priority_tasks = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            high_priority_tasks += test_broker.get_tasks(
+            high_priority_tasks += test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            low_priority_tasks = test_broker.get_tasks(
+            low_priority_tasks = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            low_priority_tasks += test_broker.get_tasks(
+            low_priority_tasks += test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
-            low_priority_tasks += test_broker.get_tasks(
+            low_priority_tasks += test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=2,
             )
@@ -402,7 +402,7 @@ class BrokerTestCase:
                 second=[task.kwargs['priority'] for task in low_priority_tasks],
             )
 
-    def test_get_tasks(
+    def test_pop_tasks(
         self,
     ):
         for test_broker in self.test_brokers:
@@ -427,7 +427,7 @@ class BrokerTestCase:
                 ],
                 priority='NORMAL',
             )
-            tasks = test_broker.get_tasks(
+            tasks = test_broker.pop_tasks(
                 task_name='test_task_one',
                 number_of_tasks=3,
             )
@@ -456,7 +456,7 @@ class BrokerTestCase:
                 task=task_one,
                 priority='NORMAL',
             )
-            task_one = test_broker.get_tasks(
+            task_one = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
@@ -465,7 +465,7 @@ class BrokerTestCase:
                 task_name='test_task',
                 task=task_one,
             )
-            task_one = test_broker.get_tasks(
+            task_one = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
@@ -490,7 +490,7 @@ class BrokerTestCase:
                 task=task_one,
                 priority='NORMAL',
             )
-            task_one = test_broker.get_tasks(
+            task_one = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
@@ -499,7 +499,7 @@ class BrokerTestCase:
                 task_name='test_task',
                 task=task_one,
             )
-            task_one = test_broker.get_tasks(
+            task_one = test_broker.pop_tasks(
                 task_name='test_task',
                 number_of_tasks=1,
             )[0]
