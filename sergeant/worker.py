@@ -228,25 +228,22 @@ class Worker:
                 time_with_no_tasks = 0
 
             try:
-                iterated_tasks = 0
-                for task in tasks:
+                for iterated_tasks, task in enumerate(tasks):
                     yield task
-
-                    iterated_tasks += 1
-
-                if not run_forever:
-                    tasks_left -= number_of_dequeued_tasks
             except Exception as exception:
                 if tasks:
                     self.push_tasks(
                         kwargs_list=[
                             task.kwargs
-                            for task in tasks[iterated_tasks + 1:]
+                            for task in tasks[iterated_tasks:]
                         ],
                         priority='HIGH',
                     )
 
                 raise exception
+
+            if not run_forever:
+                tasks_left -= number_of_dequeued_tasks
 
     def work_loop(
         self,

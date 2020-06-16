@@ -34,28 +34,6 @@ class Broker:
 
         return number_of_enqueued_tasks
 
-    def wait_queue_empty(
-        self,
-        task_name: str,
-        timeout: float = 0,
-        sample_interval: float = 1.0,
-    ) -> bool:
-        remaining_time = timeout
-
-        not_empty = True
-        while not_empty:
-            if timeout and remaining_time <= 0:
-                return False
-
-            not_empty = self.number_of_enqueued_tasks(
-                task_name=task_name,
-            ) != 0
-
-            time.sleep(sample_interval)
-            remaining_time -= sample_interval
-
-        return True
-
     def push_task(
         self,
         task_name: str,

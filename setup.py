@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='sergeant',
-    version='0.14.2',
+    version='0.14.3',
     author='Gal Ben David',
     author_email='gal@intsights.com',
     url='https://github.com/Intsights/sergeant',
