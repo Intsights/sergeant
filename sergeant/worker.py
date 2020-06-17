@@ -100,10 +100,12 @@ class Worker:
     def number_of_enqueued_tasks(
         self,
         task_name: typing.Optional[str] = None,
+        consumable_only: bool = False,
     ) -> typing.Optional[int]:
         try:
             return self.broker.number_of_enqueued_tasks(
                 task_name=task_name if task_name else self.config.name,
+                consumable_only=consumable_only,
             )
         except Exception as exception:
             self.logger.error(
@@ -117,6 +119,7 @@ class Worker:
         kwargs: typing.Dict[str, typing.Any],
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         try:
             task = objects.Task(
@@ -127,6 +130,7 @@ class Worker:
                 task_name=task_name if task_name else self.config.name,
                 task=task,
                 priority=priority,
+                consumable_from=consumable_from,
             )
 
             return True
@@ -142,6 +146,7 @@ class Worker:
         kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         try:
             tasks = [
@@ -155,6 +160,7 @@ class Worker:
                 task_name=task_name if task_name else self.config.name,
                 tasks=tasks,
                 priority=priority,
+                consumable_from=consumable_from,
             )
         except Exception as exception:
             self.logger.error(
@@ -309,6 +315,7 @@ class Worker:
         self,
         task: objects.Task,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> None:
         if self.config.max_retries > 0 and self.config.max_retries <= task.run_count:
             raise WorkerMaxRetries()
@@ -317,6 +324,7 @@ class Worker:
                 task_name=self.config.name,
                 task=task,
                 priority=priority,
+                consumable_from=consumable_from,
             )
 
             raise WorkerRetry()
@@ -325,11 +333,13 @@ class Worker:
         self,
         task: objects.Task,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> None:
         self.broker.requeue(
             task_name=self.config.name,
             task=task,
             priority=priority,
+            consumable_from=consumable_from,
         )
 
         raise WorkerRequeue()

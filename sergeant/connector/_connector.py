@@ -72,6 +72,7 @@ class Connector:
         queue_name: str,
         item: bytes,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         raise NotImplementedError()
 
@@ -80,12 +81,14 @@ class Connector:
         queue_name: str,
         items: typing.Iterable[bytes],
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         raise NotImplementedError()
 
     def queue_length(
         self,
         queue_name: str,
+        consumable_only: bool,
     ) -> int:
         raise NotImplementedError()
 

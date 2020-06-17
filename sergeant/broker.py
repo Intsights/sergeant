@@ -1,5 +1,4 @@
 import typing
-import time
 
 from . import objects
 
@@ -27,9 +26,11 @@ class Broker:
     def number_of_enqueued_tasks(
         self,
         task_name: str,
+        consumable_only: bool,
     ) -> int:
         number_of_enqueued_tasks = self.connector.queue_length(
             queue_name=task_name,
+            consumable_only=consumable_only,
         )
 
         return number_of_enqueued_tasks
@@ -39,6 +40,7 @@ class Broker:
         task_name: str,
         task: objects.Task,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         encoded_item = self.encoder.encode(
             data=task,
@@ -48,6 +50,7 @@ class Broker:
             queue_name=task_name,
             item=encoded_item,
             priority=priority,
+            consumable_from=consumable_from,
         )
 
         return pushed
@@ -57,6 +60,7 @@ class Broker:
         task_name: str,
         tasks: typing.Iterable[objects.Task],
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         encoded_tasks = []
         for task in tasks:
@@ -71,6 +75,7 @@ class Broker:
                 queue_name=task_name,
                 items=encoded_tasks,
                 priority=priority,
+                consumable_from=consumable_from,
             )
 
         return True
@@ -108,6 +113,7 @@ class Broker:
         task_name: str,
         task: objects.Task,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         task.run_count += 1
 
@@ -115,6 +121,7 @@ class Broker:
             task_name=task_name,
             task=task,
             priority=priority,
+            consumable_from=consumable_from,
         )
 
     def requeue(
@@ -122,11 +129,13 @@ class Broker:
         task_name: str,
         task: objects.Task,
         priority='NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
         return self.push_task(
             task_name=task_name,
             task=task,
             priority=priority,
+            consumable_from=consumable_from,
         )
 
     def delete_key(

@@ -1,6 +1,6 @@
 # Worker - requeue
 
-The `requeue` method pushes back the task to the queue without increasing the run count by one. The way it works is by raising a `WorkerRequeue` exception which cause the worker to interrupt. It means you should call `requeue` only if you have nothing more to do. Calling `requeue` and catching the exception will not interrupt the worker but the task would be pushed back to the queue anyway. `requeue` makes the task to be considered as a failed task.
+The `requeue` method pushes back the task to the queue without increasing the run count by one. The way it works is by raising a `WorkerRequeue` exception which cause the worker to interrupt. It means you should call `requeue` only if you have nothing more to do. Calling `requeue` and catching the exception will not interrupt the worker but the task would be pushed back to the queue anyway. `requeue` makes the task to be considered as a failed task. `consumable_from` is a timestamp of when the task should be considered as a consumable task and can be popped from the queue.
 
 ???+ warning "Requeue from handlers"
     One should never call `requeue` from the following handlers:
@@ -18,6 +18,7 @@ def requeue(
     self,
     task: sergeant.objects.Task,
     priority: str = 'NORMAL',
+    consumable_from: int = 0,
 ) -> None
 ```
 

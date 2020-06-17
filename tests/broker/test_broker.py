@@ -27,6 +27,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
+                consumable_only=True,
             ),
             second=0,
         )
@@ -39,6 +40,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
+                consumable_only=True,
             ),
             second=1,
         )
@@ -48,6 +50,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
+                consumable_only=True,
             ),
             second=0,
         )
@@ -61,15 +64,25 @@ class BrokerTestCase:
             task_name='test_task',
             task=self.tasks[1],
             priority='NORMAL',
+            consumable_from=int(time.time()),
         )
         self.test_broker.push_task(
             task_name='test_task',
             task=self.tasks[2],
             priority='NORMAL',
+            consumable_from=int(time.time()) + 100,
         )
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
+                consumable_only=True,
+            ),
+            second=2,
+        )
+        self.assertEqual(
+            first=self.test_broker.number_of_enqueued_tasks(
+                task_name='test_task',
+                consumable_only=False,
             ),
             second=3,
         )
@@ -79,6 +92,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
+                consumable_only=False,
             ),
             second=0,
         )
@@ -97,25 +111,37 @@ class BrokerTestCase:
             task_name='test_task',
             tasks=self.tasks[10:15],
             priority='NORMAL',
+            consumable_from=int(time.time()),
         )
         self.test_broker.push_tasks(
             task_name='test_task',
             tasks=self.tasks[15:20],
             priority='NORMAL',
+            consumable_from=int(time.time()),
         )
         self.test_broker.push_tasks(
             task_name='test_task',
             tasks=self.tasks[20:25],
             priority='NORMAL',
+            consumable_from=int(time.time()) + 100,
         )
         self.test_broker.push_tasks(
             task_name='test_task',
             tasks=self.tasks[25:30],
             priority='NORMAL',
+            consumable_from=int(time.time()) + 100,
         )
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
+                consumable_only=True,
+            ),
+            second=20,
+        )
+        self.assertEqual(
+            first=self.test_broker.number_of_enqueued_tasks(
+                task_name='test_task',
+                consumable_only=False,
             ),
             second=30,
         )
@@ -125,6 +151,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
+                consumable_only=False,
             ),
             second=0,
         )
@@ -141,6 +168,7 @@ class BrokerTestCase:
                 task_name='test_task',
                 task=self.tasks[3],
                 priority='NORMAL',
+                consumable_from=int(time.time()),
             )
             test_broker.push_task(
                 task_name='test_task',
@@ -182,13 +210,8 @@ class BrokerTestCase:
                 first=empty_list,
                 second=[],
             )
-            self.assertEqual(
-                first=[
-                    self.tasks[3],
-                    self.tasks[0],
-                    self.tasks[1],
-                    self.tasks[2],
-                ],
+            self.assertCountEqual(
+                first=self.tasks[:4],
                 second=[
                     task_one_test,
                     task_two_test,
@@ -208,6 +231,24 @@ class BrokerTestCase:
             test_broker.push_tasks(
                 task_name='test_task_one',
                 tasks=[
+                    self.tasks[4],
+                    self.tasks[5],
+                ],
+                priority='NORMAL',
+                consumable_from=int(time.time()),
+            )
+            test_broker.push_tasks(
+                task_name='test_task_one',
+                tasks=[
+                    self.tasks[6],
+                    self.tasks[7],
+                ],
+                priority='NORMAL',
+                consumable_from=int(time.time()),
+            )
+            test_broker.push_tasks(
+                task_name='test_task_one',
+                tasks=[
                     self.tasks[0],
                     self.tasks[1],
                 ],
@@ -218,22 +259,6 @@ class BrokerTestCase:
                 tasks=[
                     self.tasks[2],
                     self.tasks[3],
-                ],
-                priority='NORMAL',
-            )
-            test_broker.push_tasks(
-                task_name='test_task_one',
-                tasks=[
-                    self.tasks[4],
-                    self.tasks[5],
-                ],
-                priority='NORMAL',
-            )
-            test_broker.push_tasks(
-                task_name='test_task_one',
-                tasks=[
-                    self.tasks[6],
-                    self.tasks[7],
                 ],
                 priority='NORMAL',
             )
@@ -255,8 +280,12 @@ class BrokerTestCase:
             )
 
             self.assertEqual(
-                first=self.tasks[0:8],
-                second=tasks_one_test + tasks_two_test + tasks_three_test + tasks_four_test,
+                first=self.tasks[:4],
+                second=tasks_one_test + tasks_two_test,
+            )
+            self.assertCountEqual(
+                first=self.tasks[4:8],
+                second=tasks_three_test + tasks_four_test,
             )
 
     def test_queue_priority(
@@ -319,6 +348,7 @@ class BrokerTestCase:
             self.assertEqual(
                 first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
+                    consumable_only=True,
                 ),
                 second=8,
             )

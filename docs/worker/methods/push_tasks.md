@@ -7,6 +7,7 @@ The `push_tasks` method pushes multiple tasks onto the queue in a bulk insert. U
 - `priority`:
     - `NORMAL` - The tasks will be pushed on the top of the queue. Will be pulled last. [FIFO]
     - `HIGH` - The tasks will be pushed to the bottom of the queue. Will be pulled first. [LIFO]
+- `consumable_from` - Timestamp of when the task should be considered as a consumable task and can be popped from the queue.
 
 
 ## Definition
@@ -17,6 +18,7 @@ def push_tasks(
     kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
     task_name: typing.Optional[str] = None,
     priority: str = 'NORMAL',
+    consumable_from: int = 0,
 ) -> bool
 ```
 
@@ -33,7 +35,10 @@ def work(
     response = requests.get(url_to_crawl)
     blocked = self.are_we_blocked(response)
     if blocked:
-        self.purge_tasks()
+        self.retry(
+            task=task,
+            consumable_from=int(time.time() + 60 * 30),
+        )
 
     urls = self.extract_urls(response.content)
     self.push_tasks(

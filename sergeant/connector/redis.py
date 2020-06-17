@@ -92,6 +92,154 @@ class Lock(
         self.release()
 
 
+class QueueRedis(
+    redis.Redis,
+):
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self.queue_length_script = self.register_script(
+            script='''
+                local number_of_items = 0
+
+                number_of_items = number_of_items + redis.call("LLEN", KEYS[1])
+                if ARGV[1] == nil then
+                    number_of_items = number_of_items + redis.call("ZCARD", KEYS[1] .. ".delayed")
+                else
+                    number_of_items = number_of_items + redis.call("ZCOUNT", KEYS[1] .. ".delayed", 0, ARGV[1])
+                end
+
+                return number_of_items
+            ''',
+        )
+        self.queue_delete_script = self.register_script(
+            script='''
+                local deleted_items = 0
+
+                deleted_items = deleted_items + redis.call("DEL", KEYS[1])
+                deleted_items = deleted_items + redis.call("DEL", KEYS[1] .. ".delayed")
+
+                return deleted_items
+            ''',
+        )
+        self.queue_pop_script = self.register_script(
+            script='''
+                local popped_item = redis.call("LPOP", KEYS[1])
+                if popped_item then
+                    return popped_item
+                end
+
+                local zpopped_item = redis.call("ZPOPMIN", KEYS[1] .. ".delayed", 1)
+                if next(zpopped_item) == nil then
+                    return nil
+                end
+
+                if tonumber(zpopped_item[2]) <= tonumber(ARGV[1]) then
+                    return zpopped_item[1]
+                else
+                    redis.call("ZADD", KEYS[1] .. ".delayed", zpopped_item[2], zpopped_item[1])
+
+                    return nil
+                end
+            ''',
+        )
+        self.queue_pop_bulk_script = self.register_script(
+            script='''
+                local number_of_items_to_pop = tonumber(ARGV[1])
+                local popped_items = redis.call("LRANGE", KEYS[1], 0, number_of_items_to_pop - 1)
+                local number_of_popped_items = table.getn(popped_items)
+
+                if number_of_popped_items > 0 then
+                    redis.call("LTRIM", KEYS[1], number_of_popped_items, -1)
+                end
+
+                if number_of_items_to_pop == number_of_popped_items then
+                    return popped_items
+                end
+
+                number_of_items_to_pop = number_of_items_to_pop - number_of_popped_items
+
+                local zpopped_items = redis.call("ZRANGEBYSCORE", KEYS[1] .. ".delayed", 0, ARGV[2], "LIMIT", 0, number_of_items_to_pop)
+
+                local zset_number_of_elements = table.getn(zpopped_items)
+                if zset_number_of_elements > 0 then
+                    redis.call("ZREMRANGEBYRANK", KEYS[1] .. ".delayed", 0, zset_number_of_elements - 1)
+                end
+
+                for k,v in ipairs(zpopped_items) do
+                    table.insert(popped_items, v)
+                end
+
+                return popped_items
+            ''',
+        )
+
+    def queue_length(
+        self,
+        queue_name: str,
+        consumable_only: bool,
+    ):
+        if consumable_only:
+            return self.queue_length_script(
+                keys=[
+                    queue_name,
+                ],
+                args=[
+                    int(time.time()),
+                ],
+            )
+        else:
+            return self.queue_length_script(
+                keys=[
+                    queue_name,
+                ],
+                args=[],
+            )
+
+    def queue_delete(
+        self,
+        queue_name: str,
+    ):
+        return self.queue_delete_script(
+            keys=[
+                queue_name,
+            ],
+            args=[],
+        )
+
+    def queue_pop(
+        self,
+        queue_name: str,
+    ):
+        return self.queue_pop_script(
+            keys=[
+                queue_name,
+            ],
+            args=[
+                int(time.time()),
+            ],
+        )
+
+    def queue_pop_bulk(
+        self,
+        queue_name: str,
+        number_of_items: int,
+    ):
+        return self.queue_pop_bulk_script(
+            keys=[
+                queue_name,
+            ],
+            args=[
+                number_of_items,
+                int(time.time()),
+            ],
+        )
+
+
 class Connector(
     _connector.Connector,
 ):
@@ -102,7 +250,7 @@ class Connector(
         nodes: typing.List[typing.Dict[str, typing.Any]],
     ) -> None:
         self.connections = [
-            redis.Redis(
+            QueueRedis(
                 host=node['host'],
                 port=node['port'],
                 password=node['password'],
@@ -120,7 +268,7 @@ class Connector(
     @property
     def next_connection(
         self,
-    ) -> redis.Redis:
+    ) -> QueueRedis:
         current_connection = self.connections[self.current_connection_index]
         self.current_connection_index = (self.current_connection_index + 1) % self.number_of_connections
 
@@ -163,11 +311,11 @@ class Connector(
         queue_name: str,
     ) -> typing.Optional[bytes]:
         for i in range(self.number_of_connections):
-            value = self.next_connection.lpop(
-                name=queue_name,
+            item = self.next_connection.queue_pop(
+                queue_name=queue_name,
             )
-            if value:
-                return value
+            if item:
+                return item
 
         return None
 
@@ -176,36 +324,41 @@ class Connector(
         queue_name: str,
         number_of_items: int,
     ) -> typing.List[bytes]:
-        values = []
+        items = []
         current_count = number_of_items
 
         for i in range(self.number_of_connections):
-            pipeline = self.next_connection.pipeline()
+            items += self.next_connection.queue_pop_bulk(
+                queue_name=queue_name,
+                number_of_items=current_count,
+            )
+            if len(items) == number_of_items:
+                return items
 
-            pipeline.lrange(queue_name, 0, current_count - 1)
-            pipeline.ltrim(queue_name, current_count, -1)
+            current_count = number_of_items - len(items)
 
-            value = pipeline.execute()
-
-            values += value[0]
-
-            if len(values) == number_of_items:
-                return values
-
-            current_count = number_of_items - len(values)
-
-        return values
+        return items
 
     def queue_push(
         self,
         queue_name: str,
         item: bytes,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
-        if priority == 'HIGH':
-            self.next_connection.lpush(queue_name, item)
+        if consumable_from == 0:
+            if priority == 'HIGH':
+                self.next_connection.lpush(queue_name, item)
+            else:
+                self.next_connection.rpush(queue_name, item)
         else:
-            self.next_connection.rpush(queue_name, item)
+            self.next_connection.zadd(
+                name=f'{queue_name}.delayed',
+                mapping={
+                    item: consumable_from,
+                },
+                nx=True,
+            )
 
         return True
 
@@ -214,23 +367,36 @@ class Connector(
         queue_name: str,
         items: typing.Iterable[bytes],
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
-        if priority == 'HIGH':
-            self.next_connection.lpush(queue_name, *items)
+        if consumable_from == 0:
+            if priority == 'HIGH':
+                self.next_connection.lpush(queue_name, *items)
+            else:
+                self.next_connection.rpush(queue_name, *items)
         else:
-            self.next_connection.rpush(queue_name, *items)
+            self.next_connection.zadd(
+                name=f'{queue_name}.delayed',
+                mapping={
+                    item: consumable_from
+                    for item in items
+                },
+                nx=True,
+            )
 
         return True
 
     def queue_length(
         self,
         queue_name: str,
+        consumable_only: bool,
     ) -> int:
         queue_length = 0
 
         for connection in self.connections:
-            queue_length += connection.llen(
-                name=queue_name,
+            queue_length += connection.queue_length(
+                queue_name=queue_name,
+                consumable_only=consumable_only,
             )
 
         return queue_length
@@ -242,7 +408,9 @@ class Connector(
         deleted_count = 0
 
         for connection in self.connections:
-            deleted_count += connection.delete(queue_name)
+            deleted_count += connection.queue_delete(
+                queue_name=queue_name,
+            )
 
         return deleted_count > 0
 

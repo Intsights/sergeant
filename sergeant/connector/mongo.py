@@ -166,7 +166,7 @@ class Connector(
                 keys=[
                     (
                         'queue_name',
-                        pymongo.DESCENDING,
+                        pymongo.ASCENDING,
                     ),
                     (
                         'priority',
@@ -275,6 +275,9 @@ class Connector(
             document = self.next_connection.sergeant.task_queue.find_one_and_delete(
                 filter={
                     'queue_name': queue_name,
+                    'priority': {
+                        '$lte': int(time.time()),
+                    },
                 },
                 projection={
                     'value': 1,
@@ -306,6 +309,9 @@ class Connector(
                     results_cursor = connection.sergeant.task_queue.find(
                         filter={
                             'queue_name': queue_name,
+                            'priority': {
+                                '$lte': int(time.time()),
+                            },
                         },
                         projection={
                             '_id': 1,
@@ -348,8 +354,11 @@ class Connector(
         queue_name: str,
         item: bytes,
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
-        if priority == 'HIGH':
+        if consumable_from != 0:
+            priority_value = consumable_from
+        elif priority == 'HIGH':
             priority_value = 0
         elif priority == 'NORMAL':
             priority_value = 1
@@ -369,8 +378,11 @@ class Connector(
         queue_name: str,
         items: typing.Iterable[bytes],
         priority: str = 'NORMAL',
+        consumable_from: int = 0,
     ) -> bool:
-        if priority == 'HIGH':
+        if consumable_from != 0:
+            priority_value = consumable_from
+        elif priority == 'HIGH':
             priority_value = 0
         elif priority == 'NORMAL':
             priority_value = 1
@@ -392,15 +404,26 @@ class Connector(
     def queue_length(
         self,
         queue_name: str,
+        consumable_only: bool,
     ) -> int:
         queue_length = 0
 
         for i in range(self.number_of_connections):
-            queue_length += self.next_connection.sergeant.task_queue.count_documents(
-                filter={
-                    'queue_name': queue_name,
-                },
-            )
+            if consumable_only:
+                queue_length += self.next_connection.sergeant.task_queue.count_documents(
+                    filter={
+                        'queue_name': queue_name,
+                        'priority': {
+                            '$lte': int(time.time()),
+                        },
+                    },
+                )
+            else:
+                queue_length += self.next_connection.sergeant.task_queue.count_documents(
+                    filter={
+                        'queue_name': queue_name,
+                    },
+                )
 
         return queue_length
 

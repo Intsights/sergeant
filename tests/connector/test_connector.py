@@ -1,3 +1,4 @@
+import time
 import unittest
 import unittest.mock
 
@@ -89,6 +90,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
+            consumable_only=True,
         )
         self.assertEqual(
             first=queue_length,
@@ -102,6 +104,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
+            consumable_only=True,
         )
         self.assertEqual(
             first=queue_length,
@@ -112,6 +115,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
+            consumable_only=True,
         )
         self.assertEqual(
             first=queue_length,
@@ -202,6 +206,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
+            consumable_only=True,
         )
         self.assertEqual(
             first=queue_length,
@@ -213,6 +218,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
+            consumable_only=True,
         )
         self.assertEqual(
             first=queue_length,
@@ -409,6 +415,208 @@ class ConnectorTestCase:
         self.assertEqual(
             first=lock.get_ttl(),
             second=30,
+        )
+
+    def test_queue_consumable(
+        self,
+    ):
+        self.connector.queue_delete(
+            queue_name=self.test_queue_name,
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=True,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=0,
+        )
+
+        self.connector.queue_push(
+            queue_name=self.test_queue_name,
+            item=self.test_queue_item,
+            priority='NORMAL',
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=True,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=1,
+        )
+
+        self.connector.queue_push(
+            queue_name=self.test_queue_name,
+            item=self.test_queue_item + b'1',
+            priority='NORMAL',
+            consumable_from=int(time.time()),
+        )
+        self.connector.queue_push(
+            queue_name=self.test_queue_name,
+            item=self.test_queue_item + b'2',
+            priority='NORMAL',
+            consumable_from=int(time.time() + 100),
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=True,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=2,
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=False,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=3,
+        )
+
+        self.connector.queue_delete(
+            queue_name=self.test_queue_name,
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=True,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=0,
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=False,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=0,
+        )
+
+        item = self.connector.queue_pop(
+            queue_name=self.test_queue_name,
+        )
+        self.assertIsNone(
+            obj=item,
+        )
+
+        self.connector.queue_push(
+            queue_name=self.test_queue_name,
+            item=self.test_queue_item + b'1',
+            priority='NORMAL',
+            consumable_from=int(time.time()),
+        )
+        self.connector.queue_push(
+            queue_name=self.test_queue_name,
+            item=self.test_queue_item + b'2',
+            priority='NORMAL',
+            consumable_from=int(time.time() + 100),
+        )
+        item = self.connector.queue_pop(
+            queue_name=self.test_queue_name,
+        )
+        self.assertEqual(
+            first=item,
+            second=self.test_queue_item + b'1',
+        )
+        item = self.connector.queue_pop(
+            queue_name=self.test_queue_name,
+        )
+        self.assertIsNone(
+            obj=item,
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=True,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=0,
+        )
+        queue_length = self.connector.queue_length(
+            queue_name=self.test_queue_name,
+            consumable_only=False,
+        )
+        self.assertEqual(
+            first=queue_length,
+            second=1,
+        )
+
+        for item in self.test_queue_items:
+            self.connector.queue_push(
+                queue_name=self.test_queue_name,
+                item=item,
+                priority='NORMAL',
+                consumable_from=int(time.time()),
+            )
+
+        items = []
+        for i in range(len(self.test_queue_items)):
+            item = self.connector.queue_pop(
+                queue_name=self.test_queue_name,
+            )
+            items.append(item)
+
+        self.assertCountEqual(
+            first=items,
+            second=self.test_queue_items,
+        )
+
+        self.connector.queue_push_bulk(
+            queue_name=self.test_queue_name,
+            items=self.test_queue_items,
+            priority='NORMAL',
+            consumable_from=int(time.time()),
+        )
+        items = []
+        for i in range(len(self.test_queue_items)):
+            item = self.connector.queue_pop(
+                queue_name=self.test_queue_name,
+            )
+            items.append(item)
+
+        self.assertCountEqual(
+            first=items,
+            second=self.test_queue_items,
+        )
+
+        self.connector.queue_push_bulk(
+            queue_name=self.test_queue_name,
+            items=self.test_queue_items,
+            priority='NORMAL',
+            consumable_from=int(time.time()),
+        )
+        items = self.connector.queue_pop_bulk(
+            queue_name=self.test_queue_name,
+            number_of_items=len(self.test_queue_items),
+        )
+        self.assertCountEqual(
+            first=items,
+            second=self.test_queue_items,
+        )
+
+        pushed_items = []
+        for i in range(10):
+            items_to_push = [
+                f'item_value_{i}_{j}'.encode()
+                for j in range(1000)
+            ]
+            self.connector.queue_push_bulk(
+                queue_name=self.test_queue_name,
+                items=items_to_push,
+                priority='NORMAL'
+            )
+            pushed_items += items_to_push
+
+        items = self.connector.queue_pop_bulk(
+            queue_name=self.test_queue_name,
+            number_of_items=len(pushed_items),
+        )
+        self.assertCountEqual(
+            first=items,
+            second=pushed_items,
         )
 
 
