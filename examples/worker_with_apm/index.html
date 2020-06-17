@@ -630,8 +630,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../worker/methods/apply_async_one/" title="apply_async_one" class="md-nav__link">
-      apply_async_one
+    <a href="../../worker/methods/push_task/" title="push_task" class="md-nav__link">
+      push_task
     </a>
   </li>
 
@@ -642,8 +642,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../worker/methods/apply_async_many/" title="apply_async_many" class="md-nav__link">
-      apply_async_many
+    <a href="../../worker/methods/push_tasks/" title="push_tasks" class="md-nav__link">
+      push_tasks
     </a>
   </li>
 
@@ -1222,7 +1222,7 @@
 
     <span class="c1"># Produce tasks</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
-        <span class="n">worker</span><span class="o">.</span><span class="n">apply_async_one</span><span class="p">(</span>
+        <span class="n">worker</span><span class="o">.</span><span class="n">push_task</span><span class="p">(</span>
             <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
                 <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://www.intsights.com/&#39;</span><span class="p">,</span>
             <span class="p">},</span>

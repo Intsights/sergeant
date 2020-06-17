@@ -683,8 +683,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../apply_async_one/" title="apply_async_one" class="md-nav__link">
-      apply_async_one
+    <a href="../push_task/" title="push_task" class="md-nav__link">
+      push_task
     </a>
   </li>
 
@@ -695,8 +695,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../apply_async_many/" title="apply_async_many" class="md-nav__link">
-      apply_async_many
+    <a href="../push_tasks/" title="push_tasks" class="md-nav__link">
+      push_tasks
     </a>
   </li>
 
@@ -999,7 +999,7 @@
                 
                 
                 <h1 id="worker-retry">Worker - retry<a class="headerlink" href="#worker-retry" title="Permanent link">#</a></h1>
-<p>The <code>retry</code> method pushes back the task to the queue while increasing the run count by one. The way it works is by raising a <code>WorkerRetry</code> exception which cause the worker to interrupt. It means you should call <code>retry</code> only if you have nothing more to do. Calling <code>retry</code> and catching the exception will not interrupt the worker but the task would be pushed back to the queue anyway. <code>retry</code> makes the task to be considered as a failed task.</p>
+<p>The <code>retry</code> method pushes back the task to the queue while increasing the run count by one. The way it works is by raising a <code>WorkerRetry</code> exception which cause the worker to interrupt. It means you should call <code>retry</code> only if you have nothing more to do. Calling <code>retry</code> and catching the exception will not interrupt the worker but the task would be pushed back to the queue anyway. <code>retry</code> makes the task to be considered as a failed task. <code>consumable_from</code> is a timestamp of when the task should be considered as a consumable task and can be popped from the queue. Using <code>consumable_from</code> parameter allows you to retry in a different time in case of temporary failure that will be resolved later.</p>
 <details class="warning" open="open"><summary>Retry from handlers</summary><p>One should never call <code>retry</code> from the following handlers:</p>
 <ul>
 <li><code>on_success</code></li>
@@ -1013,10 +1013,12 @@
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retry</span><span class="p">(</span>
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">retry</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">task</span><span class="p">:</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">Task</span><span class="p">,</span>
     <span class="n">priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;NORMAL&#39;</span><span class="p">,</span>
+    <span class="n">consumable_from</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 </td></tr></table>

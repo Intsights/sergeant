@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/methods/apply_async_one/">
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/methods/push_task/">
       
       
         <meta name="author" content="Gal Ben David">
@@ -19,7 +19,7 @@
     
     
       
-        <title>apply_async_one - Sergeant</title>
+        <title>push_task - Sergeant</title>
       
     
     
@@ -52,7 +52,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#worker-apply_async_one" class="md-skip">
+        <a href="#worker-push_task" class="md-skip">
           Skip to content
         </a>
       
@@ -79,7 +79,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              apply_async_one
+              push_task
             
           </span>
         </div>
@@ -643,14 +643,14 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        apply_async_one
+        push_task
         <span class="md-nav__icon md-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
         </span>
       </label>
     
-    <a href="./" title="apply_async_one" class="md-nav__link md-nav__link--active">
-      apply_async_one
+    <a href="./" title="push_task" class="md-nav__link md-nav__link--active">
+      push_task
     </a>
     
       
@@ -695,8 +695,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../apply_async_many/" title="apply_async_many" class="md-nav__link">
-      apply_async_many
+    <a href="../push_tasks/" title="push_tasks" class="md-nav__link">
+      push_tasks
     </a>
   </li>
 
@@ -990,7 +990,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/methods/apply_async_one.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/methods/push_task.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -998,8 +998,8 @@
                   
                 
                 
-                <h1 id="worker-apply_async_one">Worker - apply_async_one<a class="headerlink" href="#worker-apply_async_one" title="Permanent link">#</a></h1>
-<p>The <code>apply_async_one</code> method pushes a task onto the queue. Unless <code>task_name</code> was specified, uses the current worker name.</p>
+                <h1 id="worker-push_task">Worker - push_task<a class="headerlink" href="#worker-push_task" title="Permanent link">#</a></h1>
+<p>The <code>push_task</code> method pushes a task onto the queue. Unless <code>task_name</code> was specified, uses the current worker name.</p>
 <ul>
 <li><code>kwargs</code> - A dictionary of serializable arguments to pass to the worker.</li>
 <li><code>task_name</code> - The name of the task/queue to push to.</li>
@@ -1008,6 +1008,7 @@
 <li><code>HIGH</code> - The task will be pushed to the bottom of the queue. Will be pulled first. [LIFO]</li>
 </ul>
 </li>
+<li><code>consumable_from</code> - Timestamp of when the task should be considered as a consumable task and can be popped from the queue.</li>
 </ul>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
@@ -1015,11 +1016,13 @@
 3
 4
 5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">apply_async_one</span><span class="p">(</span>
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">push_task</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">kwargs</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">],</span>
     <span class="n">task_name</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;NORMAL&#39;</span><span class="p">,</span>
+    <span class="n">consumable_from</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 </td></tr></table>
@@ -1042,7 +1045,10 @@
 15
 16
 17
-18</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">task</span><span class="p">,</span>
 <span class="p">):</span>
@@ -1051,9 +1057,12 @@
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_to_crawl</span><span class="p">)</span>
     <span class="n">blocked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">are_we_blocked</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">blocked</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">purge_tasks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">consumable_from</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">apply_async_one</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">push_task</span><span class="p">(</span>
             <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span>
                 <span class="s1">&#39;html&#39;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span>
             <span class="p">},</span>
@@ -1095,13 +1104,13 @@
           </a>
         
         
-          <a href="../apply_async_many/" title="apply_async_many" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../push_tasks/" title="push_tasks" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                apply_async_many
+                push_tasks
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">

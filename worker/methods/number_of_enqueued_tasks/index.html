@@ -634,8 +634,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../apply_async_one/" title="apply_async_one" class="md-nav__link">
-      apply_async_one
+    <a href="../push_task/" title="push_task" class="md-nav__link">
+      push_task
     </a>
   </li>
 
@@ -646,8 +646,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../apply_async_many/" title="apply_async_many" class="md-nav__link">
-      apply_async_many
+    <a href="../push_tasks/" title="push_tasks" class="md-nav__link">
+      push_tasks
     </a>
   </li>
 
@@ -999,14 +999,16 @@
                 
                 
                 <h1 id="worker-number_of_enqueued_tasks">Worker - number_of_enqueued_tasks<a class="headerlink" href="#worker-number_of_enqueued_tasks" title="Permanent link">#</a></h1>
-<p>The <code>number_of_enqueued_tasks</code> method return the number of all the tasks from the queue. Unless <code>task_name</code> was specified, uses the current worker name.</p>
+<p>The <code>number_of_enqueued_tasks</code> method return the number of all the tasks from the queue. Unless <code>task_name</code> was specified, uses the current worker name. <code>consumable_only</code> means whether to count only consumable tasks, that are not delayed for future execution or to count those too. A good reason to use <code>consumable_only</code> parameter is when you implement an autoscaler, and you want to upscale the number of workers based on the number of consumable tasks rather than the number of tasks along with the delayed tasks.</p>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">number_of_enqueued_tasks</span><span class="p">(</span>
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">number_of_enqueued_tasks</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">task_name</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">consumable_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
 </code></pre></div>
 </td></tr></table>

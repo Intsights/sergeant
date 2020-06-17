@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/methods/apply_async_many/">
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/methods/push_tasks/">
       
       
         <meta name="author" content="Gal Ben David">
@@ -19,7 +19,7 @@
     
     
       
-        <title>apply_async_many - Sergeant</title>
+        <title>push_tasks - Sergeant</title>
       
     
     
@@ -52,7 +52,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#worker-apply_async_many" class="md-skip">
+        <a href="#worker-push_tasks" class="md-skip">
           Skip to content
         </a>
       
@@ -79,7 +79,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              apply_async_many
+              push_tasks
             
           </span>
         </div>
@@ -634,8 +634,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../apply_async_one/" title="apply_async_one" class="md-nav__link">
-      apply_async_one
+    <a href="../push_task/" title="push_task" class="md-nav__link">
+      push_task
     </a>
   </li>
 
@@ -655,14 +655,14 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        apply_async_many
+        push_tasks
         <span class="md-nav__icon md-icon">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
         </span>
       </label>
     
-    <a href="./" title="apply_async_many" class="md-nav__link md-nav__link--active">
-      apply_async_many
+    <a href="./" title="push_tasks" class="md-nav__link md-nav__link--active">
+      push_tasks
     </a>
     
       
@@ -990,7 +990,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/methods/apply_async_many.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/methods/push_tasks.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -998,8 +998,8 @@
                   
                 
                 
-                <h1 id="worker-apply_async_many">Worker - apply_async_many<a class="headerlink" href="#worker-apply_async_many" title="Permanent link">#</a></h1>
-<p>The <code>apply_async_many</code> method pushes multiple tasks onto the queue in a bulk insert. Unless <code>task_name</code> was specified, uses the current worker name. This method is similar to <code>apply_async_one</code> except it gets a list of <code>kwargs</code> and pushes much much faster.</p>
+                <h1 id="worker-push_tasks">Worker - push_tasks<a class="headerlink" href="#worker-push_tasks" title="Permanent link">#</a></h1>
+<p>The <code>push_tasks</code> method pushes multiple tasks onto the queue in a bulk insert. Unless <code>task_name</code> was specified, uses the current worker name. This method is similar to <code>push_task</code> except it gets a list of <code>kwargs</code> and pushes much much faster.</p>
 <ul>
 <li><code>kwargs_list</code> - A list of dictionaries of serializable arguments to pass to the worker.</li>
 <li><code>task_name</code> - The name of the task/queue to push to.</li>
@@ -1008,6 +1008,7 @@
 <li><code>HIGH</code> - The tasks will be pushed to the bottom of the queue. Will be pulled first. [LIFO]</li>
 </ul>
 </li>
+<li><code>consumable_from</code> - Timestamp of when the task should be considered as a consumable task and can be popped from the queue.</li>
 </ul>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
@@ -1015,11 +1016,13 @@
 3
 4
 5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">apply_async_many</span><span class="p">(</span>
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">push_tasks</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">kwargs_list</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]],</span>
     <span class="n">task_name</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">priority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;NORMAL&#39;</span><span class="p">,</span>
+    <span class="n">consumable_from</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span>
 </code></pre></div>
 </td></tr></table>
@@ -1046,7 +1049,10 @@
 19
 20
 21
-22</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
+22
+23
+24
+25</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">work</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">task</span><span class="p">,</span>
 <span class="p">):</span>
@@ -1055,10 +1061,13 @@
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url_to_crawl</span><span class="p">)</span>
     <span class="n">blocked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">are_we_blocked</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">blocked</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">purge_tasks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retry</span><span class="p">(</span>
+            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+            <span class="n">consumable_from</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="p">)</span>
 
     <span class="n">urls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_urls</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">apply_async_many</span><span class="p">(</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">push_tasks</span><span class="p">(</span>
         <span class="n">kwargs_list</span><span class="o">=</span><span class="p">[</span>
             <span class="p">{</span>
                 <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
@@ -1088,7 +1097,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../apply_async_one/" title="apply_async_one" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../push_task/" title="push_task" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -1097,7 +1106,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                apply_async_one
+                push_task
               </div>
             </div>
           </a>
