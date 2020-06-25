@@ -19,6 +19,7 @@ nav:
         - executor: 'worker/config/executor.md'
         - timeouts: 'worker/config/timeouts.md'
         - logging: 'worker/config/logging.md'
+        - starvation: 'worker/config/starvation.md'
       - Handlers:
         - on_success: 'worker/handlers/on_success.md'
         - on_failure: 'worker/handlers/on_failure.md'
