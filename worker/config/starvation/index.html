@@ -9,7 +9,7 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/config/tasks_per_transaction/">
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/config/starvation/">
       
       
         <meta name="author" content="Gal Ben David">
@@ -19,7 +19,7 @@
     
     
       
-        <title>tasks_per_transaction - Sergeant</title>
+        <title>starvation - Sergeant</title>
       
     
     
@@ -52,7 +52,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#worker-config-tasks_per_transaction" class="md-skip">
+        <a href="#worker-config-starvation" class="md-skip">
           Skip to content
         </a>
       
@@ -79,7 +79,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              tasks_per_transaction
+              starvation
             
           </span>
         </div>
@@ -290,53 +290,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        tasks_per_transaction
-        <span class="md-nav__icon md-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
-        </span>
-      </label>
-    
-    <a href="./" title="tasks_per_transaction" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../tasks_per_transaction/" title="tasks_per_transaction" class="md-nav__link">
       tasks_per_transaction
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-      </span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#definition" class="md-nav__link">
-    Definition
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
   </li>
 
         
@@ -392,11 +350,53 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="../starvation/" title="starvation" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        starvation
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="starvation" class="md-nav__link md-nav__link--active">
       starvation
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definition" class="md-nav__link">
+    Definition
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -988,7 +988,7 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/config/tasks_per_transaction.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/config/starvation.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
@@ -996,19 +996,25 @@
                   
                 
                 
-                <h1 id="worker-config-tasks_per_transaction">Worker Config - tasks_per_transaction<a class="headerlink" href="#worker-config-tasks_per_transaction" title="Permanent link">#</a></h1>
-<p><code>tasks_per_transaction</code> defines how many tasks the worker will pull from the broker on each transaction. The worker loop works as follow:</p>
-<ol>
-<li>Worker pulls tasks from the broker. The worker tries to pull <code>tasks_per_transaction</code> tasks in one command.</li>
-<li>The worker executes each of the tasks one after one.</li>
-<li>At the end of executing all the pulled tasks, repeat phase 1.</li>
-</ol>
-<p>The reason the worker works in this way is to reduce the load on the broker. Pulling a bulk of 100 tasks is much easier than pulling a single task 100 times. The reason not to do that is to allow better distributions of tasks. Think about the situation that you have a task, that its execution takes 1 minute. Pulling 100 tasks would repeat every 100 minutes. Imagine running 2 workers to consume this task queue, and a producer that pushed only 100 tasks. The first worker to pull from the broker would consume all the tasks and leave nothing to the other worker. Think about another situation where you have a task that might take 1 second to 1 minute to complete. The producer would push for example 100 tasks, each worker would pull 50 tasks. The first worker finished its tasks within 1 minute for example and the second worker randomlly pulled longer to execute tasks. The first worker would starve for tasks while the other exhaust.
-This parameter should be chosen wisely. When you have a lot of tasks and each task is short, feel free to raise the number of tasks per transaction. When you have long tasks, leave this number as 1 to allow better tasks distribution.</p>
+                <h1 id="worker-config-starvation">Worker Config - starvation<a class="headerlink" href="#worker-config-starvation" title="Permanent link">#</a></h1>
+<p>The <code>starvation</code> parameter controls the starvation logic of the worker. Starvation is considered as a situation where the worker is trying to pull tasks from the queue without success. It can happen in multiple situations. First, it can happen when there are no tasks left in the queue. Second, it can happen when other workers are faster in pulling tasks from the queue and the current worker is redundant. Third, it can happen when the worker has connectivity issues. It can probably happen in more cases. The idea of starvation is to detect when the worker is running when it can do nothing regarding its purpose.</p>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">tasks_per_transaction</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
+    <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">class</span> <span class="nc">Starvation</span><span class="p">:</span>
+    <span class="n">time_with_no_tasks</span><span class="p">:</span> <span class="nb">int</span>
 </code></pre></div>
 </td></tr></table>
+
+<p>The following configurations are available:</p>
+<ul>
+<li><code>time_with_no_tasks</code> - How many seconds without being able to pull tasks from the queue will be considered as a starvation.</li>
+</ul>
                 
               
               
@@ -1027,7 +1033,7 @@ This parameter should be chosen wisely. When you have a lot of tasks and each ta
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../max_retries/" title="max_retries" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../logging/" title="logging" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -1036,19 +1042,19 @@ This parameter should be chosen wisely. When you have a lot of tasks and each ta
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                max_retries
+                logging
               </div>
             </div>
           </a>
         
         
-          <a href="../encoder/" title="encoder" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../../handlers/on_success/" title="on_success" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                encoder
+                on_success
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
