@@ -1,6 +1,6 @@
 # Supervisor
 
-The supervisor is the main application that take the `Worker` class and supervise it.
+The `Supervisor` is in charge of spawning new workers, and respawning them when they exit. It is also responsible for handling their errors. The supervisor is capable of restricting worker's memory usage to eliminate memory exhaustion.
 
 - `concurrent-workers` - How many subprocesses the supervisor should spawn and supervise.
 - `worker-module` - The worker module in a dotted notation path.

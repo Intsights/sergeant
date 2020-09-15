@@ -27,7 +27,7 @@
 
 ## About The Project
 
-`Sergeant` is a comprehensive framework to create Async Task Queue architecture using distributed workers. The library was written at `Intsights` after failing to use `celery` at high scale. The library focuses on process and thread safety (through process/thread killers), performance and ease of use.
+`Sergeant` is a comprehensive distributed workers framework. The library was written in [Intsights](https://intsights.com/) after failing to use `celery` with high scale. The library focuses on process and thread safety (through process/thread killers), performance and ease of use.
 
 
 ### Built With

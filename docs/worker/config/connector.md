@@ -1,6 +1,6 @@
 # Worker Config - connector
 
-The `connector` parameter controlls the connection to the broker. It is important to note that the broker does not guarantee tasks order. Two consecutive tasks can be pushed to the queue and consumed in a different order. If order does matter to your application, use only one instance of broker, either `redis` or `mongo` based, and order would be consistent.
+The `connector` parameter configures the broker's connection. It is important to note that the broker does not guarantee tasks order. Two consecutive tasks can be pushed to the queue and consumed in a different order. If order does matter to your application, use only one instance of a broker, either `redis` or `mongo` based, and the order would stay consistent.
 
 
 ## Definition
