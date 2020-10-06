@@ -1,0 +1,63 @@
+name: Build
+on: [push, pull_request]
+
+jobs:
+  lint:
+    if: github.event_name == 'push' && !startsWith(github.event.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Install Flake8
+        run: >-
+          python -m pip install --upgrade flake8-intsights;
+      - name: Check Linting Errors
+        run: >-
+          flake8
+  test:
+    runs-on: ${{ matrix.os }}
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [3.7, 3.8]
+        os: [ubuntu-latest]
+    services:
+      redis-node-one:
+        image: redis
+        ports:
+          - 6379:6379
+      redis-node-two:
+        image: redis
+        ports:
+          - 6380:6379
+      mongo-node-one:
+        image: bitnami/mongodb
+        ports:
+          - 27017:27017
+        env:
+          MONGODB_EXTRA_FLAGS: "--bind_ip_all --port 27017 --replSet test_replica_set"
+      mongo-node-two:
+        image: bitnami/mongodb
+        ports:
+          - 27018:27018
+        env:
+          MONGODB_EXTRA_FLAGS: "--bind_ip_all --port 27018 --replSet test_replica_set"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Python Dependencies
+        run: >-
+          python -m pip install --upgrade -r requirements.txt;
+          python -m pip install --upgrade pytest;
+      - name: Test module
+        run: >-
+          pytest

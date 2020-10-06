@@ -62,7 +62,7 @@ theme:
   logo: images/logo_icon.png
   favicon: images/favicon.ico
 extra_javascript:
-  - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.1/mermaid.min.js
 markdown_extensions:
   - toc:
       permalink: "#"

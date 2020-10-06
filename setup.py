@@ -30,7 +30,12 @@ setuptools.setup(
         'pymongo',
         'redis',
     ],
-    tests_require=[],
+    setup_requires=[
+        'pytest-runner',
+    ],
+    tests_require=[
+        'pytest',
+    ],
     package_data={},
     packages=setuptools.find_packages(),
 )

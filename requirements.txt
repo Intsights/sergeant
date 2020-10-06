@@ -1,3 +1,4 @@
+hiredis
 msgpack
 orjson
 psutil
