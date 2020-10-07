@@ -1,16 +1,17 @@
-import typing
-import os
-import signal
+import argparse
 import asyncio
-import subprocess
+import logging
 import multiprocessing
 import multiprocessing.connection
+import os
 import shlex
-import sys
-import psutil
-import argparse
+import signal
 import socket
-import logging
+import subprocess
+import sys
+import typing
+
+import psutil
 
 
 class KillerServer(

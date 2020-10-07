@@ -162,7 +162,7 @@ class SerialTestCase(
         self.worker.handle_max_retries.assert_not_called()
         self.worker.handle_requeue.assert_not_called()
         self.assertIsNone(
-            obj=serial_executor.killer,
+            obj=getattr(serial_executor, 'killer', None),
         )
 
     def test_failure(
@@ -215,7 +215,7 @@ class SerialTestCase(
         self.worker.handle_max_retries.assert_not_called()
         self.worker.handle_requeue.assert_not_called()
         self.assertIsNone(
-            obj=serial_executor.killer,
+            obj=getattr(serial_executor, 'killer', None),
         )
 
     def test_soft_timeout(
@@ -429,7 +429,7 @@ class SerialTestCase(
         self.worker.handle_max_retries.assert_not_called()
         self.worker.handle_requeue.assert_not_called()
         self.assertIsNone(
-            obj=serial_executor.killer,
+            obj=getattr(serial_executor, 'killer', None),
         )
 
     def test_on_max_retries(
@@ -479,7 +479,7 @@ class SerialTestCase(
         self.worker.handle_retry.assert_not_called()
         self.worker.handle_requeue.assert_not_called()
         self.assertIsNone(
-            obj=serial_executor.killer,
+            obj=getattr(serial_executor, 'killer', None),
         )
 
     def test_on_requeue(
@@ -529,7 +529,7 @@ class SerialTestCase(
         self.worker.handle_retry.assert_not_called()
         self.worker.handle_max_retries.assert_not_called()
         self.assertIsNone(
-            obj=serial_executor.killer,
+            obj=getattr(serial_executor, 'killer', None),
         )
 
     def test_stop(

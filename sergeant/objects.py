@@ -1,6 +1,6 @@
 import dataclasses
-import typing
 import time
+import typing
 
 
 @dataclasses.dataclass

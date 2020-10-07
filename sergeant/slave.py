@@ -1,9 +1,8 @@
-import importlib
-import traceback
-import sys
-import multiprocessing.connection
 import argparse
-import sergeant
+import importlib
+import multiprocessing.connection
+import sys
+import traceback
 
 
 def main() -> int:
@@ -54,9 +53,9 @@ def main() -> int:
         summary = worker_obj.work_loop()
         pipe_obj.send(summary)
 
-        if isinstance(summary['executor_exception'], sergeant.worker.WorkerRespawn):
+        if summary['respawn']:
             return 4
-        elif isinstance(summary['executor_exception'], sergeant.worker.WorkerStop):
+        elif summary['stop']:
             return 5
         else:
             return 0
@@ -65,9 +64,10 @@ def main() -> int:
     except Exception as exception:
         pipe_obj.send(
             {
-                'exception': repr(exception),
-                'traceback': traceback.format_exc(),
-            }
+                'message': str(exception),
+                'stacktrace': traceback.format_exc(),
+                'type': exception.__class__.__name__,
+            },
         )
 
         return 1

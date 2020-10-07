@@ -1,6 +1,6 @@
-import time
 import datetime
 import logging
+import time
 import typing
 
 from . import broker
@@ -62,8 +62,15 @@ class Worker:
             compressor_name=self.config.encoder.compressor,
             serializer_name=self.config.encoder.serializer,
         )
-        connector_class = connector.__connectors__[self.config.connector.type]
-        connector_obj = connector_class(**self.config.connector.params)
+
+        connector_obj: connector.Connector
+        if self.config.connector.type == connector.mongo.Connector.name:
+            connector_obj = connector.mongo.Connector(**self.config.connector.params)
+        elif self.config.connector.type == connector.redis.Connector.name:
+            connector_obj = connector.redis.Connector(**self.config.connector.params)
+        else:
+            raise ValueError(f'connector type {self.config.connector.type} is not supported')
+
         self.broker = broker.Broker(
             connector=connector_obj,
             encoder=encoder_obj,
@@ -72,6 +79,7 @@ class Worker:
     def init_executor(
         self,
     ) -> None:
+        self.executor_obj: executor._executor.Executor
         if self.config.executor.type == 'serial':
             self.executor_obj = executor.serial.SerialExecutor(
                 worker=self,
@@ -189,7 +197,7 @@ class Worker:
     def lock(
         self,
         name: str,
-    ) -> typing.Union[connector.mongo.Lock, connector.redis.Lock]:
+    ) -> connector.Lock:
         try:
             return self.broker.lock(
                 name=name,
@@ -254,12 +262,14 @@ class Worker:
     def work_loop(
         self,
     ) -> typing.Dict[str, typing.Any]:
-        summary = {
+        summary: typing.Dict[str, typing.Any] = {
             'start_time': datetime.datetime.utcnow(),
             'executor_exception': None,
             'initialize_exception': None,
             'finalize_exception': None,
             'executor': {},
+            'respawn': False,
+            'stop': False,
         }
 
         try:
@@ -281,10 +291,10 @@ class Worker:
             self.executor_obj.execute_tasks(
                 tasks=self.iterate_tasks(),
             )
-        except WorkerRespawn as exception:
-            summary['executor_exception'] = exception
-        except WorkerStop as exception:
-            summary['executor_exception'] = exception
+        except WorkerRespawn:
+            summary['respawn'] = True
+        except WorkerStop:
+            summary['stop'] = True
         except Exception as exception:
             self.logger.error(
                 msg=f'execute_tasks has failed: {exception}',

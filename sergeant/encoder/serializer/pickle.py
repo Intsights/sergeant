@@ -1,5 +1,5 @@
-import typing
 import pickle
+import typing
 
 from . import _serializer
 

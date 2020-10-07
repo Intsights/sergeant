@@ -1,15 +1,14 @@
 import typing
 
-from . import objects
-
-from . import encoder
 from . import connector
+from . import encoder
+from . import objects
 
 
 class Broker:
     def __init__(
         self,
-        connector: typing.Union[connector.mongo.Connector, connector.redis.Connector],
+        connector: connector.Connector,
         encoder: encoder.encoder.Encoder,
     ) -> None:
         self.connector = connector
@@ -183,7 +182,7 @@ class Broker:
     def lock(
         self,
         name: str,
-    ) -> typing.Union[connector.mongo.Lock, connector.redis.Lock]:
+    ) -> connector.Lock:
         return self.connector.lock(
             name=name,
         )

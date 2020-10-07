@@ -1,11 +1,11 @@
-import typing
-import threading
 import concurrent.futures
+import threading
+import typing
 
-from . import _executor
 from .. import killer
 from .. import objects
 from .. import worker
+from . import _executor
 
 
 class ThreadedExecutor(
@@ -21,7 +21,7 @@ class ThreadedExecutor(
 
         has_soft_timeout = self.worker.config.timeouts.soft_timeout > 0
         self.should_use_a_killer = has_soft_timeout
-        self.thread_killers = {}
+        self.thread_killers: typing.Dict[int, killer.thread.Killer] = {}
 
     def execute_tasks(
         self,

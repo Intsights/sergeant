@@ -12,12 +12,15 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-      - name: Install Flake8
+      - name: Install Flake8 & mypy
         run: >-
-          python -m pip install --upgrade flake8-intsights;
-      - name: Check Linting Errors
+          python -m pip install --upgrade flake8-intsights mypy;
+      - name: Check Flake8 Linting Errors
         run: >-
           flake8
+      - name: Check mypy Linting Errors
+        run: >-
+          mypy --ignore-missing-imports -p tests -p sergeant
   test:
     runs-on: ${{ matrix.os }}
     needs: lint

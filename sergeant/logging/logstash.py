@@ -1,10 +1,12 @@
 import dataclasses
 import datetime
 import logging
-import orjson
 import socket
 import sys
 import traceback
+import typing
+
+import orjson
 
 
 class LogstashHandler(
@@ -51,7 +53,7 @@ class LogstashHandler(
         self,
         record: logging.LogRecord,
     ) -> None:
-        message = {
+        message: typing.Dict[str, typing.Any] = {
             '@timestamp': datetime.datetime.utcfromtimestamp(record.created).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'message': record.getMessage(),
             'logging': {

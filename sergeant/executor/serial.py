@@ -1,12 +1,12 @@
-import typing
-import types
 import os
 import signal
+import types
+import typing
 
-from . import _executor
 from .. import killer
 from .. import objects
 from .. import worker
+from . import _executor
 
 
 class SerialExecutor(
@@ -24,6 +24,7 @@ class SerialExecutor(
         has_soft_timeout = self.worker.config.timeouts.soft_timeout > 0
         has_hard_timeout = self.worker.config.timeouts.hard_timeout > 0
         has_critical_timeout = self.worker.config.timeouts.critical_timeout > 0
+
         self.should_use_a_killer = has_soft_timeout or has_hard_timeout or has_critical_timeout
         if self.should_use_a_killer:
             self.killer = killer.process.Killer(
@@ -36,8 +37,6 @@ class SerialExecutor(
 
             signal.signal(signal.SIGABRT, self.sigabrt_handler)
             signal.signal(signal.SIGINT, self.sigint_handler)
-        else:
-            self.killer = None
 
     def sigabrt_handler(
         self,
