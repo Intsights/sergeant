@@ -69,7 +69,7 @@ class Worker:
         elif self.config.connector.type == connector.redis.Connector.name:
             connector_obj = connector.redis.Connector(**self.config.connector.params)
         else:
-            raise ValueError(f'connector type {self.config.connector.type} is not supported')
+            raise ValueError(f'Connector type {self.config.connector.type} is not supported.')
 
         self.broker = broker.Broker(
             connector=connector_obj,
@@ -100,7 +100,7 @@ class Worker:
             )
         except Exception as exception:
             self.logger.error(
-                msg=f'could not purge tasks: {exception}',
+                msg=f'Could not purge tasks: {exception}.',
             )
 
             return False
@@ -117,7 +117,7 @@ class Worker:
             )
         except Exception as exception:
             self.logger.error(
-                msg=f'could not get the queue length: {exception}',
+                msg=f'Could not get the queue length: {exception}.',
             )
 
             return None
@@ -144,7 +144,7 @@ class Worker:
             return True
         except Exception as exception:
             self.logger.error(
-                msg=f'could not push task: {exception}',
+                msg=f'Could not push task: {exception}.',
             )
 
             return False
@@ -172,7 +172,7 @@ class Worker:
             )
         except Exception as exception:
             self.logger.error(
-                msg=f'could not push tasks: {exception}',
+                msg=f'Could not push tasks: {exception}.',
             )
 
             return False
@@ -189,7 +189,7 @@ class Worker:
             )
         except Exception as exception:
             self.logger.error(
-                msg=f'could not pull tasks: {exception}',
+                msg=f'Could not pull tasks: {exception}.',
             )
 
             return []
@@ -204,7 +204,7 @@ class Worker:
             )
         except Exception as exception:
             self.logger.error(
-                msg=f'could not create a lock: {exception}',
+                msg=f'Could not create a lock: {exception}.',
             )
 
             raise exception
@@ -276,7 +276,7 @@ class Worker:
             self.initialize()
         except Exception as exception:
             self.logger.error(
-                msg=f'initialize has failed: {exception}',
+                msg=f'Initialize has failed: {exception}.',
             )
 
             summary['end_time'] = datetime.datetime.utcnow()
@@ -297,7 +297,7 @@ class Worker:
             summary['stop'] = True
         except Exception as exception:
             self.logger.error(
-                msg=f'execute_tasks has failed: {exception}',
+                msg=f'Execute_tasks has failed: {exception}.',
             )
 
             summary['executor_exception'] = exception
@@ -306,7 +306,7 @@ class Worker:
             self.finalize()
         except Exception as exception:
             self.logger.error(
-                msg=f'finalize has failed: {exception}',
+                msg=f'Finalize has failed: {exception}.',
             )
             summary['finalize_exception'] = exception
 
@@ -372,7 +372,7 @@ class Worker:
         try:
             if self.config.logging.events.on_success:
                 self.logger.info(
-                    msg='task has finished successfully',
+                    msg='Task has finished successfully.',
                     extra={
                         'task': task,
                     },
@@ -386,7 +386,7 @@ class Worker:
             raise exception
         except Exception as exception:
             self.logger.error(
-                msg=f'on_success handler has failed: {exception}',
+                msg=f'On_success handler has failed: {exception}.',
                 extra={
                     'task': task,
                 },
@@ -400,7 +400,7 @@ class Worker:
         try:
             if self.config.logging.events.on_failure:
                 self.logger.error(
-                    msg='task has failed',
+                    msg='Task has failed.',
                     extra={
                         'task': task,
                     },
@@ -426,7 +426,7 @@ class Worker:
             raise exception
         except Exception as exception:
             self.logger.error(
-                msg=f'on_failure handler has failed: {exception}',
+                msg=f'On_failure handler has failed: {exception}.',
                 extra={
                     'task': task,
                 },
@@ -439,7 +439,7 @@ class Worker:
         try:
             if self.config.logging.events.on_timeout:
                 self.logger.error(
-                    msg='task has timedout',
+                    msg='Task has timedout.',
                     extra={
                         'task': task,
                     },
@@ -464,7 +464,7 @@ class Worker:
             raise exception
         except Exception as exception:
             self.logger.error(
-                msg=f'on_timeout handler has failed: {exception}',
+                msg=f'On_timeout handler has failed: {exception}.',
                 extra={
                     'task': task,
                 },
@@ -477,7 +477,7 @@ class Worker:
         try:
             if self.config.logging.events.on_retry:
                 self.logger.info(
-                    msg='task has retried',
+                    msg='Task has retried.',
                     extra={
                         'task': task,
                     },
@@ -490,7 +490,7 @@ class Worker:
             raise exception
         except Exception as exception:
             self.logger.error(
-                msg=f'on_retry handler has failed: {exception}',
+                msg=f'On_retry handler has failed: {exception}.',
                 extra={
                     'task': task,
                 },
@@ -503,7 +503,7 @@ class Worker:
         try:
             if self.config.logging.events.on_max_retries:
                 self.logger.error(
-                    msg='task has reached max retries',
+                    msg='Task has reached max retries.',
                     extra={
                         'task': task,
                     },
@@ -516,7 +516,7 @@ class Worker:
             raise exception
         except Exception as exception:
             self.logger.error(
-                msg=f'on_max_retries handler has failed: {exception}',
+                msg=f'On_max_retries handler has failed: {exception}.',
                 extra={
                     'task': task,
                 },
@@ -529,7 +529,7 @@ class Worker:
         try:
             if self.config.logging.events.on_requeue:
                 self.logger.info(
-                    msg='task has requeued',
+                    msg='Task has requeued.',
                     extra={
                         'task': task,
                     },
@@ -542,7 +542,7 @@ class Worker:
             raise exception
         except Exception as exception:
             self.logger.error(
-                msg=f'on_requeue handler has failed: {exception}',
+                msg=f'On_requeue handler has failed: {exception}.',
                 extra={
                     'task': task,
                 },
@@ -555,7 +555,7 @@ class Worker:
         try:
             if self.config.logging.events.on_starvation:
                 self.logger.warning(
-                    msg='worker is starving',
+                    msg='Worker is starving.',
                     extra={
                         'time_with_no_tasks': time_with_no_tasks,
                     },
@@ -568,7 +568,7 @@ class Worker:
             raise exception
         except Exception as exception:
             self.logger.error(
-                msg=f'on_starvation handler has failed: {exception}',
+                msg=f'On_starvation handler has failed: {exception}.',
                 extra={
                     'time_with_no_tasks': time_with_no_tasks,
                 },

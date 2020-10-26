@@ -40,8 +40,8 @@ class Worker(
         task,
     ):
         if task.kwargs['timeout']:
-            self.logger.info(f'Going to timeout')
+            self.logger.info(f'Going to timeout.')
             time.sleep(2)
-            self.logger.info(f'You won\'t see this print')
+            self.logger.info(f'You won\'t see this print.')
         else:
-            self.logger.info(f'Not going to timeout')
+            self.logger.info(f'Not going to timeout.')

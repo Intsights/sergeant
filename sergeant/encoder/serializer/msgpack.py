@@ -54,7 +54,7 @@ class Serializer(
                 '__task__': obj.__dict__,
             }
         else:
-            raise TypeError(f'unsupported type {type(obj)}')
+            raise TypeError(f'Unsupported type {type(obj)}.')
 
     def serialize(
         self,

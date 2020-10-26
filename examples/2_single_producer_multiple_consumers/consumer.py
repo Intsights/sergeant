@@ -34,4 +34,4 @@ class Worker(
         self,
         task,
     ):
-        self.logger.info(f'{task.kwargs["some_parameter"]} task from {os.getpid()}')
+        self.logger.info(f'{task.kwargs["some_parameter"]} task from {os.getpid()}.')

@@ -35,6 +35,6 @@ class Worker(
         task,
     ):
         if task.kwargs['phase'] == 'start':
-            self.logger.error(f'start: {time.time()}')
+            self.logger.error(f'Start: {time.time()}.')
         elif task.kwargs['phase'] == 'end':
-            self.logger.error(f'end: {time.time()}')
+            self.logger.error(f'End: {time.time()}.')

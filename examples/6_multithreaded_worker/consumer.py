@@ -39,5 +39,5 @@ class Worker(
         self,
         task,
     ):
-        self.logger.info(f'Hello from thread_id: {threading.get_ident()}')
+        self.logger.info(f'Hello from thread_id: {threading.get_ident()}.')
         time.sleep(1)

@@ -76,17 +76,17 @@ class KillerServer(
     ) -> None:
         if data == b'start':
             self.logger.info(
-                msg='start request was received',
+                msg='Start request was received.',
             )
             self.running = True
         elif data == b'stop':
             self.logger.info(
-                msg='stop request was received',
+                msg='Stop request was received.',
             )
             self.running = False
         elif data == b'reset':
             self.logger.info(
-                msg='reset request was received',
+                msg='Reset request was received.',
             )
             self.time_elapsed = 0.0
             self.soft_timeout_raised = False
@@ -94,7 +94,7 @@ class KillerServer(
             self.critical_timeout_raised = False
         elif data == b'stop_and_reset':
             self.logger.info(
-                msg='stop_and_reset request was received',
+                msg='Stop_and_reset request was received.',
             )
             self.running = False
             self.time_elapsed = 0.0
@@ -106,7 +106,7 @@ class KillerServer(
         self,
     ) -> None:
         self.logger.info(
-            msg='kill loop started',
+            msg='Kill loop started.',
         )
 
         process_to_kill = psutil.Process(
@@ -133,7 +133,7 @@ class KillerServer(
         )
 
         self.logger.info(
-            msg='kill loop ended',
+            msg='Kill loop ended.',
         )
 
     def is_process_alive(
@@ -142,7 +142,7 @@ class KillerServer(
     ) -> bool:
         if not process.is_running():
             self.logger.info(
-                msg='process status: not running',
+                msg='Process status: not running.',
             )
 
             return False
@@ -151,7 +151,7 @@ class KillerServer(
             process_status = process.status()
         except psutil.NoSuchProcess:
             self.logger.info(
-                msg='pid does not exist anymore',
+                msg='Pid does not exist anymore.',
             )
 
             return False
@@ -161,7 +161,7 @@ class KillerServer(
             psutil.STATUS_ZOMBIE,
         ]:
             self.logger.error(
-                msg=f'process became a zombie/dead process: {process_status}',
+                msg=f'Process became a zombie/dead process: {process_status}.',
             )
 
             return False
@@ -179,7 +179,7 @@ class KillerServer(
 
         if self.time_elapsed >= self.soft_timeout:
             self.logger.info(
-                msg='raising soft timeout',
+                msg='Raising soft timeout.',
             )
             self.soft_timeout_raised = True
             self.kill_process(
@@ -198,7 +198,7 @@ class KillerServer(
 
         if self.time_elapsed >= self.hard_timeout:
             self.logger.info(
-                msg='raising hard timeout',
+                msg='Raising hard timeout.',
             )
             self.hard_timeout_raised = True
             self.kill_process(
@@ -217,7 +217,7 @@ class KillerServer(
 
         if self.time_elapsed >= self.critical_timeout:
             self.logger.info(
-                msg='raising critical timeout',
+                msg='Raising critical timeout.',
             )
             self.critical_timeout_raised = True
             self.kill_process(
@@ -232,7 +232,7 @@ class KillerServer(
     ) -> None:
         try:
             self.logger.info(
-                msg='kill_process request',
+                msg='Kill_process request.',
             )
 
             os.kill(pid, signal)

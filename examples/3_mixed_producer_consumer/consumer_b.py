@@ -33,4 +33,4 @@ class Worker(
         self,
         task,
     ):
-        self.logger.info(f'I am consumer_b. Got parameter: {task.kwargs["some_parameter"]}')
+        self.logger.info(f'I am consumer_b. Got parameter: {task.kwargs["some_parameter"]}.')

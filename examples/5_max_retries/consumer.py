@@ -33,7 +33,7 @@ class Worker(
         self,
         task,
     ):
-        self.logger.info(f'Going to retry')
+        self.logger.info(f'Going to retry.')
         self.retry(
             task=task,
         )

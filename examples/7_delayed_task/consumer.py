@@ -38,7 +38,7 @@ class Worker(
         task,
     ):
         if task.kwargs['type'] == 'start':
-            self.logger.info('type: start')
+            self.logger.info('Type: start.')
 
             self.push_task(
                 kwargs={
@@ -47,4 +47,4 @@ class Worker(
                 consumable_from=int(time.time() + 5),
             )
         elif task.kwargs['type'] == 'delayed':
-            self.logger.info('type: delayed')
+            self.logger.info('Type: delayed.')
