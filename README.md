@@ -8,7 +8,7 @@
 </p>
 
 ![license](https://img.shields.io/badge/MIT-License-blue)
-![Python](https://img.shields.io/badge/Python-3.7%20%7C%203.8-blue)
+![Python](https://img.shields.io/badge/Python-3.7%20%7C%203.8%20%7C%203.9-blue)
 ![Build](https://github.com/intsights/sergeant/workflows/Build/badge.svg)
 [![PyPi](https://img.shields.io/pypi/v/sergeant.svg)](https://pypi.org/project/sergeant/)
 
