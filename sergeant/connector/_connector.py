@@ -88,7 +88,7 @@ class Connector:
     def queue_length(
         self,
         queue_name: str,
-        consumable_only: bool,
+        include_delayed: bool,
     ) -> int:
         raise NotImplementedError()
 
