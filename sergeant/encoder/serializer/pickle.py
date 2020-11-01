@@ -23,6 +23,6 @@ class Serializer(
         data: bytes,
     ) -> typing.Any:
         return pickle.loads(
-            data=data,
+            data,
             encoding='utf-8',
         )

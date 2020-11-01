@@ -1,5 +1,6 @@
 import datetime
 import logging
+import sys
 import time
 import typing
 
@@ -39,7 +40,9 @@ class Worker:
         )
 
         if self.config.logging.log_to_stdout:
-            stream_handler = logging.StreamHandler()
+            stream_handler = logging.StreamHandler(
+                stream=sys.stdout,
+            )
             stream_handler.setFormatter(
                 fmt=logging.Formatter(
                     fmt='%(asctime)s %(name)-12s %(process)d %(levelname)-8s %(message)s',
