@@ -111,12 +111,12 @@ class Worker:
     def number_of_enqueued_tasks(
         self,
         task_name: typing.Optional[str] = None,
-        consumable_only: bool = False,
+        include_delayed: bool = False,
     ) -> typing.Optional[int]:
         try:
             return self.broker.number_of_enqueued_tasks(
                 task_name=task_name if task_name else self.config.name,
-                consumable_only=consumable_only,
+                include_delayed=include_delayed,
             )
         except Exception as exception:
             self.logger.error(

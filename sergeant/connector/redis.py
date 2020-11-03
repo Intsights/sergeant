@@ -121,22 +121,22 @@ class QueueRedis(
     def queue_length(
         self,
         queue_name: str,
-        consumable_only: bool,
+        include_delayed: bool,
     ):
         pipeline = self.pipeline()
         pipeline.llen(
             name=queue_name,
         )
 
-        if consumable_only:
+        if include_delayed:
+            pipeline.zcard(
+                name=f'{queue_name}.delayed',
+            )
+        else:
             pipeline.zcount(
                 name=f'{queue_name}.delayed',
                 min=0,
                 max=int(time.time()),
-            )
-        else:
-            pipeline.zcard(
-                name=f'{queue_name}.delayed',
             )
 
         return sum(pipeline.execute())
@@ -359,14 +359,14 @@ class Connector(
     def queue_length(
         self,
         queue_name: str,
-        consumable_only: bool,
+        include_delayed: bool,
     ) -> int:
         queue_length = 0
 
         for connection in self.connections:
             queue_length += connection.queue_length(
                 queue_name=queue_name,
-                consumable_only=consumable_only,
+                include_delayed=include_delayed,
             )
 
         return queue_length

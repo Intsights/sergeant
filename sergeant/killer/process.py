@@ -1,37 +1,32 @@
 import argparse
-import asyncio
 import logging
 import multiprocessing
 import multiprocessing.connection
 import os
+import psutil
 import shlex
 import signal
-import socket
 import subprocess
 import sys
-import typing
-
-import psutil
+import time
 
 
-class KillerServer(
-    asyncio.DatagramProtocol,
-):
+class KillerServer:
     def __init__(
         self,
-        async_loop: asyncio.AbstractEventLoop,
+        pipe: multiprocessing.connection.Connection,
         pid_to_kill: int,
         sleep_interval: float,
         soft_timeout: float,
         hard_timeout: float,
         critical_timeout: float,
     ) -> None:
-        super().__init__()
-
         self.init_logger()
 
-        self.pid_to_kill = pid_to_kill
-        self.async_loop = async_loop
+        self.pipe = pipe
+        self.process_to_kill = psutil.Process(
+            pid=pid_to_kill,
+        )
 
         self.sleep_interval = sleep_interval
         self.time_elapsed = 0.0
@@ -46,8 +41,6 @@ class KillerServer(
 
         self.running = False
 
-        self.async_loop.create_task(self.kill_loop())
-
     def init_logger(
         self,
     ) -> None:
@@ -58,7 +51,9 @@ class KillerServer(
         self.logger.setLevel(
             level=logging.ERROR,
         )
-        stream_handler = logging.StreamHandler()
+        stream_handler = logging.StreamHandler(
+            stream=sys.stdout,
+        )
         stream_handler.setFormatter(
             fmt=logging.Formatter(
                 fmt='%(asctime)s %(name)-12s %(process)d %(levelname)-8s %(message)s',
@@ -69,66 +64,64 @@ class KillerServer(
             hdlr=stream_handler,
         )
 
-    def datagram_received(
+    def process_requests(
         self,
-        data: bytes,
-        addr: typing.Tuple[str, int],
     ) -> None:
-        if data == b'start':
-            self.logger.info(
-                msg='start request was received',
-            )
-            self.running = True
-        elif data == b'stop':
-            self.logger.info(
-                msg='stop request was received',
-            )
-            self.running = False
-        elif data == b'reset':
-            self.logger.info(
-                msg='reset request was received',
-            )
-            self.time_elapsed = 0.0
-            self.soft_timeout_raised = False
-            self.hard_timeout_raised = False
-            self.critical_timeout_raised = False
-        elif data == b'stop_and_reset':
-            self.logger.info(
-                msg='stop_and_reset request was received',
-            )
-            self.running = False
-            self.time_elapsed = 0.0
-            self.soft_timeout_raised = False
-            self.hard_timeout_raised = False
-            self.critical_timeout_raised = False
+        if self.pipe.poll(
+            timeout=self.sleep_interval,
+        ):
+            data = self.pipe.recv_bytes()
+            if data == b'start':
+                self.logger.info(
+                    msg='start request was received',
+                )
+                self.running = True
+            elif data == b'stop':
+                self.logger.info(
+                    msg='stop request was received',
+                )
+                self.running = False
+            elif data == b'reset':
+                self.logger.info(
+                    msg='reset request was received',
+                )
+                self.time_elapsed = 0.0
+                self.soft_timeout_raised = False
+                self.hard_timeout_raised = False
+                self.critical_timeout_raised = False
+            elif data == b'stop_and_reset':
+                self.logger.info(
+                    msg='stop_and_reset request was received',
+                )
+                self.running = False
+                self.time_elapsed = 0.0
+                self.soft_timeout_raised = False
+                self.hard_timeout_raised = False
+                self.critical_timeout_raised = False
 
-    async def kill_loop(
+    def kill_loop(
         self,
     ) -> None:
         self.logger.info(
             msg='kill loop started',
         )
 
-        process_to_kill = psutil.Process(
-            pid=self.pid_to_kill,
-        )
         while self.is_process_alive(
-            process=process_to_kill,
+            process=self.process_to_kill,
         ):
+            before = time.time()
+
+            self.process_requests()
             if self.running:
                 self.check_and_process_soft_timeout()
                 self.check_and_process_hard_timeout()
                 self.check_and_process_critical_timeout()
 
-                self.time_elapsed += self.sleep_interval
-
-            await asyncio.sleep(
-                delay=self.sleep_interval,
-                loop=self.async_loop,
-            )
+                after = time.time()
+                self.time_elapsed += after - before
 
         self.kill_process(
-            pid=process_to_kill.pid,
+            process=self.process_to_kill,
             signal=signal.SIGTERM,
         )
 
@@ -160,7 +153,7 @@ class KillerServer(
             psutil.STATUS_DEAD,
             psutil.STATUS_ZOMBIE,
         ]:
-            self.logger.error(
+            self.logger.info(
                 msg=f'process became a zombie/dead process: {process_status}',
             )
 
@@ -183,7 +176,7 @@ class KillerServer(
             )
             self.soft_timeout_raised = True
             self.kill_process(
-                pid=self.pid_to_kill,
+                process=self.process_to_kill,
                 signal=signal.SIGINT,
             )
 
@@ -202,7 +195,7 @@ class KillerServer(
             )
             self.hard_timeout_raised = True
             self.kill_process(
-                pid=self.pid_to_kill,
+                process=self.process_to_kill,
                 signal=signal.SIGABRT,
             )
 
@@ -221,13 +214,13 @@ class KillerServer(
             )
             self.critical_timeout_raised = True
             self.kill_process(
-                pid=self.pid_to_kill,
+                process=self.process_to_kill,
                 signal=signal.SIGTERM,
             )
 
     def kill_process(
         self,
-        pid: int,
+        process: psutil.Process,
         signal: int,
     ) -> None:
         try:
@@ -235,7 +228,9 @@ class KillerServer(
                 msg='kill_process request',
             )
 
-            os.kill(pid, signal)
+            process.send_signal(
+                sig=signal,
+            )
         except Exception as exception:
             self.logger.error(
                 msg=str(exception),
@@ -251,67 +246,54 @@ class Killer:
         hard_timeout: float,
         critical_timeout: float,
     ) -> None:
-        parent_pipe, child_pipe = multiprocessing.Pipe()
+        self.parent_pipe: multiprocessing.connection.Connection
+        self.child_pipe: multiprocessing.connection.Connection
+        self.parent_pipe, self.child_pipe = multiprocessing.Pipe()
 
         self.killer_process = subprocess.Popen(
             args=shlex.split(
                 s=(
-                    f'{sys.executable} -m {__name__} '
+                    f'{sys.executable} {os.path.relpath(__file__)} '
                     f'--pid-to-kill {pid_to_kill} '
                     f'--sleep-interval {sleep_interval} '
                     f'--soft-timeout {soft_timeout} '
                     f'--hard-timeout {hard_timeout} '
                     f'--critical-timeout {critical_timeout} '
-                    f'--pipe-fd {child_pipe.fileno()} '
+                    f'--pipe-fd {self.child_pipe.fileno()} '
                 ),
             ),
-            stderr=subprocess.DEVNULL,
             pass_fds=[
-                child_pipe.fileno(),
+                self.child_pipe.fileno(),
             ],
         )
 
-        port = parent_pipe.recv()
-
-        self.killer_socket = socket.socket(
-            family=socket.AF_INET,
-            type=socket.SOCK_DGRAM,
-        )
-        self.killer_socket.connect(
-            (
-                'localhost',
-                port,
-            )
-        )
-
-        parent_pipe.close()
-        child_pipe.close()
+        self.parent_pipe.recv()
 
     def start(
         self,
     ) -> None:
-        self.killer_socket.send(b'start')
+        self.parent_pipe.send_bytes(b'start')
 
     def stop(
         self,
     ) -> None:
-        self.killer_socket.send(b'stop')
+        self.parent_pipe.send_bytes(b'stop')
 
     def reset(
         self,
     ) -> None:
-        self.killer_socket.send(b'reset')
+        self.parent_pipe.send_bytes(b'reset')
 
     def stop_and_reset(
         self,
     ) -> None:
-        self.killer_socket.send(b'stop_and_reset')
+        self.parent_pipe.send_bytes(b'stop_and_reset')
 
     def kill(
         self,
     ) -> None:
         try:
-            self.killer_socket.close()
+            self.parent_pipe.close()
         except Exception:
             pass
 
@@ -386,44 +368,22 @@ def main():
 
     args = parser.parse_args()
 
-    server_socket = socket.socket(
-        family=socket.AF_INET,
-        type=socket.SOCK_DGRAM,
-    )
-    server_socket.bind(
-        (
-            'localhost',
-            0,
-        ),
-    )
-    server_socket_host, server_socket_port = server_socket.getsockname()
-
     pipe = multiprocessing.connection.Connection(
         handle=args.pipe_fd,
     )
     pipe.send(
-        obj=server_socket_port,
+        obj={},
     )
-    pipe.close()
 
-    async_loop = asyncio.new_event_loop()
-    killer_udp_server_endpoint = async_loop.create_datagram_endpoint(
-        protocol_factory=lambda: KillerServer(
-            async_loop=async_loop,
-            pid_to_kill=args.pid_to_kill,
-            sleep_interval=args.sleep_interval,
-            soft_timeout=args.soft_timeout,
-            hard_timeout=args.hard_timeout,
-            critical_timeout=args.critical_timeout,
-        ),
-        sock=server_socket,
+    killer_server = KillerServer(
+        pipe=pipe,
+        pid_to_kill=args.pid_to_kill,
+        sleep_interval=args.sleep_interval,
+        soft_timeout=args.soft_timeout,
+        hard_timeout=args.hard_timeout,
+        critical_timeout=args.critical_timeout,
     )
-    async_loop.create_task(killer_udp_server_endpoint)
-
-    try:
-        async_loop.run_forever()
-    except Exception:
-        async_loop.close()
+    killer_server.kill_loop()
 
 
 if __name__ == '__main__':
