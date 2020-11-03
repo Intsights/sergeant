@@ -405,24 +405,24 @@ class Connector(
     def queue_length(
         self,
         queue_name: str,
-        consumable_only: bool,
+        include_delayed: bool,
     ) -> int:
         queue_length = 0
 
         for i in range(self.number_of_connections):
-            if consumable_only:
+            if include_delayed:
                 queue_length += self.next_connection.sergeant.task_queue.count_documents(
                     filter={
                         'queue_name': queue_name,
-                        'priority': {
-                            '$lte': int(time.time()),
-                        },
                     },
                 )
             else:
                 queue_length += self.next_connection.sergeant.task_queue.count_documents(
                     filter={
                         'queue_name': queue_name,
+                        'priority': {
+                            '$lte': int(time.time()),
+                        },
                     },
                 )
 

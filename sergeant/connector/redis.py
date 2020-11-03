@@ -182,9 +182,16 @@ class QueueRedis(
     def queue_length(
         self,
         queue_name: str,
-        consumable_only: bool,
+        include_delayed: bool,
     ):
-        if consumable_only:
+        if include_delayed:
+            return self.queue_length_script(
+                keys=[
+                    queue_name,
+                ],
+                args=[],
+            )
+        else:
             return self.queue_length_script(
                 keys=[
                     queue_name,
@@ -192,13 +199,6 @@ class QueueRedis(
                 args=[
                     int(time.time()),
                 ],
-            )
-        else:
-            return self.queue_length_script(
-                keys=[
-                    queue_name,
-                ],
-                args=[],
             )
 
     def queue_delete(
@@ -390,14 +390,14 @@ class Connector(
     def queue_length(
         self,
         queue_name: str,
-        consumable_only: bool,
+        include_delayed: bool,
     ) -> int:
         queue_length = 0
 
         for connection in self.connections:
             queue_length += connection.queue_length(
                 queue_name=queue_name,
-                consumable_only=consumable_only,
+                include_delayed=include_delayed,
             )
 
         return queue_length

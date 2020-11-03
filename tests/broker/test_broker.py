@@ -27,7 +27,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=True,
+                include_delayed=False,
             ),
             second=0,
         )
@@ -40,7 +40,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=True,
+                include_delayed=False,
             ),
             second=1,
         )
@@ -50,7 +50,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=True,
+                include_delayed=False,
             ),
             second=0,
         )
@@ -75,14 +75,14 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=True,
+                include_delayed=False,
             ),
             second=2,
         )
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=False,
+                include_delayed=True,
             ),
             second=3,
         )
@@ -92,7 +92,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=False,
+                include_delayed=True,
             ),
             second=0,
         )
@@ -134,14 +134,14 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=True,
+                include_delayed=False,
             ),
             second=20,
         )
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=False,
+                include_delayed=True,
             ),
             second=30,
         )
@@ -151,7 +151,7 @@ class BrokerTestCase:
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
                 task_name='test_task',
-                consumable_only=False,
+                include_delayed=True,
             ),
             second=0,
         )
@@ -348,7 +348,7 @@ class BrokerTestCase:
             self.assertEqual(
                 first=test_broker.number_of_enqueued_tasks(
                     task_name='test_task',
-                    consumable_only=True,
+                    include_delayed=False,
                 ),
                 second=8,
             )

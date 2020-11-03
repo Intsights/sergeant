@@ -90,7 +90,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -104,7 +104,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -115,7 +115,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -206,7 +206,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -218,7 +218,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -425,7 +425,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -439,7 +439,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -460,7 +460,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -468,7 +468,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=False,
+            include_delayed=True,
         )
         self.assertEqual(
             first=queue_length,
@@ -480,7 +480,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -488,7 +488,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=False,
+            include_delayed=True,
         )
         self.assertEqual(
             first=queue_length,
@@ -529,7 +529,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=True,
+            include_delayed=False,
         )
         self.assertEqual(
             first=queue_length,
@@ -537,7 +537,7 @@ class ConnectorTestCase:
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
-            consumable_only=False,
+            include_delayed=True,
         )
         self.assertEqual(
             first=queue_length,

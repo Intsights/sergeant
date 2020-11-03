@@ -25,11 +25,11 @@ class Broker:
     def number_of_enqueued_tasks(
         self,
         task_name: str,
-        consumable_only: bool,
+        include_delayed: bool,
     ) -> int:
         number_of_enqueued_tasks = self.connector.queue_length(
             queue_name=task_name,
-            consumable_only=consumable_only,
+            include_delayed=include_delayed,
         )
 
         return number_of_enqueued_tasks
