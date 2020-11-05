@@ -103,79 +103,18 @@ class QueueRedis(
     ):
         super().__init__(*args, **kwargs)
 
-        self.queue_length_script = self.register_script(
-            script='''
-                local number_of_items = 0
-
-                number_of_items = number_of_items + redis.call("LLEN", KEYS[1])
-                if ARGV[1] == nil then
-                    number_of_items = number_of_items + redis.call("ZCARD", KEYS[1] .. ".delayed")
-                else
-                    number_of_items = number_of_items + redis.call("ZCOUNT", KEYS[1] .. ".delayed", 0, ARGV[1])
-                end
-
-                return number_of_items
-            ''',
-        )
-        self.queue_delete_script = self.register_script(
-            script='''
-                local deleted_items = 0
-
-                deleted_items = deleted_items + redis.call("DEL", KEYS[1])
-                deleted_items = deleted_items + redis.call("DEL", KEYS[1] .. ".delayed")
-
-                return deleted_items
-            ''',
-        )
-        self.queue_pop_script = self.register_script(
-            script='''
-                local popped_item = redis.call("LPOP", KEYS[1])
-                if popped_item then
-                    return popped_item
-                end
-
-                local zpopped_item = redis.call("ZPOPMIN", KEYS[1] .. ".delayed", 1)
-                if next(zpopped_item) == nil then
-                    return nil
-                end
-
-                if tonumber(zpopped_item[2]) <= tonumber(ARGV[1]) then
-                    return zpopped_item[1]
-                else
-                    redis.call("ZADD", KEYS[1] .. ".delayed", zpopped_item[2], zpopped_item[1])
-
-                    return nil
-                end
-            ''',
-        )
-        self.queue_pop_bulk_script = self.register_script(
+        self.delayed_queue_pop_bulk_script = self.register_script(
             script='''
                 local number_of_items_to_pop = tonumber(ARGV[1])
-                local popped_items = redis.call("LRANGE", KEYS[1], 0, number_of_items_to_pop - 1)
-                local number_of_popped_items = table.getn(popped_items)
 
-                if number_of_popped_items > 0 then
-                    redis.call("LTRIM", KEYS[1], number_of_popped_items, -1)
-                end
-
-                if number_of_items_to_pop == number_of_popped_items then
-                    return popped_items
-                end
-
-                number_of_items_to_pop = number_of_items_to_pop - number_of_popped_items
-
-                local zpopped_items = redis.call("ZRANGEBYSCORE", KEYS[1] .. ".delayed", 0, ARGV[2], "LIMIT", 0, number_of_items_to_pop)
+                local zpopped_items = redis.call("ZRANGEBYSCORE", KEYS[1], 0, ARGV[2], "LIMIT", 0, number_of_items_to_pop)
 
                 local zset_number_of_elements = table.getn(zpopped_items)
                 if zset_number_of_elements > 0 then
-                    redis.call("ZREMRANGEBYRANK", KEYS[1] .. ".delayed", 0, zset_number_of_elements - 1)
+                    redis.call("ZREMRANGEBYRANK", KEYS[1], 0, zset_number_of_elements - 1)
                 end
 
-                for k,v in ipairs(zpopped_items) do
-                    table.insert(popped_items, v)
-                end
-
-                return popped_items
+                return zpopped_items
             ''',
         )
 
@@ -184,61 +123,91 @@ class QueueRedis(
         queue_name: str,
         include_delayed: bool,
     ):
+        pipeline = self.pipeline()
+        pipeline.llen(
+            name=queue_name,
+        )
+
         if include_delayed:
-            return self.queue_length_script(
-                keys=[
-                    queue_name,
-                ],
-                args=[],
+            pipeline.zcard(
+                name=f'{queue_name}.delayed',
             )
         else:
-            return self.queue_length_script(
-                keys=[
-                    queue_name,
-                ],
-                args=[
-                    int(time.time()),
-                ],
+            pipeline.zcount(
+                name=f'{queue_name}.delayed',
+                min=0,
+                max=int(time.time()),
             )
+
+        return sum(pipeline.execute())
 
     def queue_delete(
         self,
         queue_name: str,
     ):
-        return self.queue_delete_script(
-            keys=[
-                queue_name,
-            ],
-            args=[],
+        return self.delete(
+            queue_name,
+            f'{queue_name}.delayed',
         )
 
     def queue_pop(
         self,
         queue_name: str,
     ):
-        return self.queue_pop_script(
-            keys=[
-                queue_name,
-            ],
-            args=[
-                int(time.time()),
-            ],
+        item = self.lpop(
+            name=queue_name,
         )
+        if item:
+            return item
+
+        result = self.zpopmin(
+            name=f'{queue_name}.delayed',
+            count=1,
+        )
+        if not result:
+            return None
+        else:
+            delayed_item, delayed_item_score = result[0]
+
+        if delayed_item_score <= int(time.time()):
+            return delayed_item
+        else:
+            self.zadd(
+                name=f'{queue_name}.delayed',
+                mapping={
+                    delayed_item: delayed_item_score,
+                },
+            )
+
+            return None
 
     def queue_pop_bulk(
         self,
         queue_name: str,
         number_of_items: int,
     ):
-        return self.queue_pop_bulk_script(
-            keys=[
-                queue_name,
-            ],
-            args=[
-                number_of_items,
-                int(time.time()),
-            ],
-        )
+        pipeline = self.pipeline()
+        pipeline.lrange(queue_name, 0, number_of_items - 1)
+        pipeline.ltrim(queue_name, number_of_items, -1)
+        value = pipeline.execute()
+
+        regular_items = value[0]
+        number_of_regular_items = len(regular_items)
+        if number_of_regular_items == number_of_items:
+            return regular_items
+        else:
+            delayed_items_to_pull = number_of_items - number_of_regular_items
+            delayed_items = self.delayed_queue_pop_bulk_script(
+                keys=[
+                    f'{queue_name}.delayed',
+                ],
+                args=[
+                    delayed_items_to_pull,
+                    int(time.time()),
+                ],
+            )
+
+            return regular_items + delayed_items
 
 
 class Connector(
