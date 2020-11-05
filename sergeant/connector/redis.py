@@ -229,6 +229,7 @@ class Connector(
                 socket_keepalive=True,
                 socket_connect_timeout=10,
                 socket_timeout=60,
+                single_connection_client=True,
             )
             for node in nodes
         ]

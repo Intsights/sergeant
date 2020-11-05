@@ -38,8 +38,8 @@ celery -A benchmark.1_simple_worker.celery.consumer worker \
 
 ### Output
 ```
-[2020-04-07 16:30:39,182: ERROR/MainProcess] benchmark.1_simple_worker.celery.consumer.simple[ec24fc55-27f7-4db6-9b97-946984a93c9f]: start: 1586266239.1829102
-[2020-04-07 16:32:18,890: ERROR/MainProcess] benchmark.1_simple_worker.celery.consumer.simple[e956585c-e1e7-4f05-b7c4-70c44d19b7bc]: end: 1586266338.8908153
+[2020-11-05 16:34:08,831: ERROR/MainProcess] benchmark.1_simple_worker.celery.consumer.simple[4a1a77b8-061f-4394-934e-4b5db6c7a1fd]: start: 1604586848.831512
+[2020-11-05 16:38:21,563: ERROR/MainProcess] benchmark.1_simple_worker.celery.consumer.simple[129b57c0-67b4-4ed5-aee1-ced9aeca8310]: end: 1604587101.5630937
 ```
 
 
@@ -71,11 +71,11 @@ python3 -m benchmark.1_simple_worker.sergeant.supervisor
 
 ### Output
 ```
-2020-04-07 16:43:53 Supervisor   55574 INFO     spawned a new worker at pid: 55584
-2020-04-07 16:43:53 test_worker  55584 ERROR    start: 1586267033.935504
-2020-04-07 16:43:54 test_worker  55584 ERROR    end: 1586267034.3093672
-2020-04-07 16:43:54 Supervisor   55574 INFO     a worker has exited with error code: 0
-2020-04-07 16:43:54 Supervisor   55574 INFO     spawned a new worker at pid: 55594
+2020-11-05 16:29:42 Supervisor   100938 INFO     spawned a new worker at pid: 100939
+2020-11-05 16:29:43 test_worker  100939 ERROR    start: 1604586583.00647
+2020-11-05 16:29:43 test_worker  100939 ERROR    end: 1604586583.4399953
+2020-11-05 16:29:43 Supervisor   100938 INFO     worker has finished successfully
+2020-11-05 16:29:43 Supervisor   100938 INFO     spawned a new worker at pid: 100997
 ```
 
 
@@ -84,12 +84,12 @@ python3 -m benchmark.1_simple_worker.sergeant.supervisor
 ### Tasks Producing
 | Library  | #Tasks | Function | Time | Improvement Factor |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
-| [celery](https://github.com/celery/celery) | 100,002 | apply_async | 75s | 1.0x |
-| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | push_task | 9.7s | 7.7x |
-| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | push_tasks | 0.93s | 80.6x |
+| [celery](https://github.com/celery/celery) | 100,002 | apply_async | 154s | 1.0x |
+| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | push_task | 32s | 4.8x |
+| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | push_tasks | 0.82s | 187.8x |
 
 ### Tasks Consuming
 | Library  | #Tasks | Time | Improvement Factor |
 | ------------- | ------------- | ------------- | ------------- |
-| [celery](https://github.com/celery/celery) | 100,002 | 99.7s | 1.0x |
-| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | 0.373s | 267.3x |
+| [celery](https://github.com/celery/celery) | 100,002 | 252.731s | 1.0x |
+| [sergeant](https://github.com/Intsights/sergeant) | 100,002 | 0.433s | 583.6x |
