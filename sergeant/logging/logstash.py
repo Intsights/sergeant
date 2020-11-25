@@ -56,10 +56,8 @@ class LogstashHandler(
         message: typing.Dict[str, typing.Any] = {
             '@timestamp': datetime.datetime.utcfromtimestamp(record.created).strftime('%Y-%m-%dT%H:%M:%SZ'),
             'message': record.getMessage(),
-            'logging': {
-                'level': record.levelname,
-                'name': record.name,
-            },
+            'level': record.levelname,
+            'name': record.name,
             'emitter': {
                 'hostname': self.hostname,
                 'ipaddress': self.ipaddress,
