@@ -28,9 +28,6 @@ class Worker(
             level=logging.INFO,
             log_to_stdout=True,
         ),
-        executor=sergeant.config.Executor(
-            type='serial',
-        ),
     )
 
     def work(

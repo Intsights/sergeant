@@ -29,10 +29,7 @@ class Worker(
             level=logging.INFO,
             log_to_stdout=True,
         ),
-        executor=sergeant.config.Executor(
-            type='threaded',
-            number_of_threads=10,
-        ),
+        number_of_threads=10,
     )
 
     def work(

@@ -83,14 +83,14 @@ class Worker:
         self,
     ) -> None:
         self.executor_obj: executor._executor.Executor
-        if self.config.executor.type == 'serial':
+        if self.config.number_of_threads == 1:
             self.executor_obj = executor.serial.SerialExecutor(
                 worker=self,
             )
-        elif self.config.executor.type == 'threaded':
+        else:
             self.executor_obj = executor.threaded.ThreadedExecutor(
                 worker=self,
-                number_of_threads=self.config.executor.number_of_threads,
+                number_of_threads=self.config.number_of_threads,
             )
 
     def purge_tasks(

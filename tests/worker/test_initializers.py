@@ -231,9 +231,7 @@ class WorkerInitializersTestCase(
                 type='',
                 params={},
             ),
-            executor=sergeant.config.Executor(
-                type='serial',
-            )
+            number_of_threads=1,
         )
         worker.init_executor()
         self.assertIsInstance(
@@ -247,10 +245,7 @@ class WorkerInitializersTestCase(
                 type='',
                 params={},
             ),
-            executor=sergeant.config.Executor(
-                type='threaded',
-                number_of_threads=1,
-            )
+            number_of_threads=2,
         )
         worker.init_executor()
         self.assertIsInstance(
