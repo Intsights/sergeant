@@ -49,14 +49,6 @@ class Connector:
 @dataclasses.dataclass(
     frozen=True,
 )
-class Executor:
-    type: str = 'serial'
-    number_of_threads: int = 1
-
-
-@dataclasses.dataclass(
-    frozen=True,
-)
 class Timeouts:
     soft_timeout: float = 0.0
     hard_timeout: float = 0.0
@@ -79,11 +71,9 @@ class WorkerConfig:
     max_tasks_per_run: int = 0
     max_retries: int = 0
     tasks_per_transaction: int = 1
+    number_of_threads: int = 1
     encoder: Encoder = dataclasses.field(
         default_factory=Encoder,
-    )
-    executor: Executor = dataclasses.field(
-        default_factory=Executor,
     )
     timeouts: Timeouts = dataclasses.field(
         default_factory=Timeouts,
