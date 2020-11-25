@@ -475,3 +475,123 @@ class SupervisorSuperviseWorkerTestCase(
         )
 
         supervisor.stop_a_worker.assert_called_once()
+
+    def test_worker_stop_initialize(
+        self,
+    ):
+        supervisor = sergeant.supervisor.Supervisor(
+            worker_module_name='tests.supervisor.workers.worker_stop_initialize',
+            worker_class_name='Worker',
+            concurrent_workers=1,
+            logger=unittest.mock.MagicMock(),
+        )
+        supervisor.supervise_loop = unittest.mock.MagicMock()
+        supervisor.respawn_a_worker = unittest.mock.MagicMock()
+        supervisor.stop_a_worker = unittest.mock.MagicMock()
+        supervisor.start()
+        supervisor.current_workers[0].process.wait(5)
+        supervisor.supervise_worker(supervisor.current_workers[0])
+
+        first_log = supervisor.logger.info.call_args_list[0]
+        self.assertTrue(
+            expr=first_log[1]['msg'].startswith('spawned a new worker at pid: '),
+        )
+        self.assertEqual(
+            first=first_log[1]['extra'],
+            second={
+                'supervisor': {
+                    'worker_module_name': 'tests.supervisor.workers.worker_stop_initialize',
+                    'worker_class_name': 'Worker',
+                    'concurrent_workers': 1,
+                    'max_worker_memory_usage': None,
+                },
+            },
+        )
+
+        second_log = supervisor.logger.info.call_args_list[1]
+        del second_log[1]['extra']['summary']['start_time']
+        del second_log[1]['extra']['summary']['end_time']
+        del second_log[1]['extra']['summary']['executor']
+        self.assertEqual(
+            first=second_log[1],
+            second={
+                'msg': 'worker has requested to stop',
+                'extra': {
+                    'supervisor': {
+                        'worker_module_name': 'tests.supervisor.workers.worker_stop_initialize',
+                        'worker_class_name': 'Worker',
+                        'concurrent_workers': 1,
+                        'max_worker_memory_usage': None,
+                    },
+                    'summary': {
+                        'executor_exception': None,
+                        'initialize_exception': None,
+                        'finalize_exception': None,
+                        'respawn': False,
+                        'stop': True,
+                    }
+                },
+            },
+        )
+
+        supervisor.stop_a_worker.assert_called_once()
+
+    def test_worker_stop_finalize(
+        self,
+    ):
+        supervisor = sergeant.supervisor.Supervisor(
+            worker_module_name='tests.supervisor.workers.worker_stop_finalize',
+            worker_class_name='Worker',
+            concurrent_workers=1,
+            logger=unittest.mock.MagicMock(),
+        )
+        supervisor.supervise_loop = unittest.mock.MagicMock()
+        supervisor.respawn_a_worker = unittest.mock.MagicMock()
+        supervisor.stop_a_worker = unittest.mock.MagicMock()
+        supervisor.start()
+        supervisor.current_workers[0].process.wait(5)
+        supervisor.supervise_worker(supervisor.current_workers[0])
+
+        first_log = supervisor.logger.info.call_args_list[0]
+        self.assertTrue(
+            expr=first_log[1]['msg'].startswith('spawned a new worker at pid: '),
+        )
+        self.assertEqual(
+            first=first_log[1]['extra'],
+            second={
+                'supervisor': {
+                    'worker_module_name': 'tests.supervisor.workers.worker_stop_finalize',
+                    'worker_class_name': 'Worker',
+                    'concurrent_workers': 1,
+                    'max_worker_memory_usage': None,
+                },
+            },
+        )
+
+        second_log = supervisor.logger.info.call_args_list[1]
+        del second_log[1]['extra']['summary']['start_time']
+        del second_log[1]['extra']['summary']['end_time']
+        del second_log[1]['extra']['summary']['executor']
+        self.assertEqual(
+            first=second_log[1],
+            second={
+                'msg': 'worker has requested to stop',
+                'extra': {
+                    'supervisor': {
+                        'worker_module_name': 'tests.supervisor.workers.worker_stop_finalize',
+                        'worker_class_name': 'Worker',
+                        'concurrent_workers': 1,
+                        'max_worker_memory_usage': None,
+                    },
+                    'summary': {
+                        'executor_exception': None,
+                        'initialize_exception': None,
+                        'finalize_exception': None,
+                        'respawn': False,
+                        'stop': True,
+                    }
+                },
+            },
+        )
+
+        supervisor.stop_a_worker.assert_called_once()
