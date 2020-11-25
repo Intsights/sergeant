@@ -4,7 +4,7 @@ import time
 import typing
 
 
-class KillerThread(
+class Killer(
     threading.Thread,
 ):
     def __init__(
@@ -51,48 +51,27 @@ class KillerThread(
                         ctypes.py_object(self.exception),
                     )
 
-
-class Killer:
-    def __init__(
-        self,
-        thread_id: int,
-        timeout: float,
-        exception: typing.Type[BaseException],
-        sleep_interval: float = 0.1,
-    ) -> None:
-        self.killer_thread = KillerThread(
-            thread_id=thread_id,
-            timeout=timeout,
-            exception=exception,
-            sleep_interval=sleep_interval,
-        )
-
-    def start(
-        self,
-    ) -> None:
-        self.killer_thread.start()
-
     def kill(
         self,
     ) -> None:
-        self.killer_thread.enabled = False
+        self.enabled = False
 
     def suspend(
         self,
     ) -> None:
-        with self.killer_thread.lock:
-            self.killer_thread.running = False
+        with self.lock:
+            self.running = False
 
     def resume(
         self,
     ) -> None:
-        with self.killer_thread.lock:
-            self.killer_thread.running = True
+        with self.lock:
+            self.running = True
 
     def reset(
         self,
     ) -> None:
-        self.killer_thread.time_elapsed = 0
+        self.time_elapsed = 0
 
     def __del__(
         self,

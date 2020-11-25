@@ -53,19 +53,19 @@ class KillerTestCase(
             cls=ExceptionTest,
         )
         self.assertEqual(
-            first=killer.killer_thread.time_elapsed,
+            first=killer.time_elapsed,
             second=0.5,
         )
         self.assertFalse(
-            expr=killer.killer_thread.running,
+            expr=killer.running,
         )
         self.assertTrue(
-            expr=killer.killer_thread.enabled,
+            expr=killer.enabled,
         )
 
         killer.kill()
         self.assertFalse(
-            expr=killer.killer_thread.enabled,
+            expr=killer.enabled,
         )
 
     def test_suspend_resume(
@@ -89,14 +89,14 @@ class KillerTestCase(
         time.sleep(0.5)
         killer.suspend()
         self.assertEqual(
-            first=killer.killer_thread.time_elapsed,
+            first=killer.time_elapsed,
             second=0.5,
         )
         self.assertFalse(
-            expr=killer.killer_thread.running,
+            expr=killer.running,
         )
         self.assertTrue(
-            expr=killer.killer_thread.enabled,
+            expr=killer.enabled,
         )
 
         time.sleep(0.3)
@@ -104,14 +104,14 @@ class KillerTestCase(
             expr=thread.is_alive(),
         )
         self.assertEqual(
-            first=killer.killer_thread.time_elapsed,
+            first=killer.time_elapsed,
             second=0.5,
         )
         self.assertFalse(
-            expr=killer.killer_thread.running,
+            expr=killer.running,
         )
         self.assertTrue(
-            expr=killer.killer_thread.enabled,
+            expr=killer.enabled,
         )
 
         killer.resume()
@@ -120,14 +120,14 @@ class KillerTestCase(
             expr=thread.is_alive(),
         )
         self.assertEqual(
-            first=killer.killer_thread.time_elapsed,
+            first=killer.time_elapsed,
             second=0.7,
         )
         self.assertFalse(
-            expr=killer.killer_thread.running,
+            expr=killer.running,
         )
         self.assertTrue(
-            expr=killer.killer_thread.enabled,
+            expr=killer.enabled,
         )
         self.assertIsInstance(
             obj=self.raised_exception,
@@ -136,7 +136,7 @@ class KillerTestCase(
 
         killer.kill()
         self.assertFalse(
-            expr=killer.killer_thread.enabled,
+            expr=killer.enabled,
         )
 
     def test_reset_while_running(
@@ -201,7 +201,7 @@ class KillerTestCase(
             cls=ExceptionTest,
         )
         self.assertFalse(
-            expr=killer.killer_thread.running,
+            expr=killer.running,
         )
 
         thread = threading.Thread(
@@ -209,7 +209,7 @@ class KillerTestCase(
         )
         thread.start()
 
-        killer.killer_thread.thread_id = thread.ident
+        killer.thread_id = thread.ident
         killer.reset()
         killer.resume()
         self.assertTrue(
@@ -224,7 +224,7 @@ class KillerTestCase(
             cls=ExceptionTest,
         )
         self.assertFalse(
-            expr=killer.killer_thread.running,
+            expr=killer.running,
         )
         killer.kill()
 
