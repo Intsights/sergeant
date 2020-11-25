@@ -277,6 +277,16 @@ class Worker:
 
         try:
             self.initialize()
+        except WorkerRespawn:
+            summary['respawn'] = True
+            summary['end_time'] = datetime.datetime.utcnow()
+
+            return summary
+        except WorkerStop:
+            summary['stop'] = True
+            summary['end_time'] = datetime.datetime.utcnow()
+
+            return summary
         except Exception as exception:
             self.logger.error(
                 msg=f'initialize has failed: {exception}',
@@ -307,6 +317,10 @@ class Worker:
 
         try:
             self.finalize()
+        except WorkerRespawn:
+            summary['respawn'] = True
+        except WorkerStop:
+            summary['stop'] = True
         except Exception as exception:
             self.logger.error(
                 msg=f'finalize has failed: {exception}',
