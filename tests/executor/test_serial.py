@@ -40,7 +40,7 @@ class SerialTestCase(
         self,
     ):
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
         serial_executor.killer = unittest.mock.MagicMock()
 
@@ -81,7 +81,7 @@ class SerialTestCase(
         self,
     ):
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
         serial_executor.killer = unittest.mock.MagicMock()
 
@@ -134,7 +134,7 @@ class SerialTestCase(
         self,
     ):
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -178,7 +178,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -237,7 +237,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -293,7 +293,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -350,7 +350,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -395,7 +395,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -445,7 +445,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -495,7 +495,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -545,7 +545,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()
@@ -593,7 +593,7 @@ class SerialTestCase(
         )
 
         serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
         )
 
         task = sergeant.objects.Task()

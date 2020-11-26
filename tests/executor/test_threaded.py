@@ -21,6 +21,9 @@ class ThreadedTestCase(
                 type='',
                 params={},
             ),
+            timeouts=sergeant.config.Timeouts(
+                soft_timeout=1.0,
+            )
         )
         self.worker.work = unittest.mock.MagicMock(
             return_value=True,
@@ -40,101 +43,101 @@ class ThreadedTestCase(
     def test_pre_work(
         self,
     ):
-        threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
-            number_of_threads=1,
-        )
-
-        task = sergeant.objects.Task()
-        threaded_executor.pre_work(
-            task=task,
-        )
-        self.worker.pre_work.assert_called_once_with(
-            task=task,
-        )
-        self.worker.logger.error.assert_not_called()
-
-        self.worker.pre_work.side_effect = Exception('exception message')
-        threaded_executor.pre_work(
-            task=task,
-        )
-        self.worker.logger.error.assert_called_once_with(
-            msg='pre_work has failed: exception message',
-            extra={
-                'task': task,
-            },
-        )
-
-        threaded_executor.should_use_a_killer = True
         with unittest.mock.patch(
             target='sergeant.killer.thread.Killer',
         ):
-            threaded_executor.pre_work(
-                task=task,
+            threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
+                worker_object=self.worker,
+                number_of_threads=1,
             )
-            threaded_executor.thread_killers[threading.get_ident()].start.assert_called_once()
-            threaded_executor.thread_killers[threading.get_ident()].start.reset_mock()
 
+            task = sergeant.objects.Task()
             threaded_executor.pre_work(
                 task=task,
             )
-            threaded_executor.thread_killers[threading.get_ident()].reset.assert_called_once()
-            threaded_executor.thread_killers[threading.get_ident()].resume.assert_called_once()
-            threaded_executor.thread_killers[threading.get_ident()].start.assert_not_called()
+            self.worker.pre_work.assert_called_once_with(
+                task=task,
+            )
+            self.worker.logger.error.assert_not_called()
+
+            self.worker.pre_work.side_effect = Exception('exception message')
+            threaded_executor.pre_work(
+                task=task,
+            )
+            self.worker.logger.error.assert_called_once_with(
+                msg='pre_work has failed: exception message',
+                extra={
+                    'task': task,
+                },
+            )
+
+            threaded_executor.should_use_a_killer = True
+            threaded_executor.thread_killer.add.reset_mock()
+            threaded_executor.pre_work(
+                task=task,
+            )
+            threaded_executor.thread_killer.add.assert_called_once_with(
+                thread_id=threading.get_ident(),
+                timeout=self.worker.config.timeouts.soft_timeout,
+            )
 
     def test_post_work(
         self,
     ):
-        threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
-            number_of_threads=1,
-        )
-        threaded_executor.thread_killers[threading.get_ident()] = unittest.mock.MagicMock()
+        with unittest.mock.patch(
+            target='sergeant.killer.thread.Killer',
+        ):
+            threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
+                worker_object=self.worker,
+                number_of_threads=1,
+            )
+            threaded_executor.should_use_a_killer = False
 
-        task = sergeant.objects.Task()
-        threaded_executor.post_work(
-            task=task,
-            success=True,
-            exception=None,
-        )
-        self.worker.post_work.assert_called_once_with(
-            task=task,
-            success=True,
-            exception=None,
-        )
-        threaded_executor.thread_killers[threading.get_ident()].suspend.assert_not_called()
-        self.worker.logger.error.assert_not_called()
+            task = sergeant.objects.Task()
+            threaded_executor.post_work(
+                task=task,
+                success=True,
+                exception=None,
+            )
+            self.worker.post_work.assert_called_once_with(
+                task=task,
+                success=True,
+                exception=None,
+            )
+            threaded_executor.thread_killer.remove.assert_not_called()
+            self.worker.logger.error.assert_not_called()
 
-        exception = Exception('exception message')
-        self.worker.post_work.side_effect = exception
-        threaded_executor.post_work(
-            task=task,
-            success=True,
-            exception=None,
-        )
-        self.worker.logger.error.assert_called_once_with(
-            msg='post_work has failed: exception message',
-            extra={
-                'task': task,
-                'success': True,
-                'exception': exception,
-            },
-        )
+            exception = Exception('exception message')
+            self.worker.post_work.side_effect = exception
+            threaded_executor.post_work(
+                task=task,
+                success=True,
+                exception=None,
+            )
+            self.worker.logger.error.assert_called_once_with(
+                msg='post_work has failed: exception message',
+                extra={
+                    'task': task,
+                    'success': True,
+                    'exception': exception,
+                },
+            )
 
-        threaded_executor.thread_killers[threading.get_ident()] = unittest.mock.MagicMock()
-        threaded_executor.should_use_a_killer = True
-        threaded_executor.post_work(
-            task=task,
-            success=True,
-            exception=None,
-        )
-        threaded_executor.thread_killers[threading.get_ident()].suspend.assert_called_once()
+            threaded_executor.should_use_a_killer = True
+            threaded_executor.post_work(
+                task=task,
+                success=True,
+                exception=None,
+            )
+            threaded_executor.thread_killer.remove.assert_called_once_with(
+                thread_id=threading.get_ident(),
+            )
 
     def test_success(
         self,
     ):
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -173,7 +176,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=10,
         )
 
@@ -217,7 +220,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -274,7 +277,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -328,7 +331,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=10,
         )
 
@@ -371,7 +374,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -419,7 +422,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -467,7 +470,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -515,7 +518,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -564,7 +567,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 

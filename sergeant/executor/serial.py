@@ -14,25 +14,25 @@ class SerialExecutor(
 ):
     def __init__(
         self,
-        worker: worker.Worker,
+        worker_object: worker.Worker,
     ) -> None:
-        self.worker = worker
+        self.worker_object = worker_object
         self.currently_working = False
         self.original_int = signal.getsignal(signal.SIGINT)
         self.original_abrt = signal.getsignal(signal.SIGABRT)
 
-        has_soft_timeout = self.worker.config.timeouts.soft_timeout > 0
-        has_hard_timeout = self.worker.config.timeouts.hard_timeout > 0
-        has_critical_timeout = self.worker.config.timeouts.critical_timeout > 0
+        has_soft_timeout = self.worker_object.config.timeouts.soft_timeout > 0
+        has_hard_timeout = self.worker_object.config.timeouts.hard_timeout > 0
+        has_critical_timeout = self.worker_object.config.timeouts.critical_timeout > 0
 
         self.should_use_a_killer = has_soft_timeout or has_hard_timeout or has_critical_timeout
         if self.should_use_a_killer:
             self.killer = killer.process.Killer(
                 pid_to_kill=os.getpid(),
                 sleep_interval=0.1,
-                soft_timeout=self.worker.config.timeouts.soft_timeout,
-                hard_timeout=self.worker.config.timeouts.hard_timeout,
-                critical_timeout=self.worker.config.timeouts.critical_timeout,
+                soft_timeout=self.worker_object.config.timeouts.soft_timeout,
+                hard_timeout=self.worker_object.config.timeouts.hard_timeout,
+                critical_timeout=self.worker_object.config.timeouts.critical_timeout,
             )
 
             signal.signal(signal.SIGABRT, self.sigabrt_handler)
@@ -72,7 +72,7 @@ class SerialExecutor(
         )
 
         try:
-            returned_value = self.worker.work(
+            returned_value = self.worker_object.work(
                 task=task,
             )
         except worker.WorkerTimedout as exception:
@@ -82,7 +82,7 @@ class SerialExecutor(
                 exception=exception,
             )
 
-            self.worker.handle_timeout(
+            self.worker_object.handle_timeout(
                 task=task,
             )
         except worker.WorkerRetry as exception:
@@ -92,7 +92,7 @@ class SerialExecutor(
                 exception=exception,
             )
 
-            self.worker.handle_retry(
+            self.worker_object.handle_retry(
                 task=task,
             )
         except worker.WorkerMaxRetries as exception:
@@ -102,7 +102,7 @@ class SerialExecutor(
                 exception=exception,
             )
 
-            self.worker.handle_max_retries(
+            self.worker_object.handle_max_retries(
                 task=task,
             )
         except worker.WorkerRequeue as exception:
@@ -112,7 +112,7 @@ class SerialExecutor(
                 exception=exception,
             )
 
-            self.worker.handle_requeue(
+            self.worker_object.handle_requeue(
                 task=task,
             )
         except worker.WorkerInterrupt as exception:
@@ -130,7 +130,7 @@ class SerialExecutor(
                 exception=exception,
             )
 
-            self.worker.handle_failure(
+            self.worker_object.handle_failure(
                 task=task,
                 exception=exception,
             )
@@ -140,7 +140,7 @@ class SerialExecutor(
                 success=True,
                 exception=None,
             )
-            self.worker.handle_success(
+            self.worker_object.handle_success(
                 task=task,
                 returned_value=returned_value,
             )
@@ -150,11 +150,11 @@ class SerialExecutor(
         task: objects.Task,
     ) -> None:
         try:
-            self.worker.pre_work(
+            self.worker_object.pre_work(
                 task=task,
             )
         except Exception as exception:
-            self.worker.logger.error(
+            self.worker_object.logger.error(
                 msg=f'pre_work has failed: {exception}',
                 extra={
                     'task': task,
@@ -178,13 +178,13 @@ class SerialExecutor(
         self.currently_working = False
 
         try:
-            self.worker.post_work(
+            self.worker_object.post_work(
                 task=task,
                 success=success,
                 exception=exception,
             )
         except Exception as exception:
-            self.worker.logger.error(
+            self.worker_object.logger.error(
                 msg=f'post_work has failed: {exception}',
                 extra={
                     'task': task,
