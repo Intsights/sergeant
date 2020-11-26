@@ -25,14 +25,12 @@ class ThreadedExecutor(
             exception=worker.WorkerSoftTimedout,
             sleep_interval=0.1,
         )
+        self.interrupt_exception = None
 
     def execute_tasks(
         self,
         tasks: typing.Iterable[objects.Task],
     ) -> None:
-        interrupt_exception = None
-        future_to_task = {}
-
         if self.should_use_a_killer:
             self.thread_killer.start()
 
@@ -40,42 +38,31 @@ class ThreadedExecutor(
             max_workers=self.number_of_threads,
         )
 
+        running_futures = []
         for task in tasks:
             future = executor.submit(self.execute_task, task)
-            future_to_task[future] = task
+            running_futures.append(future)
 
-            if len(future_to_task) == self.number_of_threads:
+            if len(running_futures) == self.number_of_threads:
                 finished, pending = concurrent.futures.wait(
-                    fs=future_to_task,
+                    fs=running_futures,
                     timeout=None,
                     return_when=concurrent.futures.FIRST_COMPLETED,
                 )
                 for finished_future in finished:
-                    del future_to_task[finished_future]
+                    running_futures.remove(finished_future)
 
-                    try:
-                        finished_future.result()
-                    except worker.WorkerInterrupt as exception:
-                        interrupt_exception = exception
-
-                        break
-
-        for finished_future in concurrent.futures.as_completed(future_to_task):
-            try:
-                finished_future.result()
-            except worker.WorkerInterrupt as exception:
-                if not interrupt_exception:
-                    interrupt_exception = exception
-
-        if self.should_use_a_killer:
-            self.thread_killer.stop()
+            if self.interrupt_exception:
+                break
 
         executor.shutdown(
             wait=True,
         )
+        if self.should_use_a_killer:
+            self.thread_killer.stop()
 
-        if interrupt_exception:
-            raise interrupt_exception
+        if self.interrupt_exception:
+            raise self.interrupt_exception
 
     def execute_task(
         self,
@@ -136,7 +123,7 @@ class ThreadedExecutor(
                 exception=exception,
             )
 
-            raise exception
+            self.interrupt_exception = exception
         except Exception as exception:
             self.post_work(
                 task=task,
