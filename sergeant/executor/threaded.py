@@ -54,7 +54,7 @@ class ThreadedExecutor(
 
                         break
 
-        for future in concurrent.futures.as_completed(future_to_task):
+        for finished_future in concurrent.futures.as_completed(future_to_task):
             try:
                 finished_future.result()
             except worker.WorkerInterrupt as exception:
