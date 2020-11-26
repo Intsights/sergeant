@@ -41,7 +41,7 @@ class ThreadedTestCase(
         self,
     ):
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -86,7 +86,7 @@ class ThreadedTestCase(
         self,
     ):
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
         threaded_executor.thread_killers[threading.get_ident()] = unittest.mock.MagicMock()
@@ -134,7 +134,7 @@ class ThreadedTestCase(
         self,
     ):
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -173,7 +173,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=10,
         )
 
@@ -217,7 +217,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -274,7 +274,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -328,7 +328,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=10,
         )
 
@@ -371,7 +371,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -419,7 +419,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -467,7 +467,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -515,7 +515,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
@@ -564,7 +564,7 @@ class ThreadedTestCase(
         )
 
         threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
-            worker=self.worker,
+            worker_object=self.worker,
             number_of_threads=1,
         )
 
