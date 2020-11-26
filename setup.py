@@ -24,12 +24,12 @@ setuptools.setup(
     python_requires='>=3.7',
     zip_safe=False,
     install_requires=[
-        'hiredis',
-        'msgpack',
-        'orjson',
-        'psutil',
-        'pymongo',
-        'redis',
+        'hiredis==1.*',
+        'msgpack==1.*',
+        'orjson==3.*',
+        'psutil==5.*',
+        'pymongo==3.*',
+        'redis==3.*',
     ],
     setup_requires=[
         'pytest-runner',
