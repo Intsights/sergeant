@@ -85,11 +85,11 @@ class Worker:
         self.executor_obj: executor._executor.Executor
         if self.config.number_of_threads == 1:
             self.executor_obj = executor.serial.SerialExecutor(
-                worker=self,
+                worker_object=self,
             )
         else:
             self.executor_obj = executor.threaded.ThreadedExecutor(
-                worker=self,
+                worker_object=self,
                 number_of_threads=self.config.number_of_threads,
             )
 
