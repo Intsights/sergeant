@@ -28,30 +28,25 @@ class ThreadedExecutor(
         self,
         tasks: typing.Iterable[objects.Task],
     ) -> None:
-        executor = concurrent.futures.ThreadPoolExecutor(
+        with concurrent.futures.ThreadPoolExecutor(
             max_workers=self.number_of_threads,
-        )
+        ) as executor:
+            running_futures = []
+            for task in tasks:
+                future = executor.submit(self.execute_task, task)
+                running_futures.append(future)
 
-        running_futures = []
-        for task in tasks:
-            future = executor.submit(self.execute_task, task)
-            running_futures.append(future)
+                if len(running_futures) == self.number_of_threads:
+                    finished, pending = concurrent.futures.wait(
+                        fs=running_futures,
+                        timeout=None,
+                        return_when=concurrent.futures.FIRST_COMPLETED,
+                    )
+                    for finished_future in finished:
+                        running_futures.remove(finished_future)
 
-            if len(running_futures) == self.number_of_threads:
-                finished, pending = concurrent.futures.wait(
-                    fs=running_futures,
-                    timeout=None,
-                    return_when=concurrent.futures.FIRST_COMPLETED,
-                )
-                for finished_future in finished:
-                    running_futures.remove(finished_future)
-
-            if self.interrupt_exception:
-                break
-
-        executor.shutdown(
-            wait=True,
-        )
+                if self.interrupt_exception:
+                    break
 
         for thread_killer in self.thread_killers.values():
             thread_killer.kill()
