@@ -112,7 +112,6 @@ class KillerTestCase(
         thread.join()
 
 
-
 class ExceptionTest(
     Exception,
 ):
