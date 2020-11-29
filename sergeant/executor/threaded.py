@@ -22,7 +22,7 @@ class ThreadedExecutor(
         has_soft_timeout = self.worker_object.config.timeouts.soft_timeout > 0
         self.should_use_a_killer = has_soft_timeout
         self.thread_killers: typing.Dict[int, killer.thread.Killer] = {}
-        self.interrupt_exception = None
+        self.interrupt_exception: typing.Optional[Exception] = None
 
     def execute_tasks(
         self,
