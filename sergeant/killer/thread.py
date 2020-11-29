@@ -9,71 +9,79 @@ class Killer(
 ):
     def __init__(
         self,
-        thread_id: int,
-        timeout: float,
         exception: typing.Type[BaseException],
         sleep_interval: float = 0.1,
     ) -> None:
         super().__init__()
 
-        self.timeout = timeout
         self.exception = exception
-        self.thread_id = thread_id
         self.sleep_interval = sleep_interval
 
-        self.time_elapsed = 0.0
+        self.thread_to_end_time: typing.Dict[int, float] = {}
         self.enabled = True
-        self.running = True
+        self.started = False
 
+        self.finished = threading.Event()
         self.lock = threading.Lock()
 
     def run(
         self,
     ) -> None:
+        self.started = True
+
         while self.enabled:
-            if not self.running:
-                time.sleep(self.sleep_interval)
-
-                continue
-
-            if self.time_elapsed < self.timeout:
-                self.time_elapsed += self.sleep_interval
-                time.sleep(self.sleep_interval)
-
-                continue
-
             with self.lock:
-                if self.running:
-                    self.running = False
+                for thread_id, end_time in list(self.thread_to_end_time.items()):
+                    if time.time() > end_time:
+                        del self.thread_to_end_time[thread_id]
+                        self.raise_exception_in_thread(
+                            thread_id=thread_id,
+                            exception=self.exception,
+                        )
 
-                    ctypes.pythonapi.PyThreadState_SetAsyncExc(
-                        ctypes.c_ulong(self.thread_id),
-                        ctypes.py_object(self.exception),
-                    )
+            time.sleep(self.sleep_interval)
 
-    def kill(
+        self.finished.set()
+
+    def raise_exception_in_thread(
+        self,
+        thread_id: int,
+        exception: typing.Type[BaseException],
+    ) -> bool:
+        try:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(
+                ctypes.c_ulong(thread_id),
+                ctypes.py_object(exception),
+            )
+
+            return True
+        except Exception:
+            return False
+
+    def stop(
         self,
     ) -> None:
-        self.enabled = False
+        if self.started:
+            self.enabled = False
+            self.finished.wait()
 
-    def suspend(
+    def remove(
         self,
+        thread_id: int,
     ) -> None:
         with self.lock:
-            self.running = False
+            if thread_id in self.thread_to_end_time:
+                del self.thread_to_end_time[thread_id]
 
-    def resume(
+    def add(
         self,
+        thread_id: int,
+        timeout: float,
     ) -> None:
         with self.lock:
-            self.running = True
-
-    def reset(
-        self,
-    ) -> None:
-        self.time_elapsed = 0
+            self.thread_to_end_time[thread_id] = time.time() + timeout
 
     def __del__(
         self,
     ) -> None:
-        self.kill()
+        self.stop()

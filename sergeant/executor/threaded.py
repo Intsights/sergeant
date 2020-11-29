@@ -21,13 +21,19 @@ class ThreadedExecutor(
 
         has_soft_timeout = self.worker_object.config.timeouts.soft_timeout > 0
         self.should_use_a_killer = has_soft_timeout
-        self.thread_killers: typing.Dict[int, killer.thread.Killer] = {}
+        self.thread_killer = killer.thread.Killer(
+            exception=worker.WorkerSoftTimedout,
+            sleep_interval=0.1,
+        )
         self.interrupt_exception: typing.Optional[Exception] = None
 
     def execute_tasks(
         self,
         tasks: typing.Iterable[objects.Task],
     ) -> None:
+        if self.should_use_a_killer:
+            self.thread_killer.start()
+
         with concurrent.futures.ThreadPoolExecutor(
             max_workers=self.number_of_threads,
         ) as executor:
@@ -48,9 +54,8 @@ class ThreadedExecutor(
                 if self.interrupt_exception:
                     break
 
-        for thread_killer in self.thread_killers.values():
-            thread_killer.kill()
-        self.thread_killers.clear()
+        if self.should_use_a_killer:
+            self.thread_killer.stop()
 
         if self.interrupt_exception:
             raise self.interrupt_exception
@@ -154,18 +159,10 @@ class ThreadedExecutor(
             )
 
         if self.should_use_a_killer:
-            current_thread_id = threading.get_ident()
-
-            if current_thread_id in self.thread_killers:
-                self.thread_killers[current_thread_id].reset()
-                self.thread_killers[current_thread_id].resume()
-            else:
-                self.thread_killers[current_thread_id] = killer.thread.Killer(
-                    thread_id=current_thread_id,
-                    timeout=self.worker_object.config.timeouts.soft_timeout,
-                    exception=worker.WorkerSoftTimedout,
-                )
-                self.thread_killers[current_thread_id].start()
+            self.thread_killer.add(
+                thread_id=threading.get_ident(),
+                timeout=self.worker_object.config.timeouts.soft_timeout,
+            )
 
     def post_work(
         self,
@@ -174,7 +171,9 @@ class ThreadedExecutor(
         exception: typing.Optional[Exception] = None,
     ) -> None:
         if self.should_use_a_killer:
-            self.thread_killers[threading.get_ident()].suspend()
+            self.thread_killer.remove(
+                thread_id=threading.get_ident(),
+            )
 
         try:
             self.worker_object.post_work(
@@ -191,11 +190,3 @@ class ThreadedExecutor(
                     'exception': exception,
                 },
             )
-
-    def __del__(
-        self,
-    ) -> None:
-        for thread_killer in self.thread_killers.values():
-            thread_killer.kill()
-
-        self.thread_killers.clear()
