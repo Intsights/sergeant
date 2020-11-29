@@ -32,8 +32,9 @@ class SupervisedWorker:
                     f'--child-pipe={self.child_pipe.fileno()} '
                 ),
             ),
-            text=True,
+            bufsize=0,
             stderr=subprocess.PIPE,
+            text=True,
             pass_fds=(
                 self.child_pipe.fileno(),
             ),
@@ -62,10 +63,16 @@ class SupervisedWorker:
     def get_stderr(
         self,
     ) -> str:
-        if self.process.stderr:
-            return self.process.stderr.read()
-
-        return ''
+        try:
+            stdout, stderr = self.process.communicate(
+                timeout=5,
+            )
+            if stderr:
+                return stderr
+            else:
+                return ''
+        except subprocess.TimeoutExpired:
+            return 'could not grab process stderr'
 
     def kill(
         self,
