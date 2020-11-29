@@ -36,11 +36,13 @@ class KillerTestCase(
         thread.start()
 
         killer = sergeant.killer.thread.Killer(
-            thread_id=thread.ident,
-            timeout=0.5,
             exception=ExceptionTest,
         )
         killer.start()
+        killer.add(
+            thread_id=thread.ident,
+            timeout=0.5,
+        )
         self.assertTrue(
             expr=thread.is_alive(),
         )
@@ -52,18 +54,15 @@ class KillerTestCase(
             obj=self.raised_exception,
             cls=ExceptionTest,
         )
+
         self.assertEqual(
-            first=killer.time_elapsed,
-            second=0.5,
-        )
-        self.assertFalse(
-            expr=killer.running,
+            first=killer.thread_to_end_time,
+            second={},
         )
         self.assertTrue(
             expr=killer.enabled,
         )
-
-        killer.kill()
+        killer.stop()
         self.assertFalse(
             expr=killer.enabled,
         )
