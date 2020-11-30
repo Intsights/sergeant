@@ -32,9 +32,6 @@ class SupervisedWorker:
                     f'--child-pipe={self.child_pipe.fileno()} '
                 ),
             ),
-            bufsize=0,
-            stderr=subprocess.PIPE,
-            text=True,
             pass_fds=(
                 self.child_pipe.fileno(),
             ),
@@ -59,20 +56,6 @@ class SupervisedWorker:
             return self.parent_pipe.recv()
 
         return None
-
-    def get_stderr(
-        self,
-    ) -> str:
-        try:
-            stdout, stderr = self.process.communicate(
-                timeout=5,
-            )
-            if stderr:
-                return stderr
-            else:
-                return ''
-        except subprocess.TimeoutExpired:
-            return 'could not grab process stderr'
 
     def kill(
         self,
@@ -238,7 +221,6 @@ class Supervisor:
             elif worker.process.returncode == 1:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['exception'] = worker_summary if worker_summary else {}
-                extra_signature['stderr'] = worker.get_stderr()
                 self.logger.critical(
                     msg='worker execution has failed',
                     extra=extra_signature,
@@ -280,7 +262,6 @@ class Supervisor:
             else:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['exception'] = worker_summary if worker_summary else {}
-                extra_signature['stderr'] = worker.get_stderr()
                 extra_signature['return_code'] = worker.process.returncode
                 self.logger.critical(
                     msg=f'worker execution has been interrupted with return code: {worker.process.returncode}',

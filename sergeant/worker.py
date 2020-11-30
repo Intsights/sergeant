@@ -34,10 +34,14 @@ class Worker:
         self.logger = logging.getLogger(
             name=self.config.name,
         )
-        self.logger.propagate = False
         self.logger.setLevel(
             level=self.config.logging.level,
         )
+        for handler in self.logger.handlers:
+            self.logger.removeHandler(
+                hdlr=handler,
+            )
+        self.logger.propagate = False
 
         if self.config.logging.log_to_stdout:
             stream_handler = logging.StreamHandler(
@@ -51,6 +55,10 @@ class Worker:
             )
             self.logger.addHandler(
                 hdlr=stream_handler,
+            )
+        elif not self.config.logging.handlers:
+            self.logger.addHandler(
+                hdlr=logging.NullHandler(),
             )
 
         for handler in self.config.logging.handlers:
