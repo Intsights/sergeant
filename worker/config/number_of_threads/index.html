@@ -7,24 +7,25 @@
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/config/executor/">
+      
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/config/number_of_threads/">
       
       
         <meta name="author" content="Gal Ben David">
       
       <link rel="shortcut icon" href="../../../images/favicon.ico">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.0">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.6">
     
     
       
-        <title>executor - Sergeant</title>
+        <title>number_of_threads - Sergeant</title>
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.bc7e593a.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.6910b76c.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab28b872.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.196e0c26.min.css">
         
       
     
@@ -60,7 +61,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#worker-config-executor" class="md-skip">
+        <a href="#worker-config-number_of_threads" class="md-skip">
           Skip to content
         </a>
       
@@ -89,7 +90,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              executor
+              number_of_threads
             
           </span>
         </div>
@@ -104,7 +105,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
@@ -203,8 +204,7 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
-    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
     <label class="md-nav__link" for="nav-2">
       Worker
       <span class="md-nav__icon md-icon"></span>
@@ -226,8 +226,7 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-1" type="checkbox" id="nav-2-1" checked>
-    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-1" type="checkbox" id="nav-2-1" checked>
     <label class="md-nav__link" for="nav-2-1">
       Config
       <span class="md-nav__icon md-icon"></span>
@@ -327,12 +326,12 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        executor
+        number_of_threads
         <span class="md-nav__icon md-icon"></span>
       </label>
     
     <a href="./" class="md-nav__link md-nav__link--active">
-      executor
+      number_of_threads
     </a>
     
       
@@ -351,13 +350,6 @@
         <li class="md-nav__item">
   <a href="#definition" class="md-nav__link">
     Definition
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
   </a>
   
 </li>
@@ -417,8 +409,7 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2">
-    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-2" type="checkbox" id="nav-2-2" >
     <label class="md-nav__link" for="nav-2-2">
       Handlers
       <span class="md-nav__icon md-icon"></span>
@@ -527,8 +518,7 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3">
-    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-3" type="checkbox" id="nav-2-3" >
     <label class="md-nav__link" for="nav-2-3">
       Worker
       <span class="md-nav__icon md-icon"></span>
@@ -613,8 +603,7 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
-    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4" >
     <label class="md-nav__link" for="nav-2-4">
       Methods
       <span class="md-nav__icon md-icon"></span>
@@ -759,8 +748,7 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5">
-    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5" >
     <label class="md-nav__link" for="nav-2-5">
       Lock
       <span class="md-nav__icon md-icon"></span>
@@ -862,8 +850,7 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
-    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" >
     <label class="md-nav__link" for="nav-4">
       Examples
       <span class="md-nav__icon md-icon"></span>
@@ -959,13 +946,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -978,57 +958,23 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/config/executor.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/intsights/sergeant/edit/master/docs/worker/config/number_of_threads.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="worker-config-executor">Worker Config - executor<a class="headerlink" href="#worker-config-executor" title="Permanent link">#</a></h1>
-<p>The <code>executor</code> parameter controls which executor to use when executing tasks.</p>
+                <h1 id="worker-config-number_of_threads">Worker Config - number_of_threads<a class="headerlink" href="#worker-config-number_of_threads" title="Permanent link">#</a></h1>
+<p>The <code>number_of_threads</code> parameter controls how many thread to use for the tasks execution. Under the hood, it controls which executor to use when executing tasks.</p>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
-    <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">class</span> <span class="nc">Executor</span><span class="p">:</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;serial&#39;</span>
-    <span class="n">number_of_threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">number_of_threads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div>
 </td></tr></table>
-<p>The <code>executor</code> parameter defines the type of the tasks execution.</p>
-<p>The following executor types are available:</p>
+<p>The <code>number_of_threads</code> parameter defines the number of thread to use when executing tasks. When the number of threads is 1, the <code>serial</code> executor would be in use, otherwise the <code>threaded</code> executor would be in use.</p>
 <ul>
 <li><code>serial</code> [default] - Serial executor takes the bulk of the tasks that were pulled from the broker, and executes each one of them one by one. This executor means there is no parallelism within the process.</li>
 <li><code>threaded</code> - Threaded executor takes the bulk of the tasks that were pulled from the broker, and executes them within a thread pool. This executor means that on the top of the process, there is parallelism between different threads.</li>
 </ul>
-<p><code>number_of_threads</code> parameter is relevant only with <code>threaded</code> executor.</p>
-<p>It is very important to choose the right executor type. There are more consequences than one might think for choosing incorrect executor. When using the serial executor, the only concurrency you will get will be the amount of workers that were spawned by the <code>supervisor</code>. It is a very stable executor due to its nature. It takes a task after task, and runs it in a loop. The threaded executor take a bunch of tasks and runs them inside a thread pool. The big concern here is the inability to stop an execution of a thread in Python. A thread that would lock the GIL would make the worker inaccesible. The worker would be in a stuck mode. There are two different killers for each of the executors. When using the serial executor, the <code>sergeant.killer.process</code> is being used. This type of killer can kill the process entirely on situations where the process became stuck. When using the threaded executor, the <code>sergeant.killer.thread</code> is being used. This type of killer tries to raise an exception inside the stuck thread. If the thread holds the GIL, or is not switching its current execution line, it would stuck forever. A call for <code>time.sleep(100)</code> for example would not raise an exception until the sleep would end. The reason not to use signals here as we do in <code>sergeant.killer.process</code> is that we do not want to interrupt all the threads, and this would cause to drop multiple tasks.</p>
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
-<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">serial</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Executor</span><span class="p">(</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;serial&#39;</span><span class="p">,</span>
-<span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">threaded</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Executor</span><span class="p">(</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;threaded&#39;</span><span class="p">,</span>
-    <span class="n">number_of_threads</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-<span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
+<p>It is very important to choose the right executor type. There are more consequences than one might think for choosing the incorrect executor. When using the serial executor, the only concurrency you will get will be the amount of workers that were spawned by the <code>supervisor</code>. It is a very stable executor due to its nature. It takes a task after task, and runs it in a loop. The threaded executor take a bunch of tasks and runs them inside a thread pool. The big concern here is the inability to stop an execution of a thread in Python. A thread that would lock the GIL would make the worker inaccesible. The worker would be in a stuck mode. There are two different killers for each of the executors. When using the serial executor, the <code>sergeant.killer.process</code> is being used. This type of killer can kill the process entirely on situations where the process became stuck. When using the threaded executor, the <code>sergeant.killer.thread</code> is being used. This type of killer tries to raise an exception inside the stuck thread. If the thread holds the GIL, or is not switching its current execution line, it would stuck forever. A call for <code>time.sleep(100)</code> for example would not raise an exception until the sleep would end. The reason not to use signals here as we do in <code>sergeant.killer.process</code> is that we do not want to interrupt all the threads, and this would cause to drop multiple tasks.</p>
                 
               
               
@@ -1099,8 +1045,8 @@
       
     </div>
     
-      <script src="../../../assets/javascripts/vendor.6a3d08fc.min.js"></script>
-      <script src="../../../assets/javascripts/bundle.71201edf.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      <script src="../../../assets/javascripts/vendor.fd16492e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.7836ba4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
       <script>
         app = initialize({
