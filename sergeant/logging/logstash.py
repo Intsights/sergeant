@@ -16,12 +16,14 @@ class LogstashHandler(
         self,
         host: str,
         port: int,
+        timeout: typing.Optional[float] = 2.0,
     ) -> None:
         super().__init__()
         self.hostname = socket.gethostname()
         self.ipaddress = socket.gethostbyname(self.hostname)
         self.host = host
         self.port = port
+        self.timeout = timeout
         self.address = (
             self.host,
             self.port,
@@ -96,16 +98,12 @@ class LogstashHandler(
         )
 
         try:
-            socket_connection = socket.socket(
+            with socket.socket(
                 family=socket.AF_INET,
                 type=socket.SOCK_STREAM,
-            )
-            socket_connection.connect(self.address)
-            socket_connection.sendall(encoded_message)
+            ) as socket_connection:
+                socket_connection.settimeout(self.timeout)
+                socket_connection.connect(self.address)
+                socket_connection.sendall(encoded_message)
         except Exception:
             traceback.print_exc()
-        finally:
-            try:
-                socket_connection.close()
-            except Exception:
-                pass
