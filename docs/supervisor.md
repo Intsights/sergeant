@@ -42,7 +42,7 @@ Assuming a `Supervisor` with concurrency level of 4
 python3 -m sergeant.supervisor \
     --worker-module=crawl_worker \
     --worker-class=Worker \
-    --concurrent-worker=4
+    --concurrent-workers=4
 ```
 
 ```mermaid
