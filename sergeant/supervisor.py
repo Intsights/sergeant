@@ -221,8 +221,10 @@ class Supervisor:
             elif worker.process.returncode == 1:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['exception'] = worker_summary if worker_summary else {}
+                exception_message = extra_signature['exception'].get('message', None)
+
                 self.logger.critical(
-                    msg='worker execution has failed',
+                    msg=f'worker execution has failed with the following exception: {exception_message}',
                     extra=extra_signature,
                 )
             elif worker.process.returncode == 2:
