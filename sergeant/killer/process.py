@@ -70,7 +70,15 @@ class KillerServer:
         if self.pipe.poll(
             timeout=self.sleep_interval,
         ):
-            data = self.pipe.recv_bytes()
+            try:
+                data = self.pipe.recv_bytes()
+            except EOFError:
+                self.logger.warning(
+                    msg='recv_bytes has exited unexpectedly with EOFError',
+                )
+
+                return False
+
             if data == b'start':
                 self.logger.info(
                     msg='start request was received',
@@ -99,6 +107,8 @@ class KillerServer:
                 self.hard_timeout_raised = False
                 self.critical_timeout_raised = False
 
+        return True
+
     def kill_loop(
         self,
     ) -> None:
@@ -111,7 +121,9 @@ class KillerServer:
         ):
             before = time.time()
 
-            self.process_requests()
+            if not self.process_requests():
+                break
+
             if self.running:
                 self.check_and_process_soft_timeout()
                 self.check_and_process_hard_timeout()
