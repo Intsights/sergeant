@@ -66,7 +66,7 @@ class KillerServer:
 
     def process_requests(
         self,
-    ) -> None:
+    ) -> bool:
         if self.pipe.poll(
             timeout=self.sleep_interval,
         ):
