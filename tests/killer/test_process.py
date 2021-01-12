@@ -275,7 +275,7 @@ class KillerTestCase(
         self.assertFalse(
             expr=testing_process.is_alive(),
         )
-        self.assertEqual(testing_process.exitcode, -15)
+        self.assertEqual(testing_process.exitcode, -9)
         killer.stop()
 
 

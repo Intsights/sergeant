@@ -40,6 +40,7 @@ class KillerServer:
         self.critical_timeout_raised = False
 
         self.running = False
+        self.kill_received = False
 
     def init_logger(
         self,
@@ -106,6 +107,13 @@ class KillerServer:
                 self.soft_timeout_raised = False
                 self.hard_timeout_raised = False
                 self.critical_timeout_raised = False
+            elif data == b'kill':
+                self.logger.info(
+                    msg='kill request was received',
+                )
+                self.kill_received = True
+
+                return False
 
         return True
 
@@ -132,10 +140,22 @@ class KillerServer:
                 after = time.time()
                 self.time_elapsed += after - before
 
-        self.kill_process(
-            process=self.process_to_kill,
-            signal=signal.SIGTERM,
-        )
+        if self.kill_received is False:
+            try:
+                self.logger.info(
+                    msg='waiting for process to terminate',
+                )
+                self.process_to_kill.wait(
+                    timeout=5.0,
+                )
+            except Exception:
+                self.logger.warning(
+                    msg='waiting for process to terminate has timedout. killing...',
+                )
+                self.kill_process(
+                    process=self.process_to_kill,
+                    signal_code=signal.SIGKILL,
+                )
 
         self.logger.info(
             msg='kill loop ended',
@@ -189,7 +209,7 @@ class KillerServer:
             self.soft_timeout_raised = True
             self.kill_process(
                 process=self.process_to_kill,
-                signal=signal.SIGINT,
+                signal_code=signal.SIGINT,
             )
 
     def check_and_process_hard_timeout(
@@ -208,7 +228,7 @@ class KillerServer:
             self.hard_timeout_raised = True
             self.kill_process(
                 process=self.process_to_kill,
-                signal=signal.SIGABRT,
+                signal_code=signal.SIGABRT,
             )
 
     def check_and_process_critical_timeout(
@@ -227,13 +247,13 @@ class KillerServer:
             self.critical_timeout_raised = True
             self.kill_process(
                 process=self.process_to_kill,
-                signal=signal.SIGTERM,
+                signal_code=signal.SIGKILL,
             )
 
     def kill_process(
         self,
         process: psutil.Process,
-        signal: int,
+        signal_code: int,
     ) -> None:
         try:
             self.logger.info(
@@ -241,12 +261,20 @@ class KillerServer:
             )
 
             process.send_signal(
-                sig=signal,
+                sig=signal_code,
             )
         except Exception as exception:
             self.logger.error(
-                msg=str(exception),
+                msg=f'could not kill process: {exception}',
             )
+
+        try:
+            if signal_code == signal.SIGKILL:
+                process.wait(
+                    timeout=0.1,
+                )
+        except Exception:
+            pass
 
 
 class Killer:
@@ -304,22 +332,13 @@ class Killer:
     def kill(
         self,
     ) -> None:
-        try:
-            self.parent_pipe.close()
-        except Exception:
-            pass
+        self.parent_pipe.send_bytes(b'kill')
 
         try:
-            self.killer_process.terminate()
+            self.killer_process.wait(
+                timeout=1.0,
+            )
         except Exception:
-            pass
-
-        try:
-            self.killer_process.wait()
-        except (
-            ChildProcessError,
-            OSError,
-        ):
             pass
 
     def __del__(
@@ -399,4 +418,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
