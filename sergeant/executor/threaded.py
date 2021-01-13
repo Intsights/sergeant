@@ -19,10 +19,9 @@ class ThreadedExecutor(
         self.worker_object = worker_object
         self.number_of_threads = number_of_threads
 
-        has_soft_timeout = self.worker_object.config.timeouts.soft_timeout > 0
-        self.should_use_a_killer = has_soft_timeout
+        self.should_use_a_killer = self.worker_object.config.timeouts.timeout > 0
         self.thread_killer = killer.thread.Killer(
-            exception=worker.WorkerSoftTimedout,
+            exception=worker.WorkerTimedout,
             sleep_interval=0.1,
         )
         self.interrupt_exception: typing.Optional[Exception] = None
@@ -161,7 +160,7 @@ class ThreadedExecutor(
         if self.should_use_a_killer:
             self.thread_killer.add(
                 thread_id=threading.get_ident(),
-                timeout=self.worker_object.config.timeouts.soft_timeout,
+                timeout=self.worker_object.config.timeouts.timeout,
             )
 
     def post_work(

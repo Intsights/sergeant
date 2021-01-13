@@ -67,7 +67,7 @@ class SupervisedWorker:
             pass
 
         try:
-            self.process.terminate()
+            self.process.kill()
         except Exception:
             pass
 

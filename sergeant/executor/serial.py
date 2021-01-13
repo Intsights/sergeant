@@ -18,41 +18,26 @@ class SerialExecutor(
     ) -> None:
         self.worker_object = worker_object
         self.currently_working = False
-        self.original_int = signal.getsignal(signal.SIGINT)
-        self.original_abrt = signal.getsignal(signal.SIGABRT)
+        self.original_term = signal.getsignal(signal.SIGTERM)
 
-        has_soft_timeout = self.worker_object.config.timeouts.soft_timeout > 0
-        has_hard_timeout = self.worker_object.config.timeouts.hard_timeout > 0
-        has_critical_timeout = self.worker_object.config.timeouts.critical_timeout > 0
-
-        self.should_use_a_killer = has_soft_timeout or has_hard_timeout or has_critical_timeout
+        self.should_use_a_killer = self.worker_object.config.timeouts.timeout > 0
         if self.should_use_a_killer:
             self.killer = killer.process.Killer(
                 pid_to_kill=os.getpid(),
                 sleep_interval=0.1,
-                soft_timeout=self.worker_object.config.timeouts.soft_timeout,
-                hard_timeout=self.worker_object.config.timeouts.hard_timeout,
-                critical_timeout=self.worker_object.config.timeouts.critical_timeout,
+                timeout=self.worker_object.config.timeouts.timeout,
+                grace_period=self.worker_object.config.timeouts.grace_period,
             )
 
-            signal.signal(signal.SIGABRT, self.sigabrt_handler)
-            signal.signal(signal.SIGINT, self.sigint_handler)
+            signal.signal(signal.SIGTERM, self.sigterm_handler)
 
-    def sigabrt_handler(
+    def sigterm_handler(
         self,
         signal_num: int,
         frame: types.FrameType,
     ) -> None:
         if self.currently_working:
-            raise worker.WorkerHardTimedout()
-
-    def sigint_handler(
-        self,
-        signal_num: int,
-        frame: types.FrameType,
-    ) -> None:
-        if self.currently_working:
-            raise worker.WorkerSoftTimedout()
+            raise worker.WorkerTimedout()
 
     def execute_tasks(
         self,
@@ -200,7 +185,6 @@ class SerialExecutor(
             try:
                 self.killer.kill()
 
-                signal.signal(signal.SIGABRT, self.original_abrt)
-                signal.signal(signal.SIGINT, self.original_int)
+                signal.signal(signal.SIGTERM, self.original_term)
             except Exception:
                 pass

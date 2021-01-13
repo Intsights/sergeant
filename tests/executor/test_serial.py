@@ -218,7 +218,7 @@ class SerialTestCase(
             obj=getattr(serial_executor, 'killer', None),
         )
 
-    def test_soft_timeout(
+    def test_timeout(
         self,
     ):
         def timeout_work_method(
@@ -232,7 +232,7 @@ class SerialTestCase(
         )
         self.worker.config = self.worker.config.replace(
             timeouts=sergeant.config.Timeouts(
-                soft_timeout=0.3,
+                timeout=0.3,
             ),
         )
 
@@ -260,118 +260,10 @@ class SerialTestCase(
         )
         self.assertIsInstance(
             obj=self.worker.post_work.call_args[1]['exception'],
-            cls=sergeant.worker.WorkerSoftTimedout,
+            cls=sergeant.worker.WorkerTimedout,
         )
         self.worker.handle_timeout.assert_called_once_with(
             task=task,
-        )
-        self.worker.handle_success.assert_not_called()
-        self.worker.handle_failure.assert_not_called()
-        self.worker.handle_retry.assert_not_called()
-        self.worker.handle_max_retries.assert_not_called()
-        self.worker.handle_requeue.assert_not_called()
-        self.assertIsNotNone(
-            obj=serial_executor.killer,
-        )
-
-    def test_hard_timeout(
-        self,
-    ):
-        def timeout_work_method(
-            task,
-        ):
-            while True:
-                time.sleep(0.1)
-
-        self.worker.work = unittest.mock.MagicMock(
-            side_effect=lambda task: timeout_work_method(task),
-        )
-        self.worker.config = self.worker.config.replace(
-            timeouts=sergeant.config.Timeouts(
-                hard_timeout=0.3,
-            ),
-        )
-
-        serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker_object=self.worker,
-        )
-
-        task = sergeant.objects.Task()
-        serial_executor.execute_tasks(
-            tasks=[task],
-        )
-        self.worker.work.assert_called_once_with(
-            task=task,
-        )
-        self.worker.pre_work.assert_called_once_with(
-            task=task,
-        )
-        self.worker.post_work.assert_called_once()
-        self.assertEqual(
-            first=self.worker.post_work.call_args[1]['task'],
-            second=task,
-        )
-        self.assertFalse(
-            expr=self.worker.post_work.call_args[1]['success'],
-        )
-        self.assertIsInstance(
-            obj=self.worker.post_work.call_args[1]['exception'],
-            cls=sergeant.worker.WorkerHardTimedout,
-        )
-
-        self.worker.handle_timeout.assert_called_once_with(
-            task=task,
-        )
-        self.worker.handle_success.assert_not_called()
-        self.worker.handle_failure.assert_not_called()
-        self.worker.handle_retry.assert_not_called()
-        self.worker.handle_max_retries.assert_not_called()
-        self.worker.handle_requeue.assert_not_called()
-        self.assertIsNotNone(
-            obj=serial_executor.killer,
-        )
-
-    def test_multiple_timeout(
-        self,
-    ):
-        def timeout_work_method(
-            task,
-        ):
-            while True:
-                time.sleep(0.1)
-
-        self.worker.work = unittest.mock.MagicMock(
-            side_effect=lambda task: timeout_work_method(task),
-        )
-        self.worker.config = self.worker.config.replace(
-            timeouts=sergeant.config.Timeouts(
-                soft_timeout=0.3,
-            ),
-        )
-
-        serial_executor = sergeant.executor.serial.SerialExecutor(
-            worker_object=self.worker,
-        )
-
-        task = sergeant.objects.Task()
-        serial_executor.execute_tasks(
-            tasks=[task] * 2,
-        )
-        self.assertEqual(
-            first=self.worker.work.call_count,
-            second=2,
-        )
-        self.assertEqual(
-            first=self.worker.pre_work.call_count,
-            second=2,
-        )
-        self.assertEqual(
-            first=self.worker.post_work.call_count,
-            second=2,
-        )
-        self.assertEqual(
-            first=self.worker.handle_timeout.call_count,
-            second=2,
         )
         self.worker.handle_success.assert_not_called()
         self.worker.handle_failure.assert_not_called()

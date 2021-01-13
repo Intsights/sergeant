@@ -16,14 +16,14 @@ docker run \
 ### Spawn a supervisor to spawn the consumers
 ```shell
 python3 -m sergeant.supervisor \
-    --worker-module=examples.4_soft_timeout.consumer \
+    --worker-module=examples.4_timeout.consumer \
     --worker-class=Worker \
     --concurrent-worker=1
 ```
 
 ### Produce the tasks via the producer
 ```shell
-python3 -m examples.4_soft_timeout.producer
+python3 -m examples.4_timeout.producer
 ```
 
 ### Output

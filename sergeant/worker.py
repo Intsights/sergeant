@@ -675,25 +675,13 @@ class Worker:
 
 
 class WorkerException(
-    Exception,
+    BaseException,
 ):
     pass
 
 
 class WorkerTimedout(
     WorkerException,
-):
-    pass
-
-
-class WorkerHardTimedout(
-    WorkerTimedout,
-):
-    pass
-
-
-class WorkerSoftTimedout(
-    WorkerTimedout,
 ):
     pass
 

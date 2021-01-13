@@ -17,9 +17,8 @@ class KillerServer:
         pipe: multiprocessing.connection.Connection,
         pid_to_kill: int,
         sleep_interval: float,
-        soft_timeout: float,
-        hard_timeout: float,
-        critical_timeout: float,
+        timeout: float,
+        grace_period: float,
     ) -> None:
         self.init_logger()
 
@@ -31,12 +30,10 @@ class KillerServer:
         self.sleep_interval = sleep_interval
         self.time_elapsed = 0.0
 
-        self.soft_timeout = soft_timeout
-        self.hard_timeout = hard_timeout
-        self.critical_timeout = critical_timeout
+        self.timeout = timeout
+        self.critical_timeout = timeout + grace_period
 
-        self.soft_timeout_raised = False
-        self.hard_timeout_raised = False
+        self.timeout_raised = False
         self.critical_timeout_raised = False
 
         self.running = False
@@ -95,8 +92,7 @@ class KillerServer:
                     msg='reset request was received',
                 )
                 self.time_elapsed = 0.0
-                self.soft_timeout_raised = False
-                self.hard_timeout_raised = False
+                self.timeout_raised = False
                 self.critical_timeout_raised = False
             elif data == b'stop_and_reset':
                 self.logger.info(
@@ -104,8 +100,7 @@ class KillerServer:
                 )
                 self.running = False
                 self.time_elapsed = 0.0
-                self.soft_timeout_raised = False
-                self.hard_timeout_raised = False
+                self.timeout_raised = False
                 self.critical_timeout_raised = False
             elif data == b'kill':
                 self.logger.info(
@@ -133,14 +128,13 @@ class KillerServer:
                 break
 
             if self.running:
-                self.check_and_process_soft_timeout()
-                self.check_and_process_hard_timeout()
+                self.check_and_process_timeout()
                 self.check_and_process_critical_timeout()
 
                 after = time.time()
                 self.time_elapsed += after - before
 
-        if self.kill_received is False:
+        if not self.kill_received:
             try:
                 self.logger.info(
                     msg='waiting for process to terminate',
@@ -193,56 +187,25 @@ class KillerServer:
 
         return True
 
-    def check_and_process_soft_timeout(
+    def check_and_process_timeout(
         self,
     ) -> None:
-        if not self.soft_timeout:
-            return
-
-        if self.soft_timeout_raised:
-            return
-
-        if self.time_elapsed >= self.soft_timeout:
+        if not self.timeout_raised and self.time_elapsed >= self.timeout:
             self.logger.info(
-                msg='raising soft timeout',
+                msg='sending timeout signal',
             )
-            self.soft_timeout_raised = True
+            self.timeout_raised = True
             self.kill_process(
                 process=self.process_to_kill,
-                signal_code=signal.SIGINT,
-            )
-
-    def check_and_process_hard_timeout(
-        self,
-    ) -> None:
-        if not self.hard_timeout:
-            return
-
-        if self.hard_timeout_raised:
-            return
-
-        if self.time_elapsed >= self.hard_timeout:
-            self.logger.info(
-                msg='raising hard timeout',
-            )
-            self.hard_timeout_raised = True
-            self.kill_process(
-                process=self.process_to_kill,
-                signal_code=signal.SIGABRT,
+                signal_code=signal.SIGTERM,
             )
 
     def check_and_process_critical_timeout(
         self,
     ) -> None:
-        if not self.critical_timeout:
-            return
-
-        if self.critical_timeout_raised:
-            return
-
-        if self.time_elapsed >= self.critical_timeout:
+        if not self.critical_timeout_raised and self.time_elapsed >= self.critical_timeout:
             self.logger.info(
-                msg='raising critical timeout',
+                msg='sending critical timeout signal',
             )
             self.critical_timeout_raised = True
             self.kill_process(
@@ -282,9 +245,8 @@ class Killer:
         self,
         pid_to_kill: int,
         sleep_interval: float,
-        soft_timeout: float,
-        hard_timeout: float,
-        critical_timeout: float,
+        timeout: float,
+        grace_period: float,
     ) -> None:
         self.parent_pipe: multiprocessing.connection.Connection
         self.child_pipe: multiprocessing.connection.Connection
@@ -296,9 +258,8 @@ class Killer:
                     f'{sys.executable} {os.path.relpath(__file__)} '
                     f'--pid-to-kill {pid_to_kill} '
                     f'--sleep-interval {sleep_interval} '
-                    f'--soft-timeout {soft_timeout} '
-                    f'--hard-timeout {hard_timeout} '
-                    f'--critical-timeout {critical_timeout} '
+                    f'--timeout {timeout} '
+                    f'--grace-period {grace_period} '
                     f'--pipe-fd {self.child_pipe.fileno()} '
                 ),
             ),
@@ -369,25 +330,18 @@ def main():
         dest='sleep_interval',
     )
     parser.add_argument(
-        '--soft-timeout',
-        help='soft timeout',
+        '--timeout',
+        help='timeout',
         type=float,
         required=True,
-        dest='soft_timeout',
+        dest='timeout',
     )
     parser.add_argument(
-        '--hard-timeout',
-        help='hard timeout',
+        '--grace-period',
+        help='grace period',
         type=float,
         required=True,
-        dest='hard_timeout',
-    )
-    parser.add_argument(
-        '--critical-timeout',
-        help='critical timeout',
-        type=float,
-        required=True,
-        dest='critical_timeout',
+        dest='grace_period',
     )
     parser.add_argument(
         '--pipe-fd',
@@ -410,9 +364,8 @@ def main():
         pipe=pipe,
         pid_to_kill=args.pid_to_kill,
         sleep_interval=args.sleep_interval,
-        soft_timeout=args.soft_timeout,
-        hard_timeout=args.hard_timeout,
-        critical_timeout=args.critical_timeout,
+        timeout=args.timeout,
+        grace_period=args.grace_period,
     )
     killer_server.kill_loop()
 

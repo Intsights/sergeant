@@ -22,7 +22,7 @@ class ThreadedTestCase(
                 params={},
             ),
             timeouts=sergeant.config.Timeouts(
-                soft_timeout=1.0,
+                timeout=1.0,
             )
         )
         self.worker.work = unittest.mock.MagicMock(
@@ -78,7 +78,7 @@ class ThreadedTestCase(
             )
             threaded_executor.thread_killer.add.assert_called_once_with(
                 thread_id=threading.get_ident(),
-                timeout=self.worker.config.timeouts.soft_timeout,
+                timeout=self.worker.config.timeouts.timeout,
             )
 
     def test_post_work(
@@ -171,7 +171,7 @@ class ThreadedTestCase(
     ):
         self.worker.config = self.worker.config.replace(
             timeouts=sergeant.config.Timeouts(
-                soft_timeout=0.3,
+                timeout=0.3,
             ),
         )
 
@@ -258,7 +258,7 @@ class ThreadedTestCase(
         self.worker.handle_max_retries.assert_not_called()
         self.worker.handle_requeue.assert_not_called()
 
-    def test_soft_timeout(
+    def test_timeout(
         self,
     ):
         def timeout_work_method(
@@ -272,7 +272,7 @@ class ThreadedTestCase(
         )
         self.worker.config = self.worker.config.replace(
             timeouts=sergeant.config.Timeouts(
-                soft_timeout=0.3,
+                timeout=0.3,
             ),
         )
 
@@ -301,7 +301,7 @@ class ThreadedTestCase(
         )
         self.assertIsInstance(
             obj=self.worker.post_work.call_args[1]['exception'],
-            cls=sergeant.worker.WorkerSoftTimedout,
+            cls=sergeant.worker.WorkerTimedout,
         )
         self.worker.handle_timeout.assert_called_once_with(
             task=task,
@@ -312,7 +312,7 @@ class ThreadedTestCase(
         self.worker.handle_max_retries.assert_not_called()
         self.worker.handle_requeue.assert_not_called()
 
-    def test_soft_timeout_multiple_tasks(
+    def test_timeout_multiple_tasks(
         self,
     ):
         def timeout_work_method(
@@ -326,7 +326,7 @@ class ThreadedTestCase(
         )
         self.worker.config = self.worker.config.replace(
             timeouts=sergeant.config.Timeouts(
-                soft_timeout=0.3,
+                timeout=0.3,
             ),
         )
 

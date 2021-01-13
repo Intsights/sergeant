@@ -29,9 +29,7 @@ class Worker(
             log_to_stdout=True,
         ),
         timeouts=sergeant.config.Timeouts(
-            soft_timeout=1.0,
-            hard_timeout=0.0,
-            critical_timeout=0.0,
+            timeout=1.0,
         ),
     )
 
@@ -40,8 +38,8 @@ class Worker(
         task,
     ):
         if task.kwargs['timeout']:
-            self.logger.info(f'Going to timeout')
+            self.logger.info('Going to timeout')
             time.sleep(2)
-            self.logger.info(f'You won\'t see this print')
+            self.logger.info('You won\'t see this print')
         else:
-            self.logger.info(f'Not going to timeout')
+            self.logger.info('Not going to timeout')

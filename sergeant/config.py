@@ -50,9 +50,8 @@ class Connector:
     frozen=True,
 )
 class Timeouts:
-    soft_timeout: float = 0.0
-    hard_timeout: float = 0.0
-    critical_timeout: float = 0.0
+    timeout: float = 0.0
+    grace_period: float = 10.0
 
 
 @dataclasses.dataclass(
