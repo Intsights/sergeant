@@ -24,7 +24,7 @@ class ThreadedExecutor(
             exception=worker.WorkerTimedout,
             sleep_interval=0.1,
         )
-        self.interrupt_exception: typing.Optional[Exception] = None
+        self.interrupt_exception: typing.Optional[BaseException] = None
 
     def execute_tasks(
         self,
@@ -167,7 +167,7 @@ class ThreadedExecutor(
         self,
         task: objects.Task,
         success: bool,
-        exception: typing.Optional[Exception] = None,
+        exception: typing.Optional[BaseException] = None,
     ) -> None:
         if self.should_use_a_killer:
             self.thread_killer.remove(

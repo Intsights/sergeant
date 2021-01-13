@@ -10,7 +10,7 @@ def post_work(
     self,
     task: sergeant.objects.Task,
     success: bool,
-    exception: typing.Optional[Exception],
+    exception: typing.Optional[BaseException],
 ) -> None
 ```
 

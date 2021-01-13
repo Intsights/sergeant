@@ -619,7 +619,7 @@ class Worker:
         self,
         task: objects.Task,
         success: bool,
-        exception: typing.Optional[Exception],
+        exception: typing.Optional[BaseException],
     ) -> None:
         pass
 

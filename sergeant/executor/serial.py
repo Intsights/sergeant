@@ -155,7 +155,7 @@ class SerialExecutor(
         self,
         task: objects.Task,
         success: bool,
-        exception: typing.Optional[Exception] = None,
+        exception: typing.Optional[BaseException] = None,
     ) -> None:
         if self.should_use_a_killer:
             self.killer.stop_and_reset()
