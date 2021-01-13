@@ -985,33 +985,25 @@
 3
 4
 5
-6
-7</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
     <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">class</span> <span class="nc">Timeouts</span><span class="p">:</span>
-    <span class="n">soft_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="n">hard_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="n">critical_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">grace_period</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span>
 </code></pre></div>
 </td></tr></table>
 <p>The <code>timeouts</code> parameter defines how much time the process should run before the killer must try to kill it.</p>
-<p>The following timeouts can be configured:</p>
 <ul>
-<li><code>soft_timeout</code> [both] - On <code>serial</code> executor, by the time this timeout is reached, a <code>SIGINT</code> would be sent to the worker. On <code>threaded</code> worker, an exception would be raised inside the thread.</li>
-<li><code>hard_timeout</code> [serial] - By the time this timeout is reached, a <code>SIGABRT</code> would be sent to the worker.</li>
-<li><code>critical_timeout</code> [serial] - By the time this timeout is reached, a <code>SIGKILL</code> would be sent to the worker.</li>
+<li><code>timeout</code> - On <code>serial</code> executor, by the time this timeout is reached, a <code>SIGTERM</code> is sent to the worker. On <code>threaded</code> worker, an exception would be raised inside the thread.</li>
+<li><code>grace_period</code> [serial] - If the worker will not become responding after the SIGTERM is sent, it will be escalated to a SIGKILL signal.</li>
 </ul>
 <p>By default, no timeouts are applied. It means that the tasks will never timeout. One should use timeouts wisely and set them according to the expected type of the task. If the task, in its ordinary case, should run for no longer than 30s, you can set the timeout to 1m and keep the task from being stuck forever.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Timeouts</span><span class="p">(</span>
-    <span class="n">soft_timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
-    <span class="n">hard_timeout</span><span class="o">=</span><span class="mf">15.0</span><span class="p">,</span>
-    <span class="n">critical_timeout</span><span class="o">=</span><span class="mf">20.0</span><span class="p">,</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Timeouts</span><span class="p">(</span>
+    <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
 <span class="p">)</span>
 </code></pre></div>
 </td></tr></table>
