@@ -5,7 +5,6 @@ import multiprocessing.connection
 import os
 import psutil
 import shlex
-import signal
 import subprocess
 import sys
 import time
@@ -38,6 +37,7 @@ class KillerServer:
 
         self.running = False
         self.kill_received = False
+        self.pipe_was_closed = False
 
     def init_logger(
         self,
@@ -64,53 +64,47 @@ class KillerServer:
 
     def process_requests(
         self,
-    ) -> bool:
+    ) -> None:
         if self.pipe.poll(
             timeout=self.sleep_interval,
         ):
             try:
                 data = self.pipe.recv_bytes()
+                if data == b'start':
+                    self.logger.info(
+                        msg='start request was received',
+                    )
+                    self.running = True
+                elif data == b'stop':
+                    self.logger.info(
+                        msg='stop request was received',
+                    )
+                    self.running = False
+                elif data == b'reset':
+                    self.logger.info(
+                        msg='reset request was received',
+                    )
+                    self.time_elapsed = 0.0
+                    self.timeout_raised = False
+                    self.critical_timeout_raised = False
+                elif data == b'stop_and_reset':
+                    self.logger.info(
+                        msg='stop_and_reset request was received',
+                    )
+                    self.running = False
+                    self.time_elapsed = 0.0
+                    self.timeout_raised = False
+                    self.critical_timeout_raised = False
+                elif data == b'kill':
+                    self.logger.info(
+                        msg='kill request was received',
+                    )
+                    self.kill_received = True
             except EOFError:
                 self.logger.warning(
                     msg='recv_bytes has exited unexpectedly with EOFError',
                 )
-
-                return False
-
-            if data == b'start':
-                self.logger.info(
-                    msg='start request was received',
-                )
-                self.running = True
-            elif data == b'stop':
-                self.logger.info(
-                    msg='stop request was received',
-                )
-                self.running = False
-            elif data == b'reset':
-                self.logger.info(
-                    msg='reset request was received',
-                )
-                self.time_elapsed = 0.0
-                self.timeout_raised = False
-                self.critical_timeout_raised = False
-            elif data == b'stop_and_reset':
-                self.logger.info(
-                    msg='stop_and_reset request was received',
-                )
-                self.running = False
-                self.time_elapsed = 0.0
-                self.timeout_raised = False
-                self.critical_timeout_raised = False
-            elif data == b'kill':
-                self.logger.info(
-                    msg='kill request was received',
-                )
-                self.kill_received = True
-
-                return False
-
-        return True
+                self.pipe_was_closed = True
 
     def kill_loop(
         self,
@@ -124,32 +118,46 @@ class KillerServer:
         ):
             before = time.time()
 
-            if not self.process_requests():
+            self.process_requests()
+
+            if self.kill_received:
                 break
-
-            if self.running:
-                self.check_and_process_timeout()
-                self.check_and_process_critical_timeout()
-
-                after = time.time()
-                self.time_elapsed += after - before
-
-        if not self.kill_received:
-            try:
+            elif self.pipe_was_closed:
                 self.logger.info(
                     msg='waiting for process to terminate',
                 )
-                self.process_to_kill.wait(
-                    timeout=5.0,
-                )
-            except Exception:
-                self.logger.warning(
-                    msg='waiting for process to terminate has timedout. killing...',
-                )
-                self.kill_process(
-                    process=self.process_to_kill,
-                    signal_code=signal.SIGKILL,
-                )
+                try:
+                    self.process_to_kill.wait(
+                        timeout=10,
+                    )
+                except psutil.TimeoutExpired:
+                    self.kill_process_and_children()
+
+                break
+            elif self.running:
+                if not self.timeout_raised and self.time_elapsed >= self.timeout:
+                    self.logger.info(
+                        msg='sending timeout signal',
+                    )
+                    self.timeout_raised = True
+
+                    try:
+                        self.process_to_kill.terminate()
+                    except Exception as exception:
+                        self.logger.error(
+                            msg=f'sending timeout raised: {exception}',
+                        )
+                elif not self.critical_timeout_raised and self.time_elapsed >= self.critical_timeout:
+                    self.logger.info(
+                        msg='sending critical timeout signal',
+                    )
+                    self.critical_timeout_raised = True
+                    self.kill_process_and_children()
+
+                    break
+
+                after = time.time()
+                self.time_elapsed += after - before
 
         self.logger.info(
             msg='kill loop ended',
@@ -187,57 +195,35 @@ class KillerServer:
 
         return True
 
-    def check_and_process_timeout(
+    def kill_process_and_children(
         self,
     ) -> None:
-        if not self.timeout_raised and self.time_elapsed >= self.timeout:
-            self.logger.info(
-                msg='sending timeout signal',
-            )
-            self.timeout_raised = True
-            self.kill_process(
-                process=self.process_to_kill,
-                signal_code=signal.SIGTERM,
-            )
+        processes_to_kill = self.process_to_kill.children(
+            recursive=True,
+        )
+        processes_to_kill.append(self.process_to_kill)
+        processes_to_kill = [
+            process_to_kill
+            for process_to_kill in processes_to_kill
+            if process_to_kill.pid != os.getpid()
+        ]
 
-    def check_and_process_critical_timeout(
-        self,
-    ) -> None:
-        if not self.critical_timeout_raised and self.time_elapsed >= self.critical_timeout:
-            self.logger.info(
-                msg='sending critical timeout signal',
-            )
-            self.critical_timeout_raised = True
-            self.kill_process(
-                process=self.process_to_kill,
-                signal_code=signal.SIGKILL,
-            )
-
-    def kill_process(
-        self,
-        process: psutil.Process,
-        signal_code: int,
-    ) -> None:
-        try:
-            self.logger.info(
-                msg='kill_process request',
-            )
-
-            process.send_signal(
-                sig=signal_code,
-            )
-        except Exception as exception:
-            self.logger.error(
-                msg=f'could not kill process: {exception}',
-            )
-
-        try:
-            if signal_code == signal.SIGKILL:
-                process.wait(
-                    timeout=0.1,
+        for process_to_kill in processes_to_kill:
+            try:
+                process_to_kill.kill()
+            except psutil.NoSuchProcess as exception:
+                self.logger.error(
+                    msg=f'No process to kill: {exception}',
                 )
-        except Exception:
-            pass
+
+        psutil.wait_procs(
+            procs=processes_to_kill,
+            timeout=1.0,
+        )
+
+        self.logger.info(
+            msg='process and child processes were killed',
+        )
 
 
 class Killer:
