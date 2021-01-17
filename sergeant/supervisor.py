@@ -99,6 +99,8 @@ class Supervisor:
         self.concurrent_workers = concurrent_workers
         self.max_worker_memory_usage = max_worker_memory_usage
 
+        self.supevisor_process = psutil.Process()
+
         self.extra_signature: typing.Dict[str, typing.Any] = {
             'supervisor': {
                 'worker_module_name': self.worker_module_name,
@@ -153,6 +155,8 @@ class Supervisor:
                     self.supervise_worker(
                         worker=worker,
                     )
+
+                self.clean_zombies()
 
                 time.sleep(0.5)
 
@@ -288,6 +292,7 @@ class Supervisor:
         worker: SupervisedWorker,
     ) -> None:
         worker.kill()
+
         self.current_workers.remove(worker)
         new_worker = SupervisedWorker(
             worker_module_name=self.worker_module_name,
@@ -304,11 +309,30 @@ class Supervisor:
         worker: SupervisedWorker,
     ) -> None:
         worker.kill()
+
         self.current_workers.remove(worker)
         self.logger.info(
             msg=f'worker has stopped: {worker.process.pid}',
             extra=self.extra_signature,
         )
+
+    def clean_zombies(
+        self,
+    ):
+        supervisor_zombie_children = [
+            child_process
+            for child_process in self.supevisor_process.children()
+            if child_process.status() == psutil.STATUS_ZOMBIE
+        ]
+        if supervisor_zombie_children:
+            self.logger.info(
+                msg=f'cleaning {len(supervisor_zombie_children)} zombies',
+                extra=self.extra_signature,
+            )
+            psutil.wait_procs(
+                procs=supervisor_zombie_children,
+                timeout=1.0,
+            )
 
 
 def main() -> None:
