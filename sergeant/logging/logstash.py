@@ -105,5 +105,5 @@ class LogstashHandler(
                 socket_connection.settimeout(self.timeout)
                 socket_connection.connect(self.address)
                 socket_connection.sendall(encoded_message)
-        except Exception:
-            traceback.print_exc()
+        except Exception as exception:
+            print(f'sending log entry to the logstash server has failed: {exception}')
