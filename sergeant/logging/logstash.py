@@ -63,7 +63,7 @@ class LogstashHandler(
             'emitter': {
                 'hostname': self.hostname,
                 'ipaddress': self.ipaddress,
-                'filename': record.filename,
+                'pathname': record.pathname,
                 'function': record.funcName,
                 'line': record.lineno,
             },
