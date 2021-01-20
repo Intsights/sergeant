@@ -24,8 +24,8 @@ class Worker:
     def init_worker(
         self,
     ) -> None:
-        self.init_broker()
         self.init_logger()
+        self.init_broker()
         self.init_executor()
 
     def init_logger(
