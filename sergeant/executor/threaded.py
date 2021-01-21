@@ -189,3 +189,13 @@ class ThreadedExecutor(
                     'exception': exception,
                 },
             )
+
+    def shutdown(
+        self,
+    ) -> None:
+        self.thread_killer.stop()
+
+    def __del__(
+        self,
+    ) -> None:
+        self.shutdown()

@@ -344,6 +344,8 @@ class Worker:
             'total_cpu_time': total_cpu_time,
         }
 
+        self.executor_obj.shutdown()
+
         return summary
 
     def retry(

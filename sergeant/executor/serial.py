@@ -178,13 +178,18 @@ class SerialExecutor(
                 },
             )
 
-    def __del__(
+    def shutdown(
         self,
     ) -> None:
         if self.should_use_a_killer:
             try:
-                self.killer.kill()
+                self.killer.shutdown()
 
                 signal.signal(signal.SIGTERM, self.original_term)
             except Exception:
                 pass
+
+    def __del__(
+        self,
+    ) -> None:
+        self.shutdown()

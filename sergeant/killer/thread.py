@@ -12,7 +12,9 @@ class Killer(
         exception: typing.Type[BaseException],
         sleep_interval: float = 0.1,
     ) -> None:
-        super().__init__()
+        super().__init__(
+            daemon=True,
+        )
 
         self.exception = exception
         self.sleep_interval = sleep_interval

@@ -99,6 +99,8 @@ class KillerTestCase(
             expr=self.sigterm_fired,
         )
 
+        killer.kill()
+
     def test_sleep_case_killer(
         self,
     ):

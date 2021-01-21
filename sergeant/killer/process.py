@@ -37,6 +37,7 @@ class KillerServer:
 
         self.running = False
         self.kill_received = False
+        self.shutdown_received = False
         self.pipe_was_closed = False
 
     def init_logger(
@@ -95,6 +96,11 @@ class KillerServer:
                     self.time_elapsed = 0.0
                     self.timeout_raised = False
                     self.critical_timeout_raised = False
+                elif data == b'shutdown':
+                    self.logger.info(
+                        msg='shutdown request was received',
+                    )
+                    self.shutdown_received = True
                 elif data == b'kill':
                     self.logger.info(
                         msg='kill request was received',
@@ -122,7 +128,7 @@ class KillerServer:
 
             if self.kill_received:
                 break
-            elif self.pipe_was_closed:
+            elif self.pipe_was_closed or self.shutdown_received:
                 self.logger.info(
                     msg='waiting for process to terminate',
                 )
@@ -276,6 +282,11 @@ class Killer:
     ) -> None:
         self.parent_pipe.send_bytes(b'stop_and_reset')
 
+    def shutdown(
+        self,
+    ) -> None:
+        self.parent_pipe.send_bytes(b'shutdown')
+
     def kill(
         self,
     ) -> None:
@@ -283,7 +294,7 @@ class Killer:
 
         try:
             self.killer_process.wait(
-                timeout=1.0,
+                timeout=2.0,
             )
         except Exception:
             pass
