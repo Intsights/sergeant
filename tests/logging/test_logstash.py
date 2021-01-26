@@ -41,7 +41,7 @@ class LoggingLogstashTestCase(
             msg='test',
         )
 
-        message = orjson_mock.dumps.call_args.args[0]
+        message = orjson_mock.dumps.call_args[0][0]
 
         self.assertEqual(
             first=message['emitter']['pathname'],
