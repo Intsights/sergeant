@@ -40,7 +40,7 @@ class LoggingLogstashTestCase(
         self.logger.info(
             msg='test',
         )
-        import pudb; pudb.set_trace();
+
         message = orjson_mock.dumps.call_args.args[0]
 
         self.assertEqual(
