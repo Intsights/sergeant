@@ -47,4 +47,3 @@ class LoggingLogstashTestCase(
             first=message['emitter']['pathname'],
             second=__file__,
         )
-
