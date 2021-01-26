@@ -99,6 +99,8 @@ class Supervisor:
         self.concurrent_workers = concurrent_workers
         self.max_worker_memory_usage = max_worker_memory_usage
 
+        self.stop_process_has_started = False
+
         self.supevisor_process = psutil.Process()
 
         self.extra_signature: typing.Dict[str, typing.Any] = {
@@ -264,6 +266,8 @@ class Supervisor:
                     worker=worker,
                 )
 
+                self.stop_process_has_started = True
+
                 return
             else:
                 extra_signature = self.extra_signature.copy()
@@ -294,15 +298,22 @@ class Supervisor:
         worker.kill()
 
         self.current_workers.remove(worker)
-        new_worker = SupervisedWorker(
-            worker_module_name=self.worker_module_name,
-            worker_class_name=self.worker_class_name,
-        )
-        self.logger.info(
-            msg=f'spawned a new worker at pid: {new_worker.process.pid}',
-            extra=self.extra_signature,
-        )
-        self.current_workers.append(new_worker)
+
+        if self.stop_process_has_started:
+            self.logger.info(
+                msg='not going to respawn since the stop process has started',
+                extra=self.extra_signature,
+            )
+        else:
+            new_worker = SupervisedWorker(
+                worker_module_name=self.worker_module_name,
+                worker_class_name=self.worker_class_name,
+            )
+            self.logger.info(
+                msg=f'spawned a new worker at pid: {new_worker.process.pid}',
+                extra=self.extra_signature,
+            )
+            self.current_workers.append(new_worker)
 
     def stop_a_worker(
         self,

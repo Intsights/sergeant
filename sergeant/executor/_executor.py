@@ -9,3 +9,8 @@ class Executor:
         tasks: typing.Iterable[objects.Task],
     ) -> None:
         raise NotImplementedError()
+
+    def shutdown(
+        self,
+    ) -> None:
+        raise NotImplementedError()
