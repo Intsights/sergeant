@@ -273,6 +273,7 @@ class SerialTestCase(
         self.assertIsNotNone(
             obj=serial_executor.killer,
         )
+        serial_executor.killer.kill()
 
     def test_on_retry(
         self,

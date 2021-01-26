@@ -134,7 +134,8 @@ class KillerTestCase(
             expr=testing_process.is_alive(),
         )
         self.assertEqual(testing_process.exitcode, 10)
-        killer.stop()
+
+        killer.kill()
 
     def test_lost_case_killer(
         self,
@@ -173,7 +174,8 @@ class KillerTestCase(
             expr=testing_process.is_alive(),
         )
         self.assertEqual(testing_process.exitcode, -9)
-        killer.stop()
+
+        killer.kill()
 
 
 class TestProcess:
