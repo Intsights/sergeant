@@ -195,7 +195,6 @@ class Worker:
         stop_signal_received = False
 
         def stop_signal_handler(
-            self,
             signal_num: int,
             frame: types.FrameType,
         ) -> None:
