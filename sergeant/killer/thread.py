@@ -49,16 +49,13 @@ class Killer(
         self,
         thread_id: int,
         exception: typing.Type[BaseException],
-    ) -> bool:
-        try:
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(
-                ctypes.c_ulong(thread_id),
-                ctypes.py_object(exception),
-            )
+    ) -> int:
+        thread_states_modified = ctypes.pythonapi.PyThreadState_SetAsyncExc(
+            ctypes.c_ulong(thread_id),
+            ctypes.py_object(exception),
+        )
 
-            return True
-        except Exception:
-            return False
+        return thread_states_modified
 
     def stop(
         self,

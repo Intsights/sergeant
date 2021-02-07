@@ -10,7 +10,7 @@ def number_of_enqueued_tasks(
     self,
     task_name: typing.Optional[str] = None,
     include_delayed: bool = False,
-) -> typing.Optional[int]
+) -> int
 ```
 
 

@@ -1,12 +1,11 @@
 import dataclasses
 import datetime
 import logging
+import orjson
 import socket
 import sys
 import traceback
 import typing
-
-import orjson
 
 
 class LogstashHandler(

@@ -3,13 +3,13 @@ import logging
 import multiprocessing
 import multiprocessing.context
 import os
+import psutil
 import shlex
+import signal
 import subprocess
 import sys
 import time
 import typing
-
-import psutil
 
 
 class SupervisedWorker:
@@ -290,6 +290,11 @@ class Supervisor:
                 self.respawn_a_worker(
                     worker=worker,
                 )
+
+        if self.stop_process_has_started:
+            worker.psutil_obj.send_signal(
+                sig=signal.SIGUSR1,
+            )
 
     def respawn_a_worker(
         self,

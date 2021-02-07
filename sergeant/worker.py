@@ -1,7 +1,9 @@
 import datetime
 import logging
+import signal
 import sys
 import time
+import types
 import typing
 
 from . import broker
@@ -21,14 +23,7 @@ class Worker:
         ),
     )
 
-    def init_worker(
-        self,
-    ) -> None:
-        self.init_logger()
-        self.init_broker()
-        self.init_executor()
-
-    def init_logger(
+    def __init__(
         self,
     ) -> None:
         self.logger = logging.getLogger(
@@ -42,6 +37,24 @@ class Worker:
                 hdlr=handler,
             )
         self.logger.propagate = False
+        self.logger.addHandler(
+            hdlr=logging.NullHandler(),
+        )
+
+    def init_worker(
+        self,
+    ) -> None:
+        self.init_logger()
+        self.init_broker()
+        self.init_executor()
+
+    def init_logger(
+        self,
+    ) -> None:
+        for handler in self.logger.handlers:
+            self.logger.removeHandler(
+                hdlr=handler,
+            )
 
         if self.config.logging.log_to_stdout:
             stream_handler = logging.StreamHandler(
@@ -105,33 +118,19 @@ class Worker:
         self,
         task_name: typing.Optional[str] = None,
     ) -> bool:
-        try:
-            return self.broker.purge_tasks(
-                task_name=task_name if task_name else self.config.name,
-            )
-        except Exception as exception:
-            self.logger.error(
-                msg=f'could not purge tasks: {exception}',
-            )
-
-            return False
+        return self.broker.purge_tasks(
+            task_name=task_name if task_name else self.config.name,
+        )
 
     def number_of_enqueued_tasks(
         self,
         task_name: typing.Optional[str] = None,
         include_delayed: bool = False,
-    ) -> typing.Optional[int]:
-        try:
-            return self.broker.number_of_enqueued_tasks(
-                task_name=task_name if task_name else self.config.name,
-                include_delayed=include_delayed,
-            )
-        except Exception as exception:
-            self.logger.error(
-                msg=f'could not get the queue length: {exception}',
-            )
-
-            return None
+    ) -> int:
+        return self.broker.number_of_enqueued_tasks(
+            task_name=task_name if task_name else self.config.name,
+            include_delayed=include_delayed,
+        )
 
     def push_task(
         self,
@@ -140,25 +139,16 @@ class Worker:
         priority: str = 'NORMAL',
         consumable_from: int = 0,
     ) -> bool:
-        try:
-            task = objects.Task(
-                kwargs=kwargs,
-            )
+        task = objects.Task(
+            kwargs=kwargs,
+        )
 
-            self.broker.push_task(
-                task_name=task_name if task_name else self.config.name,
-                task=task,
-                priority=priority,
-                consumable_from=consumable_from,
-            )
-
-            return True
-        except Exception as exception:
-            self.logger.error(
-                msg=f'could not push task: {exception}',
-            )
-
-            return False
+        return self.broker.push_task(
+            task_name=task_name if task_name else self.config.name,
+            task=task,
+            priority=priority,
+            consumable_from=consumable_from,
+        )
 
     def push_tasks(
         self,
@@ -167,67 +157,66 @@ class Worker:
         priority: str = 'NORMAL',
         consumable_from: int = 0,
     ) -> bool:
-        try:
-            tasks = [
-                objects.Task(
-                    kwargs=kwargs,
-                )
-                for kwargs in kwargs_list
-            ]
-
-            return self.broker.push_tasks(
-                task_name=task_name if task_name else self.config.name,
-                tasks=tasks,
-                priority=priority,
-                consumable_from=consumable_from,
+        tasks = [
+            objects.Task(
+                kwargs=kwargs,
             )
-        except Exception as exception:
-            self.logger.error(
-                msg=f'could not push tasks: {exception}',
-            )
+            for kwargs in kwargs_list
+        ]
 
-            return False
+        return self.broker.push_tasks(
+            task_name=task_name if task_name else self.config.name,
+            tasks=tasks,
+            priority=priority,
+            consumable_from=consumable_from,
+        )
 
     def get_next_tasks(
         self,
         number_of_tasks: int,
         task_name: typing.Optional[str] = None,
     ) -> typing.List[objects.Task]:
-        try:
-            return self.broker.pop_tasks(
-                task_name=task_name if task_name else self.config.name,
-                number_of_tasks=number_of_tasks,
-            )
-        except Exception as exception:
-            self.logger.error(
-                msg=f'could not pull tasks: {exception}',
-            )
-
-            return []
+        return self.broker.pop_tasks(
+            task_name=task_name if task_name else self.config.name,
+            number_of_tasks=number_of_tasks,
+        )
 
     def lock(
         self,
         name: str,
     ) -> connector.Lock:
-        try:
-            return self.broker.lock(
-                name=name,
-            )
-        except Exception as exception:
-            self.logger.error(
-                msg=f'could not create a lock: {exception}',
-            )
-
-            raise exception
+        return self.broker.lock(
+            name=name,
+        )
 
     def iterate_tasks(
         self,
     ) -> typing.Iterable[objects.Task]:
+        stop_signal_received = False
+
+        def stop_signal_handler(
+            self,
+            signal_num: int,
+            frame: types.FrameType,
+        ) -> None:
+            nonlocal stop_signal_received
+
+            stop_signal_received = True
+
+            self.logger.info(
+                msg='stop signal has been received',
+            )
+
+        signal.signal(signal.SIGUSR1, stop_signal_handler)
+
         time_with_no_tasks = 0
         run_forever = self.config.max_tasks_per_run == 0
         tasks_left = self.config.max_tasks_per_run
 
         while tasks_left > 0 or run_forever:
+            if stop_signal_received:
+                break
+
             if run_forever:
                 number_of_tasks_to_pull = self.config.tasks_per_transaction
             else:
@@ -236,11 +225,41 @@ class Worker:
                     tasks_left,
                 )
 
-            tasks = self.get_next_tasks(
-                number_of_tasks=number_of_tasks_to_pull,
-            )
-            number_of_dequeued_tasks = len(tasks)
-            if number_of_dequeued_tasks == 0:
+            tasks = []
+
+            try:
+                tasks = self.get_next_tasks(
+                    number_of_tasks=number_of_tasks_to_pull,
+                )
+            except Exception as exception:
+                self.logger.error(
+                    msg=f'could not pull tasks: {exception}',
+                )
+
+            if tasks:
+                time_with_no_tasks = 0
+                iterated_tasks = 0
+
+                try:
+                    for task in tasks:
+                        yield task
+
+                        iterated_tasks += 1
+                        if stop_signal_received:
+                            break
+                finally:
+                    if iterated_tasks < len(tasks):
+                        self.push_tasks(
+                            kwargs_list=[
+                                task.kwargs
+                                for task in tasks[iterated_tasks:]
+                            ],
+                            priority='HIGH',
+                        )
+
+                if not run_forever:
+                    tasks_left -= len(tasks)
+            else:
                 time.sleep(1)
                 time_with_no_tasks += 1
                 if self.config.starvation and time_with_no_tasks >= self.config.starvation.time_with_no_tasks:
@@ -249,26 +268,6 @@ class Worker:
                     )
 
                 continue
-            else:
-                time_with_no_tasks = 0
-
-            try:
-                for iterated_tasks, task in enumerate(tasks):
-                    yield task
-            except Exception as exception:
-                if tasks:
-                    self.push_tasks(
-                        kwargs_list=[
-                            task.kwargs
-                            for task in tasks[iterated_tasks:]
-                        ],
-                        priority='HIGH',
-                    )
-
-                raise exception
-
-            if not run_forever:
-                tasks_left -= number_of_dequeued_tasks
 
     def work_loop(
         self,
@@ -305,10 +304,10 @@ class Worker:
 
             return summary
 
-        try:
-            task_start_time = time.perf_counter()
-            task_start_process_time = time.process_time()
+        task_start_time = time.perf_counter()
+        task_start_process_time = time.process_time()
 
+        try:
             self.executor_obj.execute_tasks(
                 tasks=self.iterate_tasks(),
             )
@@ -343,8 +342,6 @@ class Worker:
             'total_wall_time': total_wall_time,
             'total_cpu_time': total_cpu_time,
         }
-
-        self.executor_obj.shutdown()
 
         return summary
 

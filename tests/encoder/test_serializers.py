@@ -48,6 +48,13 @@ class SerializersTestCase(
             second=obj_to_serialize,
         )
 
+        with self.assertRaises(
+            expected_exception=TypeError,
+        ):
+            serialized_object = serializer_obj.serialize(
+                data=Exception(),
+            )
+
     def test_pickle(
         self,
     ):

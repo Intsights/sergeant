@@ -1,10 +1,12 @@
 import unittest
 import unittest.mock
 import time
+import os
 
-import sergeant.worker
-import sergeant.executor
 import sergeant.config
+import sergeant.executor
+import sergeant.killer
+import sergeant.worker
 
 
 class SerialTestCase(
@@ -42,14 +44,15 @@ class SerialTestCase(
         serial_executor = sergeant.executor.serial.SerialExecutor(
             worker_object=self.worker,
         )
-        serial_executor.killer = unittest.mock.MagicMock()
 
         task = sergeant.objects.Task()
         self.assertFalse(
             expr=serial_executor.currently_working,
         )
+
         serial_executor.pre_work(
             task=task,
+            killer_object=None,
         )
         self.worker.pre_work.assert_called_once_with(
             task=task,
@@ -58,13 +61,13 @@ class SerialTestCase(
         self.assertTrue(
             expr=serial_executor.currently_working,
         )
-        serial_executor.killer.start.assert_not_called()
 
-        serial_executor.should_use_a_killer = True
+        killer_mock = unittest.mock.MagicMock()
         serial_executor.pre_work(
             task=task,
+            killer_object=killer_mock,
         )
-        serial_executor.killer.start.assert_called_once()
+        killer_mock.start.assert_called_once()
 
         self.worker.pre_work.side_effect = Exception('exception message')
         serial_executor.pre_work(
@@ -83,7 +86,6 @@ class SerialTestCase(
         serial_executor = sergeant.executor.serial.SerialExecutor(
             worker_object=self.worker,
         )
-        serial_executor.killer = unittest.mock.MagicMock()
 
         task = sergeant.objects.Task()
         serial_executor.currently_working = True
@@ -94,6 +96,7 @@ class SerialTestCase(
             task=task,
             success=True,
             exception=None,
+            killer_object=None,
         )
         self.worker.post_work.assert_called_once_with(
             task=task,
@@ -104,15 +107,15 @@ class SerialTestCase(
         self.assertFalse(
             expr=serial_executor.currently_working,
         )
-        serial_executor.killer.stop_and_reset.assert_not_called()
 
-        serial_executor.should_use_a_killer = True
+        killer_mock = unittest.mock.MagicMock()
         serial_executor.post_work(
             task=task,
             success=True,
             exception=None,
+            killer_object=killer_mock,
         )
-        serial_executor.killer.stop_and_reset.assert_called_once()
+        killer_mock.stop_and_reset.assert_called_once()
 
         exception = Exception('exception message')
         self.worker.post_work.side_effect = exception
@@ -240,40 +243,49 @@ class SerialTestCase(
             worker_object=self.worker,
         )
 
-        task = sergeant.objects.Task()
-        serial_executor.execute_tasks(
-            tasks=[task],
+        killer_object = sergeant.killer.process.Killer(
+            pid_to_kill=os.getpid(),
+            sleep_interval=0.1,
+            timeout=self.worker.config.timeouts.timeout,
+            grace_period=self.worker.config.timeouts.grace_period,
         )
-        self.worker.work.assert_called_once_with(
-            task=task,
-        )
-        self.worker.pre_work.assert_called_once_with(
-            task=task,
-        )
-        self.worker.post_work.assert_called_once()
-        self.assertEqual(
-            first=self.worker.post_work.call_args[1]['task'],
-            second=task,
-        )
-        self.assertFalse(
-            expr=self.worker.post_work.call_args[1]['success'],
-        )
-        self.assertIsInstance(
-            obj=self.worker.post_work.call_args[1]['exception'],
-            cls=sergeant.worker.WorkerTimedout,
-        )
-        self.worker.handle_timeout.assert_called_once_with(
-            task=task,
-        )
-        self.worker.handle_success.assert_not_called()
-        self.worker.handle_failure.assert_not_called()
-        self.worker.handle_retry.assert_not_called()
-        self.worker.handle_max_retries.assert_not_called()
-        self.worker.handle_requeue.assert_not_called()
-        self.assertIsNotNone(
-            obj=serial_executor.killer,
-        )
-        serial_executor.killer.kill()
+
+        with unittest.mock.patch(
+            target='sergeant.killer.process.Killer',
+            return_value=killer_object,
+        ):
+            task = sergeant.objects.Task()
+            serial_executor.execute_tasks(
+                tasks=[task],
+            )
+            self.worker.work.assert_called_once_with(
+                task=task,
+            )
+            self.worker.pre_work.assert_called_once_with(
+                task=task,
+            )
+            self.worker.post_work.assert_called_once()
+            self.assertEqual(
+                first=self.worker.post_work.call_args[1]['task'],
+                second=task,
+            )
+            self.assertFalse(
+                expr=self.worker.post_work.call_args[1]['success'],
+            )
+            self.assertIsInstance(
+                obj=self.worker.post_work.call_args[1]['exception'],
+                cls=sergeant.worker.WorkerTimedout,
+            )
+            self.worker.handle_timeout.assert_called_once_with(
+                task=task,
+            )
+            self.worker.handle_success.assert_not_called()
+            self.worker.handle_failure.assert_not_called()
+            self.worker.handle_retry.assert_not_called()
+            self.worker.handle_max_retries.assert_not_called()
+            self.worker.handle_requeue.assert_not_called()
+
+            killer_object.kill()
 
     def test_on_retry(
         self,
