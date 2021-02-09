@@ -205,6 +205,7 @@ class Worker:
             self.logger.info(
                 msg='stop signal has been received',
             )
+            signal.signal(signal.SIGUSR1, signal.SIG_DFL)
 
         signal.signal(signal.SIGUSR1, stop_signal_handler)
 
@@ -241,9 +242,10 @@ class Worker:
 
                 try:
                     for task in tasks:
+                        iterated_tasks += 1
+
                         yield task
 
-                        iterated_tasks += 1
                         if stop_signal_received:
                             break
                 finally:

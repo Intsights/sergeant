@@ -216,12 +216,12 @@ class Supervisor:
                     worker_summary['finalize_exception']
                 ):
                     self.logger.critical(
-                        msg='worker internal execution has failed',
+                        msg=f'worker({worker.process.pid}) internal execution has failed',
                         extra=extra_signature,
                     )
                 else:
                     self.logger.info(
-                        msg='worker has finished successfully',
+                        msg=f'worker({worker.process.pid}) has finished successfully',
                         extra=extra_signature,
                     )
             elif worker.process.returncode == 1:
@@ -230,7 +230,7 @@ class Supervisor:
                 exception_message = extra_signature['exception'].get('message', None)
 
                 self.logger.critical(
-                    msg=f'worker execution has failed with the following exception: {exception_message}',
+                    msg=f'worker({worker.process.pid}) execution has failed with the following exception: {exception_message}',
                     extra=extra_signature,
                 )
             elif worker.process.returncode == 2:
@@ -251,14 +251,14 @@ class Supervisor:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['summary'] = worker_summary if worker_summary else {}
                 self.logger.info(
-                    msg='worker has requested to respawn',
+                    msg=f'worker({worker.process.pid}) has requested to respawn',
                     extra=extra_signature,
                 )
             elif worker.process.returncode == 5:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['summary'] = worker_summary if worker_summary else {}
                 self.logger.info(
-                    msg='worker has requested to stop',
+                    msg=f'worker({worker.process.pid}) has requested to stop',
                     extra=extra_signature,
                 )
 
@@ -274,7 +274,7 @@ class Supervisor:
                 extra_signature['exception'] = worker_summary if worker_summary else {}
                 extra_signature['return_code'] = worker.process.returncode
                 self.logger.critical(
-                    msg=f'worker execution has been interrupted with return code: {worker.process.returncode}',
+                    msg=f'worker({worker.process.pid}) execution has been interrupted with return code: {worker.process.returncode}',
                     extra=self.extra_signature,
                 )
 
@@ -284,7 +284,7 @@ class Supervisor:
         else:
             if self.max_worker_memory_usage and worker.get_rss_memory() > self.max_worker_memory_usage:
                 self.logger.warning(
-                    msg=f'worker exceeded the maximum memory limit: pid: {worker.process.pid}, rss: {worker.get_rss_memory()}',
+                    msg=f'worker({worker.process.pid}) exceeded the maximum memory limit: {worker.get_rss_memory()}',
                     extra=self.extra_signature,
                 )
                 self.respawn_a_worker(
@@ -292,9 +292,12 @@ class Supervisor:
                 )
 
         if self.stop_process_has_started:
-            worker.psutil_obj.send_signal(
-                sig=signal.SIGUSR1,
-            )
+            try:
+                worker.psutil_obj.send_signal(
+                    sig=signal.SIGUSR1,
+                )
+            except psutil.NoSuchProcess:
+                pass
 
     def respawn_a_worker(
         self,
@@ -315,7 +318,7 @@ class Supervisor:
                 worker_class_name=self.worker_class_name,
             )
             self.logger.info(
-                msg=f'spawned a new worker at pid: {new_worker.process.pid}',
+                msg=f'worker({worker.process.pid}) was respawned as worker({new_worker.process.pid})',
                 extra=self.extra_signature,
             )
             self.current_workers.append(new_worker)
@@ -328,7 +331,7 @@ class Supervisor:
 
         self.current_workers.remove(worker)
         self.logger.info(
-            msg=f'worker has stopped: {worker.process.pid}',
+            msg=f'worker({worker.process.pid}) has stopped',
             extra=self.extra_signature,
         )
 
