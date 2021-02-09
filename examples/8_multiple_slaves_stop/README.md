@@ -1,5 +1,5 @@
 ## Description
-This example shows how one slave asks for a stop also stopping the other slaves
+This example demonstrates how one slave that asks for a stop causes all the other supervised slaves to stop too
 
 ## Usage
 
