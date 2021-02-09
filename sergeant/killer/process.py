@@ -36,7 +36,6 @@ class KillerServer:
         self.critical_timeout_raised = False
 
         self.running = False
-        self.kill_received = False
         self.shutdown_received = False
         self.pipe_was_closed = False
 
@@ -101,11 +100,6 @@ class KillerServer:
                         msg='shutdown request was received',
                     )
                     self.shutdown_received = True
-                elif data == b'kill':
-                    self.logger.info(
-                        msg='kill request was received',
-                    )
-                    self.kill_received = True
             except EOFError:
                 self.logger.warning(
                     msg='recv_bytes has exited unexpectedly with EOFError',
@@ -126,9 +120,7 @@ class KillerServer:
 
             self.process_requests()
 
-            if self.kill_received:
-                break
-            elif self.pipe_was_closed or self.shutdown_received:
+            if self.pipe_was_closed or self.shutdown_received:
                 self.logger.info(
                     msg='waiting for process to terminate',
                 )
@@ -290,7 +282,10 @@ class Killer:
     def kill(
         self,
     ) -> None:
-        self.parent_pipe.send_bytes(b'kill')
+        try:
+            self.killer_process.kill()
+        except Exception:
+            pass
 
         try:
             self.killer_process.wait(

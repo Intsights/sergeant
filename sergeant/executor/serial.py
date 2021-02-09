@@ -18,18 +18,6 @@ class SerialExecutor(
     ) -> None:
         self.worker_object = worker_object
         self.currently_working = False
-        self.original_term = signal.getsignal(signal.SIGTERM)
-
-        self.should_use_a_killer = self.worker_object.config.timeouts.timeout > 0
-        if self.should_use_a_killer:
-            self.killer = killer.process.Killer(
-                pid_to_kill=os.getpid(),
-                sleep_interval=0.1,
-                timeout=self.worker_object.config.timeouts.timeout,
-                grace_period=self.worker_object.config.timeouts.grace_period,
-            )
-
-            signal.signal(signal.SIGTERM, self.sigterm_handler)
 
     def sigterm_handler(
         self,
@@ -43,17 +31,39 @@ class SerialExecutor(
         self,
         tasks: typing.Iterable[objects.Task],
     ) -> None:
-        for task in tasks:
-            self.execute_task(
-                task=task,
-            )
+        killer_object: typing.Optional[killer.process.Killer] = None
+        original_sigterm_handler = signal.getsignal(signal.SIGTERM)
+
+        try:
+            if self.worker_object.config.timeouts.timeout > 0:
+                killer_object = killer.process.Killer(
+                    pid_to_kill=os.getpid(),
+                    sleep_interval=0.1,
+                    timeout=self.worker_object.config.timeouts.timeout,
+                    grace_period=self.worker_object.config.timeouts.grace_period,
+                )
+
+                signal.signal(signal.SIGTERM, self.sigterm_handler)
+
+            for task in tasks:
+                self.execute_task(
+                    task=task,
+                    killer_object=killer_object,
+                )
+        finally:
+            if killer_object:
+                signal.signal(signal.SIGTERM, original_sigterm_handler)
+
+                killer_object.shutdown()
 
     def execute_task(
         self,
         task: objects.Task,
+        killer_object: typing.Optional[killer.process.Killer] = None,
     ) -> None:
         self.pre_work(
             task=task,
+            killer_object=killer_object,
         )
 
         try:
@@ -65,6 +75,7 @@ class SerialExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_timeout(
@@ -75,6 +86,7 @@ class SerialExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_retry(
@@ -85,6 +97,7 @@ class SerialExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_max_retries(
@@ -95,6 +108,7 @@ class SerialExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_requeue(
@@ -105,6 +119,7 @@ class SerialExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             raise exception
@@ -113,6 +128,7 @@ class SerialExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_failure(
@@ -124,6 +140,7 @@ class SerialExecutor(
                 task=task,
                 success=True,
                 exception=None,
+                killer_object=killer_object,
             )
             self.worker_object.handle_success(
                 task=task,
@@ -133,6 +150,7 @@ class SerialExecutor(
     def pre_work(
         self,
         task: objects.Task,
+        killer_object: typing.Optional[killer.process.Killer] = None,
     ) -> None:
         try:
             self.worker_object.pre_work(
@@ -146,21 +164,22 @@ class SerialExecutor(
                 },
             )
 
-        self.currently_working = True
+        if killer_object:
+            killer_object.start()
 
-        if self.should_use_a_killer:
-            self.killer.start()
+        self.currently_working = True
 
     def post_work(
         self,
         task: objects.Task,
         success: bool,
         exception: typing.Optional[BaseException] = None,
+        killer_object: typing.Optional[killer.process.Killer] = None,
     ) -> None:
-        if self.should_use_a_killer:
-            self.killer.stop_and_reset()
-
         self.currently_working = False
+
+        if killer_object:
+            killer_object.stop_and_reset()
 
         try:
             self.worker_object.post_work(
@@ -177,19 +196,3 @@ class SerialExecutor(
                     'exception': exception,
                 },
             )
-
-    def shutdown(
-        self,
-    ) -> None:
-        if self.should_use_a_killer:
-            try:
-                self.killer.shutdown()
-
-                signal.signal(signal.SIGTERM, self.original_term)
-            except Exception:
-                pass
-
-    def __del__(
-        self,
-    ) -> None:
-        self.shutdown()

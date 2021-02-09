@@ -2,6 +2,7 @@ import unittest
 import unittest.mock
 
 import sergeant.worker
+import sergeant.objects
 
 
 class WorkerIterateTasksTestCase(
@@ -11,6 +12,7 @@ class WorkerIterateTasksTestCase(
         self,
     ):
         self.worker = sergeant.worker.Worker()
+        self.worker.broker = unittest.mock.MagicMock()
         self.worker.config = sergeant.config.WorkerConfig(
             name='some_worker',
             connector=sergeant.config.Connector(
@@ -28,19 +30,35 @@ class WorkerIterateTasksTestCase(
             ),
         )
 
+        self.task_one = sergeant.objects.Task(
+            kwargs={
+                'name': 'task_one',
+            },
+        )
+        self.task_two = sergeant.objects.Task(
+            kwargs={
+                'name': 'task_two',
+            },
+        )
+        self.task_three = sergeant.objects.Task(
+            kwargs={
+                'name': 'task_three',
+            },
+        )
+
     def test_iterate_tasks_forever(
         self,
     ):
         self.worker.get_next_tasks = unittest.mock.MagicMock()
         self.worker.get_next_tasks.side_effect = [
             [
-                'task_one',
+                self.task_one,
             ],
             [
-                'task_two',
+                self.task_two,
             ],
             [
-                'task_three',
+                self.task_three,
             ],
         ]
         self.worker.config = self.worker.config.replace(
@@ -53,15 +71,15 @@ class WorkerIterateTasksTestCase(
         third_task = next(iterator)
         self.assertEqual(
             first=first_task,
-            second='task_one',
+            second=self.task_one,
         )
         self.assertEqual(
             first=second_task,
-            second='task_two',
+            second=self.task_two,
         )
         self.assertEqual(
             first=third_task,
-            second='task_three',
+            second=self.task_three,
         )
         self.assertEqual(
             first=self.worker.get_next_tasks.call_count,
@@ -76,9 +94,9 @@ class WorkerIterateTasksTestCase(
         self.worker.get_next_tasks = unittest.mock.MagicMock()
         self.worker.get_next_tasks.side_effect = [
             [
-                'task_one',
-                'task_two',
-                'task_three',
+                self.task_one,
+                self.task_two,
+                self.task_three,
             ],
         ]
         self.worker.config = self.worker.config.replace(
@@ -91,15 +109,15 @@ class WorkerIterateTasksTestCase(
         third_task = next(iterator)
         self.assertEqual(
             first=first_task,
-            second='task_one',
+            second=self.task_one,
         )
         self.assertEqual(
             first=second_task,
-            second='task_two',
+            second=self.task_two,
         )
         self.assertEqual(
             first=third_task,
-            second='task_three',
+            second=self.task_three,
         )
         self.assertEqual(
             first=self.worker.get_next_tasks.call_count,
@@ -117,13 +135,13 @@ class WorkerIterateTasksTestCase(
         self.worker.get_next_tasks = unittest.mock.MagicMock()
         self.worker.get_next_tasks.side_effect = [
             [
-                'task_one',
+                self.task_one,
             ],
             [
-                'task_two',
+                self.task_two,
             ],
             [
-                'task_three',
+                self.task_three,
             ],
         ]
         self.worker.config = self.worker.config.replace(
@@ -136,15 +154,15 @@ class WorkerIterateTasksTestCase(
         third_task = next(iterator)
         self.assertEqual(
             first=first_task,
-            second='task_one',
+            second=self.task_one,
         )
         self.assertEqual(
             first=second_task,
-            second='task_two',
+            second=self.task_two,
         )
         self.assertEqual(
             first=third_task,
-            second='task_three',
+            second=self.task_three,
         )
         self.assertEqual(
             first=self.worker.get_next_tasks.call_count,
@@ -163,9 +181,9 @@ class WorkerIterateTasksTestCase(
         self.worker.get_next_tasks = unittest.mock.MagicMock()
         self.worker.get_next_tasks.side_effect = [
             [
-                'task_one',
-                'task_two',
-                'task_three',
+                self.task_one,
+                self.task_two,
+                self.task_three,
             ],
         ]
         self.worker.config = self.worker.config.replace(
@@ -178,15 +196,15 @@ class WorkerIterateTasksTestCase(
         third_task = next(iterator)
         self.assertEqual(
             first=first_task,
-            second='task_one',
+            second=self.task_one,
         )
         self.assertEqual(
             first=second_task,
-            second='task_two',
+            second=self.task_two,
         )
         self.assertEqual(
             first=third_task,
-            second='task_three',
+            second=self.task_three,
         )
         self.assertEqual(
             first=self.worker.get_next_tasks.call_count,

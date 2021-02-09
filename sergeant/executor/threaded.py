@@ -19,52 +19,55 @@ class ThreadedExecutor(
         self.worker_object = worker_object
         self.number_of_threads = number_of_threads
 
-        self.should_use_a_killer = self.worker_object.config.timeouts.timeout > 0
-        self.thread_killer = killer.thread.Killer(
-            exception=worker.WorkerTimedout,
-            sleep_interval=0.1,
-        )
         self.interrupt_exception: typing.Optional[BaseException] = None
 
     def execute_tasks(
         self,
         tasks: typing.Iterable[objects.Task],
     ) -> None:
-        if self.should_use_a_killer:
-            self.thread_killer.start()
+        killer_object: typing.Optional[killer.thread.Killer] = None
+        if self.worker_object.config.timeouts.timeout > 0:
+            killer_object = killer.thread.Killer(
+                exception=worker.WorkerTimedout,
+                sleep_interval=0.1,
+            )
+            killer_object.start()
 
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=self.number_of_threads,
-        ) as executor:
-            running_futures = []
-            for task in tasks:
-                future = executor.submit(self.execute_task, task)
-                running_futures.append(future)
+        try:
+            with concurrent.futures.ThreadPoolExecutor(
+                max_workers=self.number_of_threads,
+            ) as executor:
+                running_futures = []
+                for task in tasks:
+                    future = executor.submit(self.execute_task, task, killer_object)
+                    running_futures.append(future)
 
-                if len(running_futures) == self.number_of_threads:
-                    finished, pending = concurrent.futures.wait(
-                        fs=running_futures,
-                        timeout=None,
-                        return_when=concurrent.futures.FIRST_COMPLETED,
-                    )
-                    for finished_future in finished:
-                        running_futures.remove(finished_future)
+                    if len(running_futures) == self.number_of_threads:
+                        finished, pending = concurrent.futures.wait(
+                            fs=running_futures,
+                            timeout=None,
+                            return_when=concurrent.futures.FIRST_COMPLETED,
+                        )
+                        for finished_future in finished:
+                            running_futures.remove(finished_future)
 
-                if self.interrupt_exception:
-                    break
+                    if self.interrupt_exception:
+                        break
+        finally:
+            if killer_object:
+                killer_object.stop()
 
-        if self.should_use_a_killer:
-            self.thread_killer.stop()
-
-        if self.interrupt_exception:
-            raise self.interrupt_exception
+            if self.interrupt_exception:
+                raise self.interrupt_exception
 
     def execute_task(
         self,
         task: objects.Task,
+        killer_object: typing.Optional[killer.thread.Killer] = None,
     ) -> None:
         self.pre_work(
             task=task,
+            killer_object=killer_object,
         )
 
         try:
@@ -76,6 +79,7 @@ class ThreadedExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_timeout(
@@ -86,6 +90,7 @@ class ThreadedExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_retry(
@@ -96,6 +101,7 @@ class ThreadedExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_max_retries(
@@ -106,6 +112,7 @@ class ThreadedExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_requeue(
@@ -116,6 +123,7 @@ class ThreadedExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.interrupt_exception = exception
@@ -124,6 +132,7 @@ class ThreadedExecutor(
                 task=task,
                 success=False,
                 exception=exception,
+                killer_object=killer_object,
             )
 
             self.worker_object.handle_failure(
@@ -135,6 +144,7 @@ class ThreadedExecutor(
                 task=task,
                 success=True,
                 exception=None,
+                killer_object=killer_object,
             )
             self.worker_object.handle_success(
                 task=task,
@@ -144,6 +154,7 @@ class ThreadedExecutor(
     def pre_work(
         self,
         task: objects.Task,
+        killer_object: typing.Optional[killer.thread.Killer] = None,
     ) -> None:
         try:
             self.worker_object.pre_work(
@@ -157,8 +168,8 @@ class ThreadedExecutor(
                 },
             )
 
-        if self.should_use_a_killer:
-            self.thread_killer.add(
+        if killer_object:
+            killer_object.add(
                 thread_id=threading.get_ident(),
                 timeout=self.worker_object.config.timeouts.timeout,
             )
@@ -168,9 +179,10 @@ class ThreadedExecutor(
         task: objects.Task,
         success: bool,
         exception: typing.Optional[BaseException] = None,
+        killer_object: typing.Optional[killer.thread.Killer] = None,
     ) -> None:
-        if self.should_use_a_killer:
-            self.thread_killer.remove(
+        if killer_object:
+            killer_object.remove(
                 thread_id=threading.get_ident(),
             )
 
@@ -189,13 +201,3 @@ class ThreadedExecutor(
                     'exception': exception,
                 },
             )
-
-    def shutdown(
-        self,
-    ) -> None:
-        self.thread_killer.stop()
-
-    def __del__(
-        self,
-    ) -> None:
-        self.shutdown()

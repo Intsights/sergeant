@@ -72,10 +72,7 @@ def main() -> int:
 
         return 1
     finally:
-        try:
-            pipe_obj.close()
-        except Exception:
-            pass
+        pipe_obj.close()
 
 
 if __name__ == '__main__':

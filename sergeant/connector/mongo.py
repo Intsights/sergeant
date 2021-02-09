@@ -110,7 +110,7 @@ class Lock(
         if not lock_document:
             return None
 
-        if lock_document['expireAt'] < now_date:
+        if lock_document['expireAt'] <= now_date:
             return None
         else:
             expire_time_delta = lock_document['expireAt'] - now_date

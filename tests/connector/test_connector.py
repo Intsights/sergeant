@@ -417,6 +417,33 @@ class ConnectorTestCase:
             second=30,
         )
 
+        self.assertTrue(
+            expr=lock.set_ttl(
+                ttl=0,
+            ),
+        )
+        self.assertIsNone(
+            obj=lock.get_ttl(),
+        )
+
+        lock.release()
+        lock.acquire(
+            timeout=None,
+            ttl=60,
+        )
+        with unittest.mock.patch(
+            target='time.sleep',
+            side_effect=Exception('sleep'),
+        ):
+            with self.assertRaises(
+                expected_exception=Exception,
+            ):
+                lock.acquire(
+                    timeout=None,
+                    ttl=60,
+                )
+        lock.release()
+
     def test_queue_consumable(
         self,
     ):

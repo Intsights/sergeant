@@ -45,7 +45,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker has finished successfully',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) has finished successfully',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_successful_execution',
@@ -108,7 +108,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker internal execution has failed',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) internal execution has failed',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_initialize_exception',
@@ -172,7 +172,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker internal execution has failed',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) internal execution has failed',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_finalize_exception',
@@ -235,7 +235,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker internal execution has failed',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) internal execution has failed',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_executor_exception',
@@ -395,7 +395,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker has requested to respawn',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) has requested to respawn',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_respawn',
@@ -455,7 +455,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker has requested to stop',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) has requested to stop',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_stop',
@@ -515,7 +515,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker has requested to stop',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) has requested to stop',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_stop_initialize',
@@ -575,7 +575,7 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': 'worker has requested to stop',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) has requested to stop',
                 'extra': {
                     'supervisor': {
                         'worker_module_name': 'tests.supervisor.workers.worker_stop_finalize',

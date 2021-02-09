@@ -32,8 +32,8 @@ class Lock(
 
         while True:
             if self.redis_connection.set(
-                self.name,
-                b'',
+                name=self.name,
+                value=b'',
                 nx=True,
                 ex=ttl,
             ):
