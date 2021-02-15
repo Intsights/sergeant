@@ -1,13 +1,103 @@
 import argparse
+import ctypes
+import enum
 import importlib
 import multiprocessing.connection
+import os
+import signal
 import sys
+import threading
 import traceback
+import typing
 
 
-def main() -> int:
+class ReturnCode(
+    enum.Enum,
+):
+    WORKER_EXITED_NORMALLY: int = 0
+    WORKER_EXITED_ABNORMALLY: int = 0
+    MODULE_NOT_FOUND: int = 2
+    CLASS_NOT_FOUND: int = 3
+    WORKER_ASKED_TO_RESPAWN: int = 4
+    WORKER_ASKED_TO_STOP: int = 5
+
+
+def work(
+    worker_module_name: str,
+    worker_class_name: str,
+) -> typing.Tuple[int, typing.Optional[typing.Dict[str, typing.Any]]]:
+    try:
+        worker_module = importlib.import_module(
+            name=worker_module_name,
+        )
+    except ModuleNotFoundError:
+        return (
+            ReturnCode.MODULE_NOT_FOUND.value,
+            None,
+        )
+
+    try:
+        worker_class = getattr(worker_module, worker_class_name)
+    except AttributeError:
+        return (
+            ReturnCode.CLASS_NOT_FOUND.value,
+            None,
+        )
+
+    try:
+        worker_obj = worker_class()
+        worker_obj.init_worker()
+        summary = worker_obj.work_loop()
+
+        if summary['respawn']:
+            return (
+                ReturnCode.WORKER_ASKED_TO_RESPAWN.value,
+                summary,
+            )
+        elif summary['stop']:
+            return (
+                ReturnCode.WORKER_ASKED_TO_STOP.value,
+                summary,
+            )
+        else:
+            return (
+                ReturnCode.WORKER_EXITED_NORMALLY.value,
+                summary,
+            )
+    except Exception as exception:
+        return (
+            ReturnCode.WORKER_EXITED_ABNORMALLY.value,
+            {
+                'message': str(exception),
+                'stacktrace': traceback.format_exc(),
+                'type': exception.__class__.__name__,
+            },
+        )
+
+
+def kill_running_background_threads() -> bool:
+    number_of_unkillable_threads = 0
+    for thread in threading.enumerate():
+        if thread is threading.main_thread():
+            continue
+
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(
+            ctypes.c_ulong(thread.ident),
+            ctypes.py_object(SystemExit),
+        )
+
+        thread.join(
+            timeout=2.0,
+        )
+        if thread.is_alive():
+            number_of_unkillable_threads += 1
+
+    return number_of_unkillable_threads == 0
+
+
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Sergeant Supervisor',
+        description='Sergeant Slave',
     )
     parser.add_argument(
         '--child-pipe',
@@ -31,49 +121,35 @@ def main() -> int:
         dest='worker_module',
     )
     args = parser.parse_args()
-    pipe_obj = multiprocessing.connection.Connection(
-        handle=args.child_pipe,
-    )
 
     try:
-        worker_module = importlib.import_module(
-            name=args.worker_module,
+        pipe_obj = multiprocessing.connection.Connection(
+            handle=args.child_pipe,
         )
-    except ModuleNotFoundError:
-        return 2
 
-    try:
-        worker_class = getattr(worker_module, args.worker_class)
-    except AttributeError:
-        return 3
+        return_code, summary = work(
+            worker_module_name=args.worker_module,
+            worker_class_name=args.worker_class,
+        )
+        summary['return_code'] = return_code
 
-    try:
-        worker_obj = worker_class()
-        worker_obj.init_worker()
-        summary = worker_obj.work_loop()
-        pipe_obj.send(summary)
+        background_threads_killed_successfully = kill_running_background_threads()
+        if not background_threads_killed_successfully:
+            unkillable_threads = [
+                thread.name
+                for thread in threading.enumerate()
+                if thread is not threading.main_thread()
+            ]
+            summary['unkillable_threads'] = unkillable_threads
 
-        if summary['respawn']:
-            return 4
-        elif summary['stop']:
-            return 5
+            pipe_obj.send(summary)
+            pipe_obj.close()
+
+            os.kill(os.getpid(), signal.SIGKILL)
         else:
-            return 0
+            pipe_obj.send(summary)
+            pipe_obj.close()
+
+            sys.exit(return_code)
     except KeyboardInterrupt:
-        return 0
-    except Exception as exception:
-        pipe_obj.send(
-            {
-                'message': str(exception),
-                'stacktrace': traceback.format_exc(),
-                'type': exception.__class__.__name__,
-            },
-        )
-
-        return 1
-    finally:
-        pipe_obj.close()
-
-
-if __name__ == '__main__':
-    sys.exit(main())
+        sys.exit(0)

@@ -26,7 +26,6 @@ python3 -m examples.8_multiple_slaves_stop.producer
 ```
 
 ### Output
-You can see in logs that the delayed task has been consumed in a 5 seconds delay
 ```
 2021-02-09 15:24:17 Supervisor   671757 INFO     spawned a new worker at pid: 671758
 2021-02-09 15:24:17 Supervisor   671757 INFO     spawned a new worker at pid: 671759

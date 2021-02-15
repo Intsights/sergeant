@@ -207,7 +207,17 @@ class Supervisor:
             except ChildProcessError:
                 pass
 
-            if worker.process.returncode == 0:
+            worker_return_code = worker.process.returncode
+            if worker_summary and 'return_code' in worker_summary:
+                worker_return_code = worker_summary['return_code']
+                if 'unkillable_threads' in worker_summary:
+                    unkillable_threads = worker_summary['unkillable_threads']
+                    self.logger.warning(
+                        msg=f'worker({worker.process.pid}) had unkillable_threads: {unkillable_threads}',
+                        extra=self.extra_signature,
+                    )
+
+            if worker_return_code == 0:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['summary'] = worker_summary if worker_summary else {}
                 if worker_summary and (
@@ -224,7 +234,7 @@ class Supervisor:
                         msg=f'worker({worker.process.pid}) has finished successfully',
                         extra=extra_signature,
                     )
-            elif worker.process.returncode == 1:
+            elif worker_return_code == 1:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['exception'] = worker_summary if worker_summary else {}
                 exception_message = extra_signature['exception'].get('message', None)
@@ -233,28 +243,28 @@ class Supervisor:
                     msg=f'worker({worker.process.pid}) execution has failed with the following exception: {exception_message}',
                     extra=extra_signature,
                 )
-            elif worker.process.returncode == 2:
+            elif worker_return_code == 2:
                 self.logger.critical(
                     msg=f'could not load worker module: {self.worker_module_name}',
                     extra=self.extra_signature,
                 )
 
                 sys.exit(1)
-            elif worker.process.returncode == 3:
+            elif worker_return_code == 3:
                 self.logger.critical(
                     msg=f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}',
                     extra=self.extra_signature,
                 )
 
                 sys.exit(1)
-            elif worker.process.returncode == 4:
+            elif worker_return_code == 4:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['summary'] = worker_summary if worker_summary else {}
                 self.logger.info(
                     msg=f'worker({worker.process.pid}) has requested to respawn',
                     extra=extra_signature,
                 )
-            elif worker.process.returncode == 5:
+            elif worker_return_code == 5:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['summary'] = worker_summary if worker_summary else {}
                 self.logger.info(
@@ -272,9 +282,9 @@ class Supervisor:
             else:
                 extra_signature = self.extra_signature.copy()
                 extra_signature['exception'] = worker_summary if worker_summary else {}
-                extra_signature['return_code'] = worker.process.returncode
+                extra_signature['return_code'] = worker_return_code
                 self.logger.critical(
-                    msg=f'worker({worker.process.pid}) execution has been interrupted with return code: {worker.process.returncode}',
+                    msg=f'worker({worker.process.pid}) execution has been interrupted with return code: {worker_return_code}',
                     extra=self.extra_signature,
                 )
 
