@@ -81,16 +81,17 @@ def kill_running_background_threads() -> bool:
         if thread is threading.main_thread():
             continue
 
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(
-            ctypes.c_ulong(thread.ident),
-            ctypes.py_object(SystemExit),
-        )
+        if thread.ident:
+            ctypes.pythonapi.PyThreadState_SetAsyncExc(
+                ctypes.c_ulong(thread.ident),
+                ctypes.py_object(SystemExit),
+            )
 
-        thread.join(
-            timeout=2.0,
-        )
-        if thread.is_alive():
-            number_of_unkillable_threads += 1
+            thread.join(
+                timeout=2.0,
+            )
+            if thread.is_alive():
+                number_of_unkillable_threads += 1
 
     return number_of_unkillable_threads == 0
 
@@ -131,6 +132,9 @@ if __name__ == '__main__':
             worker_module_name=args.worker_module,
             worker_class_name=args.worker_class,
         )
+        if not summary:
+            sys.exit(return_code)
+
         summary['return_code'] = return_code
 
         background_threads_killed_successfully = kill_running_background_threads()
