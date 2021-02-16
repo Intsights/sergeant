@@ -15,11 +15,12 @@ class ReturnCode(
     enum.Enum,
 ):
     WORKER_EXITED_NORMALLY: int = 0
-    WORKER_EXITED_ABNORMALLY: int = 0
-    MODULE_NOT_FOUND: int = 2
-    CLASS_NOT_FOUND: int = 3
+    WORKER_EXITED_ABNORMALLY: int = 1
+    WORKER_MODULE_NOT_FOUND: int = 2
+    WORKER_CLASS_NOT_FOUND: int = 3
     WORKER_ASKED_TO_RESPAWN: int = 4
     WORKER_ASKED_TO_STOP: int = 5
+    WORKER_EXECUTION_FAILURE: int = 6
 
 
 def work(
@@ -32,7 +33,7 @@ def work(
         )
     except ModuleNotFoundError:
         return (
-            ReturnCode.MODULE_NOT_FOUND.value,
+            ReturnCode.WORKER_MODULE_NOT_FOUND.value,
             None,
         )
 
@@ -40,7 +41,7 @@ def work(
         worker_class = getattr(worker_module, worker_class_name)
     except AttributeError:
         return (
-            ReturnCode.CLASS_NOT_FOUND.value,
+            ReturnCode.WORKER_CLASS_NOT_FOUND.value,
             None,
         )
 
@@ -59,6 +60,15 @@ def work(
                 ReturnCode.WORKER_ASKED_TO_STOP.value,
                 summary,
             )
+        elif (
+            summary['executor_exception'] or
+            summary['initialize_exception'] or
+            summary['finalize_exception']
+        ):
+            return (
+                ReturnCode.WORKER_EXECUTION_FAILURE.value,
+                summary,
+            )
         else:
             return (
                 ReturnCode.WORKER_EXITED_NORMALLY.value,
@@ -68,9 +78,8 @@ def work(
         return (
             ReturnCode.WORKER_EXITED_ABNORMALLY.value,
             {
-                'message': str(exception),
+                'exception': repr(exception),
                 'stacktrace': traceback.format_exc(),
-                'type': exception.__class__.__name__,
             },
         )
 
