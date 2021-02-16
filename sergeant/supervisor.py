@@ -2,7 +2,6 @@ import argparse
 import logging
 import multiprocessing
 import multiprocessing.context
-import os
 import psutil
 import shlex
 import signal
@@ -193,70 +192,67 @@ class Supervisor:
     ) -> None:
         worker_has_finished_running = worker.process.poll() is not None
         if worker_has_finished_running:
+            extra_signature = self.extra_signature.copy()
+
             try:
                 worker_summary = worker.get_summary()
+                extra_signature['summary'] = worker_summary
             except Exception as exception:
                 self.logger.error(
                     msg=f'could not receive supervised_worker\'s summary: {exception}',
                     extra=self.extra_signature,
                 )
                 worker_summary = None
+                extra_signature['summary'] = {}
 
             try:
-                os.waitpid(worker.process.pid, 0)
-            except ChildProcessError:
+                worker.process.wait()
+            except (
+                ChildProcessError,
+                OSError,
+            ):
                 pass
 
-            if worker.process.returncode == 0:
-                extra_signature = self.extra_signature.copy()
-                extra_signature['summary'] = worker_summary if worker_summary else {}
-                if worker_summary and (
-                    worker_summary['executor_exception'] or
-                    worker_summary['initialize_exception'] or
-                    worker_summary['finalize_exception']
-                ):
-                    self.logger.critical(
-                        msg=f'worker({worker.process.pid}) internal execution has failed',
-                        extra=extra_signature,
+            worker_return_code = worker.process.returncode
+            if worker_summary and 'return_code' in worker_summary:
+                worker_return_code = worker_summary['return_code']
+                if 'unkillable_threads' in worker_summary:
+                    unkillable_threads = worker_summary['unkillable_threads']
+                    self.logger.warning(
+                        msg=f'worker({worker.process.pid}) had unkillable_threads: {unkillable_threads}',
+                        extra=self.extra_signature,
                     )
-                else:
-                    self.logger.info(
-                        msg=f'worker({worker.process.pid}) has finished successfully',
-                        extra=extra_signature,
-                    )
-            elif worker.process.returncode == 1:
-                extra_signature = self.extra_signature.copy()
-                extra_signature['exception'] = worker_summary if worker_summary else {}
-                exception_message = extra_signature['exception'].get('message', None)
 
-                self.logger.critical(
-                    msg=f'worker({worker.process.pid}) execution has failed with the following exception: {exception_message}',
+            if worker_return_code == 0:
+                self.logger.info(
+                    msg=f'worker({worker.process.pid}) has finished successfully',
                     extra=extra_signature,
                 )
-            elif worker.process.returncode == 2:
+            elif worker_return_code == 1:
+                self.logger.critical(
+                    msg=f'worker({worker.process.pid}) execution has failed with the following exception: {extra_signature["summary"].get("exception")}',
+                    extra=extra_signature,
+                )
+            elif worker_return_code == 2:
                 self.logger.critical(
                     msg=f'could not load worker module: {self.worker_module_name}',
                     extra=self.extra_signature,
                 )
 
                 sys.exit(1)
-            elif worker.process.returncode == 3:
+            elif worker_return_code == 3:
                 self.logger.critical(
                     msg=f'could not find worker class: {self.worker_module_name}.{self.worker_class_name}',
                     extra=self.extra_signature,
                 )
 
                 sys.exit(1)
-            elif worker.process.returncode == 4:
-                extra_signature = self.extra_signature.copy()
-                extra_signature['summary'] = worker_summary if worker_summary else {}
+            elif worker_return_code == 4:
                 self.logger.info(
                     msg=f'worker({worker.process.pid}) has requested to respawn',
                     extra=extra_signature,
                 )
-            elif worker.process.returncode == 5:
-                extra_signature = self.extra_signature.copy()
-                extra_signature['summary'] = worker_summary if worker_summary else {}
+            elif worker_return_code == 5:
                 self.logger.info(
                     msg=f'worker({worker.process.pid}) has requested to stop',
                     extra=extra_signature,
@@ -269,12 +265,15 @@ class Supervisor:
                 self.stop_process_has_started = True
 
                 return
-            else:
-                extra_signature = self.extra_signature.copy()
-                extra_signature['exception'] = worker_summary if worker_summary else {}
-                extra_signature['return_code'] = worker.process.returncode
+            elif worker_return_code == 6:
                 self.logger.critical(
-                    msg=f'worker({worker.process.pid}) execution has been interrupted with return code: {worker.process.returncode}',
+                    msg=f'worker({worker.process.pid}) internal execution has failed',
+                    extra=extra_signature,
+                )
+            else:
+                extra_signature['return_code'] = worker_return_code
+                self.logger.critical(
+                    msg=f'worker({worker.process.pid}) execution has been interrupted with return code: {worker_return_code}',
                     extra=self.extra_signature,
                 )
 
