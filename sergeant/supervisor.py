@@ -336,7 +336,7 @@ class Supervisor:
 
     def clean_zombies(
         self,
-    ):
+    ) -> None:
         supervisor_zombie_children = [
             child_process
             for child_process in self.supevisor_process.children()

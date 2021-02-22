@@ -303,7 +303,7 @@ class Killer:
             pass
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description='Process Killer',
     )

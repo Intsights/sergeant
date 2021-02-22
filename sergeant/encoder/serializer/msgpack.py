@@ -24,8 +24,8 @@ class Serializer(
 
     def decode_extensions(
         self,
-        obj,
-    ):
+        obj: typing.Any,
+    ) -> typing.Any:
         if '__datetime__' in obj:
             return datetime.datetime.fromtimestamp(obj['__datetime__'])
         elif '__tuple__' in obj:
@@ -39,8 +39,8 @@ class Serializer(
 
     def encode_extensions(
         self,
-        obj,
-    ):
+        obj: typing.Any,
+    ) -> typing.Any:
         if type(obj) == datetime.datetime:
             return {
                 '__datetime__': obj.timestamp(),

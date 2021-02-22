@@ -127,7 +127,7 @@ class Broker:
         self,
         task_name: str,
         task: objects.Task,
-        priority='NORMAL',
+        priority: str = 'NORMAL',
         consumable_from: int = 0,
     ) -> bool:
         return self.push_task(

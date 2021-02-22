@@ -98,9 +98,9 @@ class QueueRedis(
 ):
     def __init__(
         self,
-        *args,
-        **kwargs,
-    ):
+        *args: typing.Any,
+        **kwargs: typing.Any,
+    ) -> None:
         super().__init__(*args, **kwargs)
 
         self.delayed_queue_pop_bulk_script = self.register_script(
@@ -122,7 +122,7 @@ class QueueRedis(
         self,
         queue_name: str,
         include_delayed: bool,
-    ):
+    ) -> int:
         pipeline = self.pipeline()
         pipeline.llen(
             name=queue_name,
@@ -144,7 +144,7 @@ class QueueRedis(
     def queue_delete(
         self,
         queue_name: str,
-    ):
+    ) -> int:
         return self.delete(
             queue_name,
             f'{queue_name}.delayed',
@@ -153,7 +153,7 @@ class QueueRedis(
     def queue_pop(
         self,
         queue_name: str,
-    ):
+    ) -> typing.Optional[typing.Any]:
         item = self.lpop(
             name=queue_name,
         )
@@ -185,7 +185,7 @@ class QueueRedis(
         self,
         queue_name: str,
         number_of_items: int,
-    ):
+    ) -> typing.List[typing.Any]:
         pipeline = self.pipeline()
         pipeline.lrange(queue_name, 0, number_of_items - 1)
         pipeline.ltrim(queue_name, number_of_items, -1)

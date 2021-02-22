@@ -84,9 +84,9 @@ class WorkerConfig:
 
     def replace(
         self,
-        *args,
-        **kwargs,
-    ):
+        *args: typing.Any,
+        **kwargs: typing.Any,
+    ) -> 'WorkerConfig':
         return dataclasses.replace(
             self,
             *args,
