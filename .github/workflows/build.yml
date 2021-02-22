@@ -21,7 +21,7 @@ jobs:
       - name: Check mypy Linting Errors
         if: "!contains(github.event.head_commit.message, 'skip mypy')"
         run: >-
-          mypy --ignore-missing-imports -p tests -p sergeant
+          mypy --ignore-missing-imports -p sergeant
   test:
     runs-on: ${{ matrix.os }}
     needs: lint

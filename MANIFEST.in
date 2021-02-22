@@ -1,1 +1,2 @@
-recursive-include sergeant *
+recursive-include sergeant *.py
+prune tests
