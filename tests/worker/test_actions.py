@@ -1,8 +1,8 @@
 import unittest
 import unittest.mock
 
-import sergeant.worker
 import sergeant.objects
+import sergeant.worker
 
 
 class WorkerActionsTestCase(

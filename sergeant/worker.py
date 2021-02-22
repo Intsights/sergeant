@@ -1,10 +1,11 @@
 import datetime
-import logging
 import signal
 import sys
 import time
 import types
 import typing
+
+import logging
 
 from . import broker
 from . import config

@@ -1,7 +1,8 @@
-import time
-import sergeant
-import logging
 import threading
+import time
+
+import logging
+import sergeant
 
 
 class Worker(

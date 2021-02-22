@@ -1,6 +1,7 @@
 import os
-import sergeant
+
 import logging
+import sergeant
 
 
 class Worker(

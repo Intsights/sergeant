@@ -1,6 +1,7 @@
 import dataclasses
-import logging
 import typing
+
+import logging
 
 
 @dataclasses.dataclass(

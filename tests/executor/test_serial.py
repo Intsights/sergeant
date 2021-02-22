@@ -1,7 +1,7 @@
+import os
+import time
 import unittest
 import unittest.mock
-import time
-import os
 
 import sergeant.config
 import sergeant.executor

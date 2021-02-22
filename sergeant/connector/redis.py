@@ -1,9 +1,8 @@
 import binascii
 import random
+import redis
 import time
 import typing
-
-import redis
 
 from . import _connector
 

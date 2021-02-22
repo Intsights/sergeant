@@ -3,10 +3,10 @@ import signal
 import types
 import typing
 
+from . import _executor
 from .. import killer
 from .. import objects
 from .. import worker
-from . import _executor
 
 
 class SerialExecutor(

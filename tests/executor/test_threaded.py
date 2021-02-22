@@ -1,11 +1,11 @@
+import threading
+import time
 import unittest
 import unittest.mock
-import time
-import threading
 
-import sergeant.worker
 import sergeant.executor
 import sergeant.killer
+import sergeant.worker
 
 
 class ThreadedTestCase(

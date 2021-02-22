@@ -1,5 +1,6 @@
-import sergeant
 import os
+
+import sergeant
 
 
 def main():

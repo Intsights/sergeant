@@ -1,6 +1,6 @@
-import time
 import celery
 import celery.utils.log
+import time
 
 
 app = celery.Celery(

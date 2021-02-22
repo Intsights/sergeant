@@ -1,9 +1,9 @@
-import logging
 import orjson
 import socket
 import unittest
 import unittest.mock
 
+import logging
 import sergeant.logging.logstash
 import sergeant.objects
 

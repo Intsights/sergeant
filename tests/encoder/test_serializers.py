@@ -1,5 +1,5 @@
-import unittest
 import datetime
+import unittest
 
 import sergeant.encoder.serializer
 

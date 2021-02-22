@@ -1,6 +1,6 @@
+import threading
 import time
 import unittest
-import threading
 
 import sergeant.killer.thread
 

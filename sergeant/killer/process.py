@@ -1,5 +1,4 @@
 import argparse
-import logging
 import multiprocessing
 import multiprocessing.connection
 import os
@@ -8,6 +7,8 @@ import shlex
 import subprocess
 import sys
 import time
+
+import logging
 
 
 class KillerServer:

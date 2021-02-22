@@ -1,10 +1,9 @@
 import datetime
+import msgpack
 import typing
 
-import msgpack
-
-from ... import objects
 from . import _serializer
+from ... import objects
 
 
 class Serializer(

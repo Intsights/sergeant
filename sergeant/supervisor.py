@@ -1,5 +1,4 @@
 import argparse
-import logging
 import multiprocessing
 import multiprocessing.context
 import psutil
@@ -9,6 +8,8 @@ import subprocess
 import sys
 import time
 import typing
+
+import logging
 
 
 class SupervisedWorker:
