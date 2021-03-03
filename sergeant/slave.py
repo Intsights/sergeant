@@ -22,7 +22,7 @@ class ReturnCode(
     WORKER_ASKED_TO_STOP: int = 5
     WORKER_EXECUTION_FAILURE: int = 6
     WORKER_MODULE_NOT_IMPORTABLE: int = 7
-    WORKER_COULDNT_OPEN_PIPE: int = 8
+
 
 
 def work(
