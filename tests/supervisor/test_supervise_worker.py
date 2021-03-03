@@ -660,11 +660,13 @@ class SupervisorSuperviseWorkerTestCase(
 
         supervisor.respawn_a_worker.assert_called_once()
 
+    @unittest.mock.patch('sys.exit')
     def test_import_module_exception(
         self,
+        sys_exit,
     ):
         supervisor = sergeant.supervisor.Supervisor(
-            worker_module_name='.tests.supervisor.workers.worker_successful_execution',
+            worker_module_name='tests.supervisor.workers.worker_not_importable',
             worker_class_name='Worker',
             concurrent_workers=1,
             logger=unittest.mock.MagicMock(),
@@ -684,7 +686,7 @@ class SupervisorSuperviseWorkerTestCase(
             first=first_log[1]['extra'],
             second={
                 'supervisor': {
-                    'worker_module_name': '.tests.supervisor.workers.worker_successful_execution',
+                    'worker_module_name': 'tests.supervisor.workers.worker_not_importable',
                     'worker_class_name': 'Worker',
                     'concurrent_workers': 1,
                     'max_worker_memory_usage': None,
@@ -698,23 +700,23 @@ class SupervisorSuperviseWorkerTestCase(
         self.assertEqual(
             first=second_log[1],
             second={
-                'msg': f'worker({supervisor.current_workers[0].process.pid}) could not import module',
+                'msg': f'worker({supervisor.current_workers[0].process.pid}) importing the worker module has raised an exception: Exception(\'non importable module\')',
                 'extra': {
                     'supervisor': {
-                        'worker_module_name': '.tests.supervisor.workers.worker_successful_execution',
+                        'worker_module_name': 'tests.supervisor.workers.worker_not_importable',
                         'worker_class_name': 'Worker',
                         'concurrent_workers': 1,
                         'max_worker_memory_usage': None,
                     },
                     'summary': {
                         'return_code': 7,
-                        'exception': 'TypeError("the \'package\' argument is required to perform a relative import for \'.tests.supervisor.workers.worker_successful_execution\'")',
+                        'exception': 'Exception(\'non importable module\')',
                     }
                 },
             },
         )
 
-        supervisor.respawn_a_worker.assert_called_once()
+        sys_exit.assert_called_once()
 
     def test_worker_hanging_killable_threads_success(
         self,

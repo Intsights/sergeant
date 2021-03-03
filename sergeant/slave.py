@@ -24,7 +24,6 @@ class ReturnCode(
     WORKER_MODULE_NOT_IMPORTABLE: int = 7
 
 
-
 def work(
     worker_module_name: str,
     worker_class_name: str,

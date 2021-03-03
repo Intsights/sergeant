@@ -272,14 +272,11 @@ class Supervisor:
                 )
             elif worker_return_code == 7:
                 self.logger.critical(
-                    msg=f'worker({worker.process.pid}) could not import module',
+                    msg=f'worker({worker.process.pid}) importing the worker module has raised an exception: {worker_summary.get("exception")}',
                     extra=extra_signature,
                 )
-            elif worker_return_code == 8:
-                self.logger.critical(
-                    msg=f'worker({worker.process.pid}) could not open pipe',
-                    extra=extra_signature,
-                )
+
+                sys.exit(1)
             else:
                 extra_signature['return_code'] = worker_return_code
                 self.logger.critical(
