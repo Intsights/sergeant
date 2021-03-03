@@ -146,10 +146,7 @@ if __name__ == '__main__':
         pipe_obj = multiprocessing.connection.Connection(
             handle=args.child_pipe,
         )
-    except Exception:
-        sys.exit(ReturnCode.WORKER_COULDNT_OPEN_PIPE.value)
 
-    try:
         return_code, summary = work(
             worker_module_name=args.worker_module,
             worker_class_name=args.worker_class,
