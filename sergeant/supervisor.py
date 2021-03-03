@@ -51,11 +51,11 @@ class SupervisedWorker:
 
     def get_summary(
         self,
-    ) -> typing.Optional[typing.Dict[str, typing.Any]]:
+    ) -> typing.Dict[str, typing.Any]:
         if self.parent_pipe.poll():
             return self.parent_pipe.recv()
-
-        return None
+        else:
+            return {}
 
     def kill(
         self,
@@ -193,19 +193,6 @@ class Supervisor:
     ) -> None:
         worker_has_finished_running = worker.process.poll() is not None
         if worker_has_finished_running:
-            extra_signature = self.extra_signature.copy()
-
-            try:
-                worker_summary = worker.get_summary()
-                extra_signature['summary'] = worker_summary
-            except Exception as exception:
-                self.logger.error(
-                    msg=f'could not receive supervised_worker\'s summary: {exception}',
-                    extra=self.extra_signature,
-                )
-                worker_summary = None
-                extra_signature['summary'] = {}
-
             try:
                 worker.process.wait()
             except (
@@ -213,6 +200,18 @@ class Supervisor:
                 OSError,
             ):
                 pass
+
+            try:
+                worker_summary = worker.get_summary()
+            except Exception as exception:
+                self.logger.error(
+                    msg=f'could not receive supervised_worker\'s summary: {exception}',
+                    extra=self.extra_signature,
+                )
+                worker_summary = {}
+
+            extra_signature = self.extra_signature.copy()
+            extra_signature['summary'] = worker_summary
 
             worker_return_code = worker.process.returncode
             if worker_summary and 'return_code' in worker_summary:
@@ -231,7 +230,7 @@ class Supervisor:
                 )
             elif worker_return_code == 1:
                 self.logger.critical(
-                    msg=f'worker({worker.process.pid}) execution has failed with the following exception: {extra_signature["summary"].get("exception")}',
+                    msg=f'worker({worker.process.pid}) execution has failed with the following exception: {worker_summary.get("exception")}',
                     extra=extra_signature,
                 )
             elif worker_return_code == 2:
@@ -271,6 +270,13 @@ class Supervisor:
                     msg=f'worker({worker.process.pid}) internal execution has failed',
                     extra=extra_signature,
                 )
+            elif worker_return_code == 7:
+                self.logger.critical(
+                    msg=f'worker({worker.process.pid}) importing the worker module has raised an exception: {worker_summary.get("exception")}',
+                    extra=extra_signature,
+                )
+
+                sys.exit(1)
             else:
                 extra_signature['return_code'] = worker_return_code
                 self.logger.critical(
