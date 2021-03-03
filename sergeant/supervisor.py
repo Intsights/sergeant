@@ -270,6 +270,16 @@ class Supervisor:
                     msg=f'worker({worker.process.pid}) internal execution has failed',
                     extra=extra_signature,
                 )
+            elif worker_return_code == 7:
+                self.logger.critical(
+                    msg=f'worker({worker.process.pid}) could not import module',
+                    extra=extra_signature,
+                )
+            elif worker_return_code == 8:
+                self.logger.critical(
+                    msg=f'worker({worker.process.pid}) could not open pipe',
+                    extra=extra_signature,
+                )
             else:
                 extra_signature['return_code'] = worker_return_code
                 self.logger.critical(

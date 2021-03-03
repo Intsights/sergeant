@@ -22,6 +22,7 @@ class ReturnCode(
     WORKER_ASKED_TO_STOP: int = 5
     WORKER_EXECUTION_FAILURE: int = 6
     WORKER_MODULE_NOT_IMPORTABLE: int = 7
+    WORKER_COULDNT_OPEN_PIPE: int = 8
 
 
 def work(
@@ -145,7 +146,10 @@ if __name__ == '__main__':
         pipe_obj = multiprocessing.connection.Connection(
             handle=args.child_pipe,
         )
+    except Exception:
+        sys.exit(ReturnCode.WORKER_COULDNT_OPEN_PIPE.value)
 
+    try:
         return_code, summary = work(
             worker_module_name=args.worker_module,
             worker_class_name=args.worker_class,
