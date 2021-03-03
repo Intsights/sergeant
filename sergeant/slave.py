@@ -21,6 +21,7 @@ class ReturnCode(
     WORKER_ASKED_TO_RESPAWN: int = 4
     WORKER_ASKED_TO_STOP: int = 5
     WORKER_EXECUTION_FAILURE: int = 6
+    WORKER_MODULE_NOT_IMPORTABLE: int = 7
 
 
 def work(
@@ -35,6 +36,14 @@ def work(
         return (
             ReturnCode.WORKER_MODULE_NOT_FOUND.value,
             None,
+        )
+    except Exception as exception:
+        return (
+            ReturnCode.WORKER_MODULE_NOT_IMPORTABLE.value,
+            {
+                'exception': repr(exception),
+                'stacktrace': traceback.format_exc(),
+            },
         )
 
     try:
