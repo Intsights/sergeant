@@ -335,6 +335,9 @@ class Worker:
                 msg=f'finalize has failed: {exception}',
             )
             summary['finalize_exception'] = exception
+        finally:
+            for logger_handler in self.logger.handlers:
+                logger_handler.flush()
 
         total_cpu_time = time.process_time() - task_start_process_time
         total_wall_time = time.perf_counter() - task_start_time
