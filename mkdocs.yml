@@ -51,6 +51,8 @@ nav:
         - is_locked: 'worker/lock/is_locked.md'
         - get_ttl: 'worker/lock/get_ttl.md'
         - set_ttl: 'worker/lock/set_ttl.md'
+      - Logging:
+        - logstash: 'worker/logging/logstash.md'
     - Supervisor: "supervisor.md"
     - Examples:
       - 'examples/single_producer_consumer.md'
