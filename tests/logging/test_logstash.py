@@ -8,7 +8,7 @@ import sergeant.logging.logstash
 import sergeant.objects
 
 
-class LoggingLogstashTestCase(
+class LogstashHandlerTestCase(
     unittest.TestCase,
 ):
     def setUp(
@@ -137,3 +137,63 @@ class LoggingLogstashTestCase(
                 first=print_mock.call_args_list[0][0][0],
                 second='sending log entry to the logstash server has failed: test',
             )
+
+
+class BufferedLogstashHandlerTestCase(
+    unittest.TestCase,
+):
+    def test_message_emitter(
+        self,
+    ):
+        with unittest.mock.patch.object(
+            target=sergeant.logging.logstash.socket,
+            attribute='socket',
+            autospec=True,
+        ) as socket_mock:
+            logger = logging.Logger(
+                name='logger',
+                level=logging.INFO,
+            )
+
+            logger.addHandler(
+                hdlr=sergeant.logging.logstash.BufferedLogstashHandler(
+                    host='localhost',
+                    port=9999,
+                    chunk_size=10,
+                    max_store_time=60,
+                ),
+            )
+            for i in range(9):
+                logger.info(
+                    msg=str(i),
+                )
+            socket_mock.return_value.__enter__.assert_not_called()
+            logger.info(
+                msg=str(9),
+            )
+            socket_mock.return_value.__enter__.assert_called()
+            sendall_calls = socket_mock.return_value.__enter__.return_value.sendall.call_args_list
+            for call_number, sendall_call in enumerate(sendall_calls):
+                message_data = sendall_call[0][0]
+                message = orjson.loads(message_data)
+
+                self.assertEqual(
+                    first=message['message'],
+                    second=str(call_number),
+                )
+                self.assertEqual(
+                    first=message['emitter']['pathname'],
+                    second=__file__,
+                )
+                self.assertEqual(
+                    first=message['emitter']['function'],
+                    second='test_message_emitter',
+                )
+                self.assertEqual(
+                    first=message['emitter']['hostname'],
+                    second=socket.gethostname(),
+                )
+                self.assertEqual(
+                    first=message['emitter']['ipaddress'],
+                    second=socket.gethostbyname(socket.gethostname()),
+                )

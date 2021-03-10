@@ -141,13 +141,16 @@ class BufferedLogstashHandler(
         self.log_queue.append(encoded_message)
 
         time_since_last_transmission = record.created - self.last_log_transmision_time
-        if len(self.log_queue) >= 100 or time_since_last_transmission >= 60:
+        if len(self.log_queue) >= self.chunk_size or time_since_last_transmission >= self.max_store_time:
             self.flush()
             self.last_log_transmision_time = record.created
 
     def flush(
         self,
     ) -> None:
+        if len(self.log_queue) == 0:
+            return
+
         try:
             with socket.socket(
                 family=socket.AF_INET,
@@ -157,8 +160,7 @@ class BufferedLogstashHandler(
                 socket_connection.connect(self.address)
 
                 while True:
-                    encoded_message = self.log_queue.popleft()
-                    socket_connection.sendall(encoded_message + b'\n')
+                    socket_connection.sendall(self.log_queue.popleft() + b'\n')
         except IndexError:
             pass
         except Exception as exception:
