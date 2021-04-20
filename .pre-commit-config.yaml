@@ -1,4 +1,4 @@
-exclude: '.*test.*'
+exclude: '.*(test|benchmark).*'
 repos:
 -   repo: https://github.com/Intsights/flake8-intsights
     rev: v0.1.5

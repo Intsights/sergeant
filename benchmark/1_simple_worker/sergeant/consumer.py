@@ -22,7 +22,7 @@ class Worker(
                 ],
             },
         ),
-        max_tasks_per_run=100002,
+        max_tasks_per_run=100000,
         tasks_per_transaction=25000,
         max_retries=3,
         logging=sergeant.config.Logging(

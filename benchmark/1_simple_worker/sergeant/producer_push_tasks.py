@@ -1,3 +1,5 @@
+import time
+
 from . import consumer
 
 
@@ -5,6 +7,8 @@ def main():
     worker = consumer.Worker()
     worker.init_broker()
     worker.purge_tasks()
+
+    start_time = time.time()
 
     worker.push_task(
         kwargs={
@@ -17,7 +21,7 @@ def main():
             {
                 'phase': '',
             },
-        ] * 100000,
+        ] * (100000 - 2),
     )
 
     worker.push_task(
@@ -25,6 +29,10 @@ def main():
             'phase': 'end',
         },
     )
+
+    end_time = time.time()
+
+    print(f'sergeant_push_tasks: {end_time - start_time}')
 
 
 if __name__ == '__main__':
