@@ -93,6 +93,8 @@ class Worker:
             connector_obj = connector.mongo.Connector(**self.config.connector.params)
         elif self.config.connector.type == connector.redis.Connector.name:
             connector_obj = connector.redis.Connector(**self.config.connector.params)
+        elif self.config.connector.type == connector.redis.OrderedSetConnector.name:
+            connector_obj = connector.redis.OrderedSetConnector(**self.config.connector.params)
         else:
             raise ValueError(f'connector type {self.config.connector.type} is not supported')
 
