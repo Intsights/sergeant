@@ -276,7 +276,6 @@ class OrderedSetQueueRedis(
             return regular_items + delayed_items
 
 
-
 class Connector(
     _connector.Connector,
 ):
@@ -463,6 +462,7 @@ class Connector(
             redis_connection=redis_connection,
             name=name,
         )
+
 
 class OrderedSetConnector(
     Connector,
