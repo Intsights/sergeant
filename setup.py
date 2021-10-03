@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='sergeant',
-    version='0.21.1',
+    version='0.22.0',
     author='Gal Ben David',
     author_email='gal@intsights.com',
     url='https://github.com/Intsights/sergeant',
@@ -24,7 +24,7 @@ setuptools.setup(
     python_requires='>=3.7',
     zip_safe=False,
     install_requires=[
-        'hiredis==1.*',
+        'hiredis==2.*',
         'msgpack==1.*',
         'orjson==3.*',
         'psutil==5.*',

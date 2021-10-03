@@ -1,4 +1,4 @@
-hiredis==1.*
+hiredis==2.*
 msgpack==1.*
 orjson==3.*
 psutil==5.*
