@@ -17,3 +17,4 @@ repos:
     rev: v1.26.3
     hooks:
       - id: yamllint
+        entry: "yamllint --config-data=\"{extends: default, rules: {line-length: {max: 120}}}\""
