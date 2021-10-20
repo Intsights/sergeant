@@ -7,10 +7,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Set up Python 3.9
+      - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.10
       - name: Install Flake8 & mypy
         run: >-
           python -m pip install --upgrade flake8-intsights mypy;
@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7, 3.8, 3.9, 3.10]
         os: [ubuntu-latest]
     services:
       redis-node-one:
@@ -40,13 +40,13 @@ jobs:
         ports:
           - 6380:6379
       mongo-node-one:
-        image: bitnami/mongodb
+        image: bitnami/mongodb:latest
         ports:
           - 27017:27017
         env:
           MONGODB_EXTRA_FLAGS: "--bind_ip_all --port 27017 --replSet test_replica_set"
       mongo-node-two:
-        image: bitnami/mongodb
+        image: bitnami/mongodb:latest
         ports:
           - 27018:27018
         env:
