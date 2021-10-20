@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='sergeant',
-    version='0.22.0',
+    version='0.22.1',
     author='Gal Ben David',
     author_email='gal@intsights.com',
     url='https://github.com/Intsights/sergeant',
@@ -19,6 +19,7 @@ setuptools.setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
     ],
     keywords='tasks worker queue redis async',
     python_requires='>=3.7',

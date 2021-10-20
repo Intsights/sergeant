@@ -1,3 +1,4 @@
+---
 name: Deploy
 on:
   release:
@@ -7,16 +8,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-    - name: Build a source tarball
-      run: >-
-        python -m pip install --user --upgrade setuptools;
-        python setup.py sdist;
-    - name: Publish distribution 📦 to PyPI
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        password: ${{ secrets.pypi_password }}
+      - uses: actions/checkout@v1
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.10'
+      - name: Build a source tarball
+        run: >-
+          python -m pip install --user --upgrade setuptools;
+          python setup.py sdist;
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.pypi_password }}

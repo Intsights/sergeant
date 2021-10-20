@@ -318,19 +318,17 @@ class Connector(
     ) -> bool:
         if consumable_from == 0:
             if priority == 'HIGH':
-                self.next_connection.lpush(queue_name, item)
+                return self.next_connection.lpush(queue_name, item) > 0
             else:
-                self.next_connection.rpush(queue_name, item)
+                return self.next_connection.rpush(queue_name, item) > 0
         else:
-            self.next_connection.zadd(
+            return self.next_connection.zadd(
                 name=f'{queue_name}.delayed',
                 mapping={
                     item: consumable_from,
                 },
                 nx=True,
-            )
-
-        return True
+            ) > 0
 
     def queue_push_bulk(
         self,
@@ -341,20 +339,18 @@ class Connector(
     ) -> bool:
         if consumable_from == 0:
             if priority == 'HIGH':
-                self.next_connection.lpush(queue_name, *items)
+                return self.next_connection.lpush(queue_name, *items) > 0
             else:
-                self.next_connection.rpush(queue_name, *items)
+                return self.next_connection.rpush(queue_name, *items) > 0
         else:
-            self.next_connection.zadd(
+            return self.next_connection.zadd(
                 name=f'{queue_name}.delayed',
                 mapping={
                     item: consumable_from
                     for item in items
                 },
                 nx=True,
-            )
-
-        return True
+            ) > 0
 
     def queue_length(
         self,

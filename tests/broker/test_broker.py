@@ -561,6 +561,7 @@ class BrokerTestCase:
                 first=lock.get_ttl(),
                 second=30,
             )
+            lock.release()
 
 
 class RedisSingleServerBrokerTestCase(

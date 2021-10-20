@@ -59,7 +59,7 @@ class BaseLogstashHandler(
         last_exception_type, last_exception_object, last_exception_tb = sys.exc_info()
         if last_exception_object:
             extracted_stacktrace = traceback.format_exception(
-                etype=last_exception_type,
+                last_exception_type,
                 value=last_exception_object,
                 tb=last_exception_tb,
             )
