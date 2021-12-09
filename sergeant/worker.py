@@ -209,6 +209,7 @@ class Worker:
             signal.signal(signal.SIGUSR1, signal.SIG_DFL)
 
         signal.signal(signal.SIGUSR1, stop_signal_handler)
+        signal.signal(signal.SIGTERM, stop_signal_handler)
 
         time_with_no_tasks = 0
         run_forever = self.config.max_tasks_per_run == 0

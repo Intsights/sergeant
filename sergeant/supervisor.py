@@ -191,6 +191,16 @@ class Supervisor:
         self,
         worker: SupervisedWorker,
     ) -> None:
+        def close_worker_gracefully() -> None:
+            try:
+                worker.psutil_obj.send_signal(
+                    sig=signal.SIGTERM,
+                )
+            except psutil.NoSuchProcess:
+                pass
+
+        signal.signal(signal.SIGTERM, close_worker_gracefully)
+
         worker_has_finished_running = worker.process.poll() is not None
         if worker_has_finished_running:
             try:
