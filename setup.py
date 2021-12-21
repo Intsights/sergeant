@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='sergeant',
-    version='0.22.1',
+    version='0.22.2',
     author='Gal Ben David',
     author_email='gal@intsights.com',
     url='https://github.com/Intsights/sergeant',
@@ -30,7 +30,7 @@ setuptools.setup(
         'orjson==3.*',
         'psutil==5.*',
         'pymongo==3.*',
-        'redis==3.*',
+        'redis>=3.*',
     ],
     setup_requires=[
         'pytest-runner',

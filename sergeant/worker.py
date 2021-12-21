@@ -197,7 +197,7 @@ class Worker:
 
         def stop_signal_handler(
             signal_num: int,
-            frame: types.FrameType,
+            frame: typing.Optional[types.FrameType],
         ) -> None:
             nonlocal stop_signal_received
 

@@ -7,6 +7,7 @@ import signal
 import subprocess
 import sys
 import time
+import types
 import typing
 
 import logging
@@ -129,6 +130,19 @@ class Supervisor:
             self.logger.setLevel(logging.INFO)
 
         self.current_workers: typing.List[SupervisedWorker] = []
+
+        signal.signal(signal.SIGTERM, self.sigterm_handler)
+
+    def sigterm_handler(
+        self,
+        signal_num: int,
+        frame: typing.Optional[types.FrameType],
+    ) -> None:
+        self.logger.info(
+            msg='SIGTERM was received, triggering a stopping process',
+            extra=self.extra_signature,
+        )
+        self.stop_process_has_started = True
 
     def start(
         self,

@@ -22,7 +22,7 @@ class SerialExecutor(
     def sigterm_handler(
         self,
         signal_num: int,
-        frame: types.FrameType,
+        frame: typing.Optional[types.FrameType],
     ) -> None:
         if self.currently_working:
             raise worker.WorkerTimedout()

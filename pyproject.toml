@@ -34,3 +34,11 @@ addopts = [
 testpaths = [
     "tests",
 ]
+
+[tool.mypy]
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unreachable = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+strict_equality = true
