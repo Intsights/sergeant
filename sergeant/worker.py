@@ -42,6 +42,21 @@ class Worker:
             hdlr=logging.NullHandler(),
         )
 
+        self.stop_signal_received: bool = False
+        signal.signal(signal.SIGUSR1, self.stop_signal_handler)
+
+    def stop_signal_handler(
+        self,
+        signal_num: int,
+        frame: typing.Optional[types.FrameType],
+    ) -> None:
+        self.stop_signal_received = True
+
+        self.logger.info(
+            msg='stop signal has been received',
+        )
+        signal.signal(signal.SIGUSR1, signal.SIG_DFL)
+
     def init_worker(
         self,
     ) -> None:
@@ -89,9 +104,9 @@ class Worker:
         )
 
         connector_obj: connector.Connector
-        if self.config.connector.type == connector.mongo.Connector.name:
+        if self.config.connector.type == 'mongo':
             connector_obj = connector.mongo.Connector(**self.config.connector.params)
-        elif self.config.connector.type == connector.redis.Connector.name:
+        elif self.config.connector.type == 'redis':
             connector_obj = connector.redis.Connector(**self.config.connector.params)
         else:
             raise ValueError(f'connector type {self.config.connector.type} is not supported')
@@ -193,29 +208,12 @@ class Worker:
     def iterate_tasks(
         self,
     ) -> typing.Iterable[objects.Task]:
-        stop_signal_received = False
-
-        def stop_signal_handler(
-            signal_num: int,
-            frame: typing.Optional[types.FrameType],
-        ) -> None:
-            nonlocal stop_signal_received
-
-            stop_signal_received = True
-
-            self.logger.info(
-                msg='stop signal has been received',
-            )
-            signal.signal(signal.SIGUSR1, signal.SIG_DFL)
-
-        signal.signal(signal.SIGUSR1, stop_signal_handler)
-
         time_with_no_tasks = 0
         run_forever = self.config.max_tasks_per_run == 0
         tasks_left = self.config.max_tasks_per_run
 
         while tasks_left > 0 or run_forever:
-            if stop_signal_received:
+            if self.stop_signal_received:
                 break
 
             if run_forever:
@@ -244,11 +242,10 @@ class Worker:
                 try:
                     for task in tasks:
                         iterated_tasks += 1
+                        if self.stop_signal_received:
+                            break
 
                         yield task
-
-                        if stop_signal_received:
-                            break
                 finally:
                     if iterated_tasks < len(tasks):
                         self.push_tasks(

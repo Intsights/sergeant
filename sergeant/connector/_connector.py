@@ -33,8 +33,6 @@ class Lock:
 
 
 class Connector:
-    name: str
-
     def key_set(
         self,
         key: str,

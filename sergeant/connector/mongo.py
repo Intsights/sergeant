@@ -2,6 +2,8 @@ import binascii
 import datetime
 import math
 import pymongo
+import pymongo.collection
+import pymongo.errors
 import random
 import time
 import typing
@@ -125,8 +127,6 @@ class Lock(
 class Connector(
     _connector.Connector,
 ):
-    name: str = 'mongo'
-
     def __init__(
         self,
         nodes: typing.List[typing.Dict[str, typing.Any]],
@@ -362,6 +362,8 @@ class Connector(
             priority_value = 0
         elif priority == 'NORMAL':
             priority_value = 1
+        else:
+            priority_value = 1
 
         insert_one_result = self.next_connection.sergeant.task_queue.insert_one(
             document={
@@ -385,6 +387,8 @@ class Connector(
         elif priority == 'HIGH':
             priority_value = 0
         elif priority == 'NORMAL':
+            priority_value = 1
+        else:
             priority_value = 1
 
         insert_many_result = self.next_connection.sergeant.task_queue.insert_many(

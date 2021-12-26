@@ -212,8 +212,6 @@ class QueueRedis(
 class Connector(
     _connector.Connector,
 ):
-    name: str = 'redis'
-
     def __init__(
         self,
         nodes: typing.List[typing.Dict[str, typing.Any]],
