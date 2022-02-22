@@ -41,6 +41,7 @@ class Worker:
         self.logger.addHandler(
             hdlr=logging.NullHandler(),
         )
+        self.trace_id = None
 
         self.stop_signal_received: bool = False
         signal.signal(signal.SIGUSR1, self.stop_signal_handler)
@@ -130,6 +131,17 @@ class Worker:
                 number_of_threads=self.config.number_of_threads,
             )
 
+    def get_trace_id(
+        self,
+    ) -> str:
+        return self.trace_id
+
+    def set_trace_id(
+        self,
+        trace_id: str,
+    ) -> None:
+        self.trace_id = trace_id
+
     def purge_tasks(
         self,
         task_name: typing.Optional[str] = None,
@@ -157,6 +169,7 @@ class Worker:
     ) -> bool:
         task = objects.Task(
             kwargs=kwargs,
+            trace_id=self.get_trace_id(),
         )
 
         return self.broker.push_task(
