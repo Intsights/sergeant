@@ -133,7 +133,7 @@ class Worker:
 
     def get_trace_id(
         self,
-    ) -> str:
+    ) -> typing.Union[str, None]:
         return self.trace_id
 
     def set_trace_id(
