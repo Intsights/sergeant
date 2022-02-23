@@ -18,8 +18,26 @@ class ThreadedExecutor(
     ) -> None:
         self.worker_object = worker_object
         self.number_of_threads = number_of_threads
+        self.current_tasks = {}
 
         self.interrupt_exception: typing.Optional[BaseException] = None
+
+    def get_current_task(
+        self,
+    ) -> typing.Union[objects.Task, None]:
+        return self.current_tasks.get(threading.get_ident())
+
+    def set_current_task(
+        self,
+        task: objects.Task,
+    ) -> None:
+        self.current_tasks[threading.get_ident()] = task
+
+    def set_task_trace_id(
+        self,
+        trace_id: str,
+    ) -> None:
+        self.get_current_task().trace_id = trace_id
 
     def execute_tasks(
         self,
@@ -65,6 +83,9 @@ class ThreadedExecutor(
         task: objects.Task,
         killer_object: typing.Optional[killer.thread.Killer] = None,
     ) -> None:
+        self.set_current_task(
+            task=task,
+        )
         self.pre_work(
             task=task,
             killer_object=killer_object,
@@ -150,6 +171,8 @@ class ThreadedExecutor(
                 task=task,
                 returned_value=returned_value,
             )
+
+        self.set_current_task(None)
 
     def pre_work(
         self,

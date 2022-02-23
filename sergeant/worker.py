@@ -134,13 +134,17 @@ class Worker:
     def get_trace_id(
         self,
     ) -> typing.Union[str, None]:
-        return self.trace_id
+        current_task = self.executor_obj.get_current_task()
+        if current_task:
+            return current_task.trace_id
 
     def set_trace_id(
         self,
         trace_id: str,
     ) -> None:
-        self.trace_id = trace_id
+        self.executor_obj.set_task_trace_id(
+            trace_id=trace_id,
+        )
 
     def purge_tasks(
         self,
