@@ -41,7 +41,6 @@ class Worker:
         self.logger.addHandler(
             hdlr=logging.NullHandler(),
         )
-        self.trace_id = None
 
         self.stop_signal_received: bool = False
         signal.signal(signal.SIGUSR1, self.stop_signal_handler)
