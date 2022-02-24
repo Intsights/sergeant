@@ -33,12 +33,6 @@ class ThreadedExecutor(
     ) -> None:
         self.current_tasks[threading.get_ident()] = task
 
-    def set_task_trace_id(
-        self,
-        trace_id: str,
-    ) -> None:
-        self.get_current_task().trace_id = trace_id
-
     def execute_tasks(
         self,
         tasks: typing.Iterable[objects.Task],
@@ -171,8 +165,10 @@ class ThreadedExecutor(
                 task=task,
                 returned_value=returned_value,
             )
-
-        self.set_current_task(None)
+        finally:
+            self.set_current_task(
+                task=None,
+            )
 
     def pre_work(
         self,

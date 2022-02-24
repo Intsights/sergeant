@@ -31,12 +31,6 @@ class SerialExecutor(
     ) -> None:
         self.current_task = task
 
-    def set_task_trace_id(
-        self,
-        trace_id: str,
-    ) -> None:
-        self.get_current_task().trace_id = trace_id
-
     def sigterm_handler(
         self,
         signal_num: int,
@@ -167,10 +161,10 @@ class SerialExecutor(
                 task=task,
                 returned_value=returned_value,
             )
-
-        self.set_current_task(
-            task=None,
-        )
+        finally:
+            self.set_current_task(
+                task=None,
+            )
 
     def pre_work(
         self,
