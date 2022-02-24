@@ -28,6 +28,7 @@ class WorkerBrokerTestCase(
             ),
         )
         worker.init_broker()
+        worker.init_executor()
 
         worker.purge_tasks()
         self.assertEqual(
