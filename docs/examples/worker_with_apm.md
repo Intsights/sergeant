@@ -63,9 +63,16 @@ This example demonstrates how to integrate with an APM solution. In this case, `
             self,
             task,
         ):
-            self.apm_client.begin_transaction(
+            trace_parent_id = task.trace_id if task else None
+
+            apm_transaction = self.apm_client.begin_transaction(
                 transaction_type='work',
+                trace_parent=trace_parent_id,
             )
+            if apm_transaction:
+                self.set_trace_id(
+                    trace_id=apm_transaction.trace_parent.to_string(),
+                )
 
         def post_work(
             self,

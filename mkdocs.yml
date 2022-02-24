@@ -44,6 +44,7 @@ nav:
         - get_next_tasks: 'worker/methods/get_next_tasks.md'
         - number_of_enqueued_tasks: 'worker/methods/number_of_enqueued_tasks.md'
         - purge_tasks: 'worker/methods/purge_tasks.md'
+        - set_trace_id: 'worker/methods/set_trace_id.md'
         - lock: 'worker/methods/lock.md'
       - Lock:
         - acquire: 'worker/lock/acquire.md'
