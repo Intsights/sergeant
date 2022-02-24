@@ -80,6 +80,46 @@ class SerialTestCase(
             },
         )
 
+    def test_get_current_task(
+        self,
+    ):
+        serial_executor = sergeant.executor.serial.SerialExecutor(
+            worker_object=self.worker,
+        )
+
+        task = sergeant.objects.Task()
+        self.assertIsNone(
+            obj=serial_executor.get_current_task(),
+        )
+
+        serial_executor.current_task = task
+
+        self.assertEqual(
+            first=serial_executor.get_current_task(),
+            second=task,
+        )
+
+    def test_set_current_task(
+        self,
+    ):
+        serial_executor = sergeant.executor.serial.SerialExecutor(
+            worker_object=self.worker,
+        )
+
+        task = sergeant.objects.Task()
+        self.assertIsNone(
+            obj=serial_executor.get_current_task(),
+        )
+
+        serial_executor.set_current_task(
+            task=task,
+        )
+
+        self.assertEqual(
+            first=serial_executor.get_current_task(),
+            second=task,
+        )
+
     def test_post_work(
         self,
     ):
