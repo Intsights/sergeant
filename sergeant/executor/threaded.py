@@ -18,18 +18,18 @@ class ThreadedExecutor(
     ) -> None:
         self.worker_object = worker_object
         self.number_of_threads = number_of_threads
-        self.current_tasks = {}
+        self.current_tasks: typing.Dict[int, typing.Optional[objects.Task]] = {}
 
         self.interrupt_exception: typing.Optional[BaseException] = None
 
     def get_current_task(
         self,
-    ) -> typing.Union[objects.Task, None]:
+    ) -> typing.Optional[objects.Task]:
         return self.current_tasks.get(threading.get_ident())
 
     def set_current_task(
         self,
-        task: objects.Task,
+        task: typing.Optional[objects.Task],
     ) -> None:
         self.current_tasks[threading.get_ident()] = task
 

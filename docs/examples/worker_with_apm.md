@@ -63,18 +63,10 @@ This example demonstrates how to integrate with an APM solution. In this case, `
             self,
             task,
         ):
-            if task.trace_id is None:
-                apm_transaction = self.apm_client.begin_transaction(
-                    transaction_type='work',
-                )
-                self.set_trace_id(
-                    trace_id=apm_transaction.trace_parent.to_string(),
-                )
-            else:
-                self.apm_client.begin_transaction(
-                    transaction_type='work',
-                    trace_parent=task.trace_id,
-                )
+            self.apm_client.begin_transaction(
+                transaction_type='work',
+                trace_parent=task.trace_id,
+            )
 
         def post_work(
             self,
@@ -123,6 +115,7 @@ This example demonstrates how to integrate with an APM solution. In this case, `
                 kwargs={
                     'url': 'https://www.intsights.com/',
                 },
+                trace_id=str(i)
             )
 
 

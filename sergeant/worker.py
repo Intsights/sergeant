@@ -132,14 +132,12 @@ class Worker:
 
     def get_trace_id(
         self,
-    ) -> typing.Union[str, None]:
-        return self.executor_obj.get_current_task().trace_id
-
-    def set_trace_id(
-        self,
-        trace_id: str,
-    ) -> None:
-        self.executor_obj.get_current_task().trace_id = trace_id
+    ) -> typing.Optional[str]:
+        current_task = self.executor_obj.get_current_task()
+        if current_task:
+            return current_task.trace_id
+        else:
+            return None
 
     def purge_tasks(
         self,
@@ -165,10 +163,11 @@ class Worker:
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
         consumable_from: int = 0,
+        trace_id: typing.Optional[str] = None,
     ) -> bool:
         task = objects.Task(
             kwargs=kwargs,
-            trace_id=self.get_trace_id(),
+            trace_id=trace_id if trace_id is not None else self.get_trace_id(),
         )
 
         return self.broker.push_task(
@@ -184,8 +183,9 @@ class Worker:
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
         consumable_from: int = 0,
+        trace_id: typing.Optional[str] = None,
     ) -> bool:
-        trace_id = self.get_trace_id()
+        trace_id = trace_id if trace_id is not None else self.get_trace_id()
         tasks = [
             objects.Task(
                 kwargs=kwargs,

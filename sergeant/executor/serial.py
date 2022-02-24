@@ -18,16 +18,16 @@ class SerialExecutor(
     ) -> None:
         self.worker_object = worker_object
         self.currently_working = False
-        self.current_task = None
+        self.current_task: typing.Optional[objects.Task] = None
 
     def get_current_task(
         self,
-    ) -> typing.Union[objects.Task, None]:
+    ) -> typing.Optional[objects.Task]:
         return self.current_task
 
     def set_current_task(
         self,
-        task: typing.Union[objects.Task, None],
+        task: typing.Optional[objects.Task],
     ) -> None:
         self.current_task = task
 
