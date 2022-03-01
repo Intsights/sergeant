@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='sergeant',
-    version='0.22.3',
+    version='0.23.0',
     author='Gal Ben David',
     author_email='gal@intsights.com',
     url='https://github.com/Intsights/sergeant',
@@ -29,7 +29,7 @@ setuptools.setup(
         'msgpack==1.*',
         'orjson==3.*',
         'psutil==5.*',
-        'pymongo==3.*',
+        'pymongo>=3.*',
         'redis>=3.*',
     ],
     setup_requires=[
