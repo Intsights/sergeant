@@ -49,13 +49,19 @@ jobs:
         ports:
           - 27017:27017
         env:
-          MONGODB_EXTRA_FLAGS: "--bind_ip_all --port 27017 --replSet test_replica_set"
+          MONGODB_EXTRA_FLAGS: "--bind_ip_all"
+          MONGODB_REPLICA_SET_MODE: "primary"
+          MONGODB_REPLICA_SET_NAME: "test_replica_set"
+          ALLOW_EMPTY_PASSWORD: "yes"
       mongo-node-two:
         image: bitnami/mongodb:latest
         ports:
-          - 27018:27018
+          - 27018:27017
         env:
-          MONGODB_EXTRA_FLAGS: "--bind_ip_all --port 27018 --replSet test_replica_set"
+          MONGODB_EXTRA_FLAGS: "--bind_ip_all"
+          MONGODB_REPLICA_SET_MODE: "primary"
+          MONGODB_REPLICA_SET_NAME: "test_replica_set"
+          ALLOW_EMPTY_PASSWORD: "yes"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
