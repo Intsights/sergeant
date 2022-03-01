@@ -42,7 +42,6 @@ class Worker:
             hdlr=logging.NullHandler(),
         )
 
-        self.stop_signal_received: bool = False
         signal.signal(signal.SIGUSR1, self.stop_signal_handler)
 
     def stop_signal_handler(
@@ -50,12 +49,12 @@ class Worker:
         signal_num: int,
         frame: typing.Optional[types.FrameType],
     ) -> None:
-        self.stop_signal_received = True
-
         self.logger.info(
             msg='stop signal has been received',
         )
         signal.signal(signal.SIGUSR1, signal.SIG_DFL)
+
+        raise WorkerStop()
 
     def init_worker(
         self,
@@ -130,6 +129,15 @@ class Worker:
                 number_of_threads=self.config.number_of_threads,
             )
 
+    def get_trace_id(
+        self,
+    ) -> typing.Optional[str]:
+        current_task = self.executor_obj.get_current_task()
+        if current_task:
+            return current_task.trace_id
+        else:
+            return None
+
     def purge_tasks(
         self,
         task_name: typing.Optional[str] = None,
@@ -154,9 +162,11 @@ class Worker:
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
         consumable_from: int = 0,
+        trace_id: typing.Optional[str] = None,
     ) -> bool:
         task = objects.Task(
             kwargs=kwargs,
+            trace_id=trace_id if trace_id is not None else self.get_trace_id(),
         )
 
         return self.broker.push_task(
@@ -172,10 +182,13 @@ class Worker:
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
         consumable_from: int = 0,
+        trace_id: typing.Optional[str] = None,
     ) -> bool:
+        trace_id = trace_id if trace_id is not None else self.get_trace_id()
         tasks = [
             objects.Task(
                 kwargs=kwargs,
+                trace_id=trace_id,
             )
             for kwargs in kwargs_list
         ]
@@ -213,9 +226,6 @@ class Worker:
         tasks_left = self.config.max_tasks_per_run
 
         while tasks_left > 0 or run_forever:
-            if self.stop_signal_received:
-                break
-
             if run_forever:
                 number_of_tasks_to_pull = self.config.tasks_per_transaction
             else:
@@ -242,8 +252,6 @@ class Worker:
                 try:
                     for task in tasks:
                         iterated_tasks += 1
-                        if self.stop_signal_received:
-                            break
 
                         yield task
                 finally:
@@ -408,8 +416,8 @@ class Worker:
                 task=task,
                 returned_value=returned_value,
             )
-        except WorkerInterrupt as exception:
-            raise exception
+        except WorkerInterrupt:
+            raise
         except Exception as exception:
             self.logger.error(
                 msg=f'on_success handler has failed: {exception}',
@@ -448,8 +456,8 @@ class Worker:
             self.handle_requeue(
                 task=task,
             )
-        except WorkerInterrupt as exception:
-            raise exception
+        except WorkerInterrupt:
+            raise
         except Exception as exception:
             self.logger.error(
                 msg=f'on_failure handler has failed: {exception}',
@@ -486,8 +494,8 @@ class Worker:
             self.handle_requeue(
                 task=task,
             )
-        except WorkerInterrupt as exception:
-            raise exception
+        except WorkerInterrupt:
+            raise
         except Exception as exception:
             self.logger.error(
                 msg=f'on_timeout handler has failed: {exception}',
@@ -512,8 +520,8 @@ class Worker:
             self.on_retry(
                 task=task,
             )
-        except WorkerInterrupt as exception:
-            raise exception
+        except WorkerInterrupt:
+            raise
         except Exception as exception:
             self.logger.error(
                 msg=f'on_retry handler has failed: {exception}',
@@ -538,8 +546,8 @@ class Worker:
             self.on_max_retries(
                 task=task,
             )
-        except WorkerInterrupt as exception:
-            raise exception
+        except WorkerInterrupt:
+            raise
         except Exception as exception:
             self.logger.error(
                 msg=f'on_max_retries handler has failed: {exception}',
@@ -564,8 +572,8 @@ class Worker:
             self.on_requeue(
                 task=task,
             )
-        except WorkerInterrupt as exception:
-            raise exception
+        except WorkerInterrupt:
+            raise
         except Exception as exception:
             self.logger.error(
                 msg=f'on_requeue handler has failed: {exception}',
@@ -590,8 +598,8 @@ class Worker:
             self.on_starvation(
                 time_with_no_tasks=time_with_no_tasks,
             )
-        except WorkerInterrupt as exception:
-            raise exception
+        except WorkerInterrupt:
+            raise
         except Exception as exception:
             self.logger.error(
                 msg=f'on_starvation handler has failed: {exception}',

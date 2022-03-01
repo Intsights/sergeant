@@ -18,8 +18,20 @@ class ThreadedExecutor(
     ) -> None:
         self.worker_object = worker_object
         self.number_of_threads = number_of_threads
+        self.current_tasks: typing.Dict[int, typing.Optional[objects.Task]] = {}
 
         self.interrupt_exception: typing.Optional[BaseException] = None
+
+    def get_current_task(
+        self,
+    ) -> typing.Optional[objects.Task]:
+        return self.current_tasks.get(threading.get_ident())
+
+    def set_current_task(
+        self,
+        task: typing.Optional[objects.Task],
+    ) -> None:
+        self.current_tasks[threading.get_ident()] = task
 
     def execute_tasks(
         self,
@@ -65,6 +77,9 @@ class ThreadedExecutor(
         task: objects.Task,
         killer_object: typing.Optional[killer.thread.Killer] = None,
     ) -> None:
+        self.set_current_task(
+            task=task,
+        )
         self.pre_work(
             task=task,
             killer_object=killer_object,
@@ -149,6 +164,10 @@ class ThreadedExecutor(
             self.worker_object.handle_success(
                 task=task,
                 returned_value=returned_value,
+            )
+        finally:
+            self.set_current_task(
+                task=None,
             )
 
     def pre_work(

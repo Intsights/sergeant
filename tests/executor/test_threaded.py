@@ -40,6 +40,58 @@ class ThreadedTestCase(
 
         self.exception = Exception('some exception')
 
+    def test_get_current_task(
+        self,
+    ):
+        threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
+            worker_object=self.worker,
+            number_of_threads=1,
+        )
+
+        task = sergeant.objects.Task()
+        self.assertIsNone(
+            obj=threaded_executor.get_current_task(),
+        )
+
+        thread_ident = 1234
+        threaded_executor.current_tasks[thread_ident] = task
+
+        with unittest.mock.patch(
+            target='threading.get_ident',
+            return_value=1234,
+        ):
+            self.assertEqual(
+                first=threaded_executor.get_current_task(),
+                second=task,
+            )
+
+    def test_set_current_task(
+        self,
+    ):
+        threaded_executor = sergeant.executor.threaded.ThreadedExecutor(
+            worker_object=self.worker,
+            number_of_threads=1,
+        )
+
+        task = sergeant.objects.Task()
+        self.assertIsNone(
+            obj=threaded_executor.get_current_task(),
+        )
+
+        threaded_executor.set_current_task(
+            task=task,
+        )
+
+        self.assertEqual(
+            first=len(threaded_executor.current_tasks),
+            second=1,
+        )
+
+        self.assertEqual(
+            first=threaded_executor.current_tasks.popitem()[1],
+            second=task,
+        )
+
     def test_pre_work(
         self,
     ):

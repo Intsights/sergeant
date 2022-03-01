@@ -18,6 +18,18 @@ class SerialExecutor(
     ) -> None:
         self.worker_object = worker_object
         self.currently_working = False
+        self.current_task: typing.Optional[objects.Task] = None
+
+    def get_current_task(
+        self,
+    ) -> typing.Optional[objects.Task]:
+        return self.current_task
+
+    def set_current_task(
+        self,
+        task: typing.Optional[objects.Task],
+    ) -> None:
+        self.current_task = task
 
     def sigterm_handler(
         self,
@@ -61,6 +73,9 @@ class SerialExecutor(
         task: objects.Task,
         killer_object: typing.Optional[killer.process.Killer] = None,
     ) -> None:
+        self.set_current_task(
+            task=task,
+        )
         self.pre_work(
             task=task,
             killer_object=killer_object,
@@ -145,6 +160,10 @@ class SerialExecutor(
             self.worker_object.handle_success(
                 task=task,
                 returned_value=returned_value,
+            )
+        finally:
+            self.set_current_task(
+                task=None,
             )
 
     def pre_work(
