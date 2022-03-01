@@ -14,3 +14,9 @@ class Executor:
         self,
     ) -> typing.Optional[objects.Task]:
         raise NotImplementedError()
+
+    def set_current_task(
+        self,
+        task: typing.Optional[objects.Task],
+    ) -> None:
+        raise NotImplementedError()
