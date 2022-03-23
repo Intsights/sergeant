@@ -23,7 +23,7 @@ python3 -m benchmark.1_simple_worker.celery.producer
 ```
 
 
-### Spawn a supervisor to spawn the consumers
+### Spawn a consumer to consume tasks
 ```shell
 python3 -m benchmark.1_simple_worker.celery.consumer
 ```
@@ -31,8 +31,8 @@ python3 -m benchmark.1_simple_worker.celery.consumer
 
 ### Output
 ```
-[2021-04-20 18:35:43,157: ERROR/MainProcess] benchmark.1_simple_worker.celery.consumer.simple[37b97e27-b620-4d98-9df5-effa6526708d]: start: 1618932943.1576335
-[2021-04-20 18:41:07,629: ERROR/MainProcess] benchmark.1_simple_worker.celery.consumer.simple[90925d5b-3678-4ac1-8f50-8da2f137a914]: end: 1618933267.6290138
+[2022-03-23 12:04:46,493: ERROR/MainProcess] tasks.simple[115159b3-926a-4496-ae84-e9fdda376541]: start: 1648029886.493467
+[2022-03-23 12:05:48,682: ERROR/MainProcess] tasks.simple[553ca4a6-0060-44a3-ae31-4850e9920915]: end: 1648029948.6823833
 ```
 
 
@@ -78,13 +78,13 @@ python3 -m benchmark.1_simple_worker.sergeant.supervisor
 ### Tasks Producing
 | Library  | #Tasks | Function | Time | Improvement Factor |
 | ------------- | ------------- | ------------- | ------------- | ------------- |
-| [celery](https://github.com/celery/celery) | 100,000 | apply_async | 143.99s | 1.0x |
-| [sergeant](https://github.com/Intsights/sergeant) | 100,000 | push_task | 29.73s | 4.84x |
-| [sergeant](https://github.com/Intsights/sergeant) | 100,000 | push_tasks | 0.63s | 228.55x |
+| [celery](https://github.com/celery/celery) | 100,000 | apply_async | 34.99s | 1.0x |
+| [sergeant](https://github.com/Intsights/sergeant) | 100,000 | push_task | 5.96s | 5.87x |
+| [sergeant](https://github.com/Intsights/sergeant) | 100,000 | push_tasks | 0.38s | 92.07x |
 
 ### Tasks Consuming
 | Library  | #Tasks | Time | Improvement Factor |
 | ------------- | ------------- | ------------- | ------------- |
-| [celery](https://github.com/celery/celery) | 100,000 | 324.47s | 1.0x |
-| [sergeant [Single]](https://github.com/Intsights/sergeant) | 100,000 | 57.62s | 5.63x |
-| [sergeant [Batch]](https://github.com/Intsights/sergeant) | 100,000 | 0.64s | 506.98x |
+| [celery](https://github.com/celery/celery) | 100,000 | 62.18s | 1.0x |
+| [sergeant [Single]](https://github.com/Intsights/sergeant) | 100,000 | 6.06s | 10.26x |
+| [sergeant [Batch]](https://github.com/Intsights/sergeant) | 100,000 | 0.31s | 200.58x |
