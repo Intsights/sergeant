@@ -4,6 +4,7 @@ import multiprocessing.connection
 import os
 import psutil
 import shlex
+import signal
 import subprocess
 import sys
 import time
@@ -141,7 +142,9 @@ class KillerServer:
                     self.timeout_raised = True
 
                     try:
-                        self.process_to_kill.terminate()
+                        self.process_to_kill.send_signal(
+                            sig=signal.SIGUSR1,
+                        )
                     except Exception as exception:
                         self.logger.error(
                             msg=f'sending timeout raised: {exception}',

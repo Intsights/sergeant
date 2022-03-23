@@ -14,10 +14,10 @@ class KillerTestCase(
     def setUp(
         self,
     ):
-        self.sigterm_fired = False
+        self.sigusr1_fired = False
 
         signal.signal(
-            signalnum=signal.SIGTERM,
+            signalnum=signal.SIGUSR1,
             handler=self.sigterm_handler,
         )
 
@@ -25,7 +25,7 @@ class KillerTestCase(
         self,
     ):
         for signal_type in [
-            signal.SIGTERM,
+            signal.SIGUSR1,
         ]:
             signal.signal(
                 signalnum=signal_type,
@@ -37,7 +37,7 @@ class KillerTestCase(
         signal_num,
         frame,
     ):
-        self.sigterm_fired = True
+        self.sigusr1_fired = True
 
     def test_timeouts_killer(
         self,
@@ -51,52 +51,52 @@ class KillerTestCase(
 
         killer.start()
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         time.sleep(0.5)
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         time.sleep(1.0)
         self.assertTrue(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         killer.stop()
 
-        self.sigterm_fired = False
+        self.sigusr1_fired = False
         time.sleep(1.5)
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
 
         killer.reset()
         killer.start()
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         time.sleep(0.5)
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         killer.reset()
         time.sleep(0.3)
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         killer.reset()
         time.sleep(0.5)
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         killer.reset()
         time.sleep(0.5)
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
         killer.reset()
         killer.stop()
         self.assertFalse(
-            expr=self.sigterm_fired,
+            expr=self.sigusr1_fired,
         )
 
         killer.kill()
@@ -183,7 +183,7 @@ class TestProcess:
         self,
     ):
         signal.signal(
-            signalnum=signal.SIGTERM,
+            signalnum=signal.SIGUSR1,
             handler=self.sigterm_handler,
         )
 
@@ -200,7 +200,7 @@ class TestProcess:
     ):
         self.init()
         signal.signal(
-            signalnum=signal.SIGTERM,
+            signalnum=signal.SIGUSR1,
             handler=lambda a, b: True,
         )
         time.sleep(interval)

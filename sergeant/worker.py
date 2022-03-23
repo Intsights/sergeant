@@ -43,7 +43,7 @@ class Worker:
         )
         self.executor_obj: typing.Optional[executor._executor.Executor] = None
 
-        signal.signal(signal.SIGUSR1, self.stop_signal_handler)
+        signal.signal(signal.SIGTERM, self.stop_signal_handler)
 
     def stop_signal_handler(
         self,
@@ -53,7 +53,7 @@ class Worker:
         self.logger.info(
             msg='stop signal has been received',
         )
-        signal.signal(signal.SIGUSR1, signal.SIG_DFL)
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
 
         raise WorkerStop()
 

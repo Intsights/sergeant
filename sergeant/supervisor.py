@@ -314,7 +314,7 @@ class Supervisor:
         if self.stop_process_has_started:
             try:
                 worker.psutil_obj.send_signal(
-                    sig=signal.SIGUSR1,
+                    sig=signal.SIGTERM,
                 )
             except psutil.NoSuchProcess:
                 pass

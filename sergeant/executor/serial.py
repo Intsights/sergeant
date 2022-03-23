@@ -31,7 +31,7 @@ class SerialExecutor(
     ) -> None:
         self.current_task = task
 
-    def sigterm_handler(
+    def sigusr1_handler(
         self,
         signal_num: int,
         frame: typing.Optional[types.FrameType],
@@ -44,7 +44,7 @@ class SerialExecutor(
         tasks: typing.Iterable[objects.Task],
     ) -> None:
         killer_object: typing.Optional[killer.process.Killer] = None
-        original_sigterm_handler = signal.getsignal(signal.SIGTERM)
+        original_sigusr1_handler = signal.getsignal(signal.SIGUSR1)
 
         try:
             if self.worker_object.config.timeouts.timeout > 0:
@@ -55,7 +55,7 @@ class SerialExecutor(
                     grace_period=self.worker_object.config.timeouts.grace_period,
                 )
 
-                signal.signal(signal.SIGTERM, self.sigterm_handler)
+                signal.signal(signal.SIGUSR1, self.sigusr1_handler)
 
             for task in tasks:
                 self.execute_task(
@@ -64,7 +64,7 @@ class SerialExecutor(
                 )
         finally:
             if killer_object:
-                signal.signal(signal.SIGTERM, original_sigterm_handler)
+                signal.signal(signal.SIGUSR1, original_sigusr1_handler)
 
                 killer_object.shutdown()
 
