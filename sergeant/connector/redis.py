@@ -185,17 +185,15 @@ class QueueRedis(
         queue_name: str,
         number_of_items: int,
     ) -> typing.List[typing.Any]:
-        pipeline = self.pipeline()
-        pipeline.lrange(queue_name, 0, number_of_items - 1)
-        pipeline.ltrim(queue_name, number_of_items, -1)
-        value = pipeline.execute()
+        items = self.lpop(
+            name=queue_name,
+            count=number_of_items,
+        ) or []
 
-        regular_items = value[0]
-        number_of_regular_items = len(regular_items)
-        if number_of_regular_items == number_of_items:
-            return regular_items
+        if len(items) == number_of_items:
+            return items
         else:
-            delayed_items_to_pull = number_of_items - number_of_regular_items
+            delayed_items_to_pull = number_of_items - len(items)
             delayed_items = self.delayed_queue_pop_bulk_script(
                 keys=[
                     f'{queue_name}.delayed',
@@ -206,7 +204,7 @@ class QueueRedis(
                 ],
             )
 
-            return regular_items + delayed_items
+            return items + delayed_items
 
 
 class Connector(
