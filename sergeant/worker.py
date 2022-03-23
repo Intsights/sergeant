@@ -41,6 +41,7 @@ class Worker:
         self.logger.addHandler(
             hdlr=logging.NullHandler(),
         )
+        self.executor_obj: typing.Optional[executor._executor.Executor] = None
 
         signal.signal(signal.SIGUSR1, self.stop_signal_handler)
 
@@ -118,7 +119,6 @@ class Worker:
     def init_executor(
         self,
     ) -> None:
-        self.executor_obj: executor._executor.Executor
         if self.config.number_of_threads == 1:
             self.executor_obj = executor.serial.SerialExecutor(
                 worker_object=self,
@@ -132,11 +132,12 @@ class Worker:
     def get_trace_id(
         self,
     ) -> typing.Optional[str]:
-        current_task = self.executor_obj.get_current_task()
-        if current_task:
-            return current_task.trace_id
-        else:
-            return None
+        if self.executor_obj is not None:
+            current_task = self.executor_obj.get_current_task()
+            if current_task:
+                return current_task.trace_id
+
+        return None
 
     def purge_tasks(
         self,
@@ -315,9 +316,12 @@ class Worker:
         task_start_process_time = time.process_time()
 
         try:
-            self.executor_obj.execute_tasks(
-                tasks=self.iterate_tasks(),
-            )
+            if self.executor_obj:
+                self.executor_obj.execute_tasks(
+                    tasks=self.iterate_tasks(),
+                )
+            else:
+                raise RuntimeError('executor_obj is not set')
         except WorkerRespawn:
             summary['respawn'] = True
         except WorkerStop:
