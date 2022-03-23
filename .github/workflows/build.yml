@@ -1,6 +1,7 @@
----
 name: Build
-on: [push, pull_request]
+on:
+  - push
+  - pull_request
 jobs:
   lint:
     if: github.event_name == 'push' && !startsWith(github.event.ref, 'refs/tags')
@@ -8,65 +9,71 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
+        python-version:
+          - '3.7'
+          - '3.8'
+          - '3.9'
+          - '3.10'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Flake8 & mypy
-        run: >-
-          python -m pip install --upgrade flake8-intsights mypy;
+        run: python -m pip install --upgrade flake8-intsights mypy;
       - name: Check Flake8 Linting Errors
         if: "!contains(github.event.head_commit.message, 'skip flake8')"
-        run: >-
-          flake8
+        run: flake8
       - name: Check mypy Linting Errors
         if: "!contains(github.event.head_commit.message, 'skip mypy')"
-        run: >-
-          mypy --install-types --non-interactive --ignore-missing-imports -p sergeant
+        run: mypy --install-types --non-interactive --ignore-missing-imports -p sergeant
   test:
     runs-on: ${{ matrix.os }}
     needs: lint
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10']
-        os: [ubuntu-latest]
+        python-version:
+          - '3.7'
+          - '3.8'
+          - '3.9'
+          - '3.10'
+        os:
+          - ubuntu-latest
     services:
       redis-node-one:
         image: redis
         ports:
-          - 6379:6379
+          - '6379:6379'
       redis-node-two:
         image: redis
         ports:
-          - 6380:6379
+          - '6380:6379'
       mongo-node-one:
-        image: bitnami/mongodb:latest
+        image: 'bitnami/mongodb:latest'
         ports:
-          - 27017:27017
+          - '27017:27017'
         env:
-          MONGODB_EXTRA_FLAGS: "--bind_ip_all"
-          MONGODB_REPLICA_SET_MODE: "primary"
-          MONGODB_REPLICA_SET_NAME: "test_replica_set"
-          ALLOW_EMPTY_PASSWORD: "yes"
+          MONGODB_EXTRA_FLAGS: '--bind_ip_all'
+          MONGODB_REPLICA_SET_MODE: primary
+          MONGODB_REPLICA_SET_NAME: test_replica_set
+          ALLOW_EMPTY_PASSWORD: 'yes'
       mongo-node-two:
-        image: bitnami/mongodb:latest
+        image: 'bitnami/mongodb:latest'
         ports:
-          - 27018:27017
+          - '27018:27017'
         env:
-          MONGODB_EXTRA_FLAGS: "--bind_ip_all"
-          MONGODB_REPLICA_SET_MODE: "primary"
-          MONGODB_REPLICA_SET_NAME: "test_replica_set"
-          ALLOW_EMPTY_PASSWORD: "yes"
+          MONGODB_EXTRA_FLAGS: '--bind_ip_all'
+          MONGODB_REPLICA_SET_MODE: primary
+          MONGODB_REPLICA_SET_NAME: test_replica_set
+          ALLOW_EMPTY_PASSWORD: 'yes'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Python Dependencies
@@ -74,5 +81,4 @@ jobs:
           python -m pip install --upgrade -r requirements.txt;
           python -m pip install --upgrade pytest;
       - name: Test module
-        run: >-
-          pytest
+        run: pytest
