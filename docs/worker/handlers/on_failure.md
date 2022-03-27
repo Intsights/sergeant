@@ -1,6 +1,6 @@
-# Worker Handler - on_failure
+# on_failure
 
-The `on_failure` handler is invoked when a task has raised an exception. The exception object will be passed to the handler.
+The `on_failure` handler is called when a task raises an exception. The exception object is passed to the handler.
 
 ## Definition
 
@@ -12,9 +12,9 @@ def on_failure(
 ) -> None
 ```
 
-The following use cases are possible:
+Possible use cases include:
 
-- Fire a logging event.
-- Implement a metrics collector.
-- Cleanup task's traces
-- Call `retry`/`requeue` to retry on failures
+- Send a log message
+- Create a metrics collector
+- Clean up the task's traces
+- Call `retry`/`requeue` to rerun the same task

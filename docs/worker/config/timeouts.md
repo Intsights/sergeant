@@ -1,4 +1,4 @@
-# Worker Config - timeouts
+# timeouts
 
 The `timeouts` parameter controls the killer timeouts for the worker.
 
@@ -14,12 +14,12 @@ class Timeouts:
     grace_period: float = 10.0
 ```
 
-The `timeouts` parameter defines how much time the process should run before the killer must try to kill it.
+The `timeouts` parameter controls the timeouts mechanism of the worker.
 
-- `timeout` - On `serial` executor, by the time this timeout is reached, a `SIGUSR1` is sent to the worker. On `threaded` worker, an exception would be raised inside the thread.
-- `grace_period` [serial] - If the worker will not become responding after the SIGUSR1 is sent, it will be escalated to a SIGKILL signal.
+- `timeout` - The number of seconds after which the worker will stop running a specific task.
+- `grace_period` [serial] - When the worker has been signaled to stop, how many seconds will pass before being killed aggressively.
 
-By default, no timeouts are applied. It means that the tasks will never timeout. One should use timeouts wisely and set them according to the expected type of the task. If the task, in its ordinary case, should run for no longer than 30s, you can set the timeout to 1m and keep the task from being stuck forever.
+Timeouts are not applied by default. This means that tasks will never time out. Timeouts should be used wisely and according to the expected task type. If the task should run for no more than 30s, you can set the timeout to 1m to prevent it from being stuck forever.
 
 
 ## Examples

@@ -1,6 +1,6 @@
-# Worker Config - max_tasks_per_run
+# max_tasks_per_run
 
-`max_tasks_per_run` defines how many tasks the worker should consume before killing it self and spawning another worker instead. This number should be `int > 0`. The usage of this parameter is encouraged even if you think your worker must respawn itself ever. Memory leak situations might occuer from time to time without any simptoms. Declaring this parameter, might keep your worker healthy over time. A low number here is discouraged unless neccessary. Low number might cause the worker to die frequently and the overhead of respawning might be felt. A value of 0 means worker should never die.
+`max_tasks_per_run` specifies the maximum number of tasks the worker should consume before spawning another worker. This must be a positive integer. Even if you believe your worker should never respawn, you are encouraged to use this parameter. Memory leaks may occur from time to time without any apparent symptoms. Declaring this parameter might help maintain the health of your workers. Low numbers are discouraged unless necessary. Workers who die frequently might feel the overhead of respawning caused by a low number. When the value is 0, the worker will never respawn unless it explicitly requests it.
 
 
 ## Definition

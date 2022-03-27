@@ -1,6 +1,6 @@
-# Worker Config - starvation
+# starvation
 
-The `starvation` parameter controls the starvation logic of the worker. Starvation is considered as a situation where the worker is trying to pull tasks from the queue without success. It can happen in multiple situations. First, it can happen when there are no tasks left in the queue. Second, it can happen when other workers are faster in pulling tasks from the queue and the current worker is redundant. Third, it can happen when the worker has connectivity issues. It can probably happen in more cases. The idea of starvation is to detect when the worker is running when it can do nothing regarding its purpose.
+The starvation logic of the worker is controlled by the starvation parameter. When a worker tries to pull tasks from the queue but fails, he or she is considered to be starving. It can happen in a number of circumstances. First of all, the task queue may be empty. Second, it can occur when other workers pull tasks from the queue faster than the current worker. Third, the worker might be experiencing connectivity problems. There are probably more cases of this. Starvation is the concept of running a worker when it can do nothing related to its purpose.
 
 
 ## Definition
@@ -15,4 +15,4 @@ class Starvation:
 
 The following configurations are available:
 
-- `time_with_no_tasks` - How many seconds without being able to pull tasks from the queue will be considered as a starvation.
+- `time_with_no_tasks` - How many seconds will be considered a starvation without being able to pull tasks from the queue.

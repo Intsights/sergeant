@@ -1,6 +1,6 @@
-# Worker - initialize
+# initialize
 
-The `initialize` method is invoked by the worker once at the moment the worker is spawned by the `supervisor`. This method allows to implement an initialization of object that will live for the whole lifespan of the worker. A good usage example is to initialize a `Logger` object or an `APM` object.
+The worker invokes the initialize method once when it is spawned by the supervisor. By using this method, you will be able to initialize objects that will last for the lifetime of the worker. The initialization of a Database connection, Logger or APM object is a good use case.
 
 
 ## Definition

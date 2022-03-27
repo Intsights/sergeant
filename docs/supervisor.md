@@ -1,18 +1,19 @@
 # Supervisor
 
-The `Supervisor` is in charge of spawning new workers, and respawning them when they exit. It is also responsible for handling their errors. The supervisor is capable of restricting worker's memory usage to eliminate memory exhaustion.
+The `Supervisor` is responsible for spawning and respawning workers. The Supervisor is also responsible for dealing with errors. Supervisors can restrict a worker's memory usage in order to prevent memory exhaustion.
 
-- `concurrent-workers` - How many subprocesses the supervisor should spawn and supervise.
+- `concurrent-workers` - The number of subprocesses that should be spawned and supervised by the supervisor.
 - `worker-module` - The worker module in a dotted notation path.
-- `worker-class` - The worker class name inside the module file - usually `Worker`.
-- `max-worker-memory-usage` [optional] - How much RSS memory in bytes a subprocess-worker can use before the supervisor terminates it and respawn a new one instead.
-- `logger` [optional - programatically only] - One can supply a custom logger to pipe all the supervisor logs to this logger.
+- `worker-class` - The class name in the module file, usually `Worker`.
+- `max-worker-memory-usage` [optional] - How much RSS memory in bytes a subprocess-worker can utilize before the supervisor terminates it and respawns a new one.
+- `logger` [optional - programmatically only] - One can supply a custom logger to send all supervisor logs to.
 
 
 ## Command Line
 
 ```shell
-python3 -m sergeant.supervisor --helpusage: supervisor.py [-h] --concurrent-workers CONCURRENT_WORKERS
+python3 -m sergeant.supervisor --help
+usage: supervisor.py [-h] --concurrent-workers CONCURRENT_WORKERS
                      --worker-class WORKER_CLASS --worker-module WORKER_MODULE
                      [--max-worker-memory-usage MAX_WORKER_MEMORY_USAGE]
 
@@ -53,7 +54,7 @@ graph TD
     Supervisor --> crawl_worker-4
 ```
 
-When a worker reaches its end of life - at the moment it finished `max_tasks_per_run` tasks, it will exit, and a new worker will be created by the supervisor.
+The worker reaches its end of life once it has completed `max_tasks_per_run` tasks. `Supervisor` will create a new worker in place.
 
 
 ## Programatically
@@ -63,7 +64,7 @@ It is possilbe to programatically invoke a `Supervisor` if you would like to doc
 
 ### Examples
 
-Pay attention to the `worker_module_name` parameter. The way python find the module name depends on the command line CWD. Look at `benchmark/1_simple_worker/sergeant/supervisor.py` to see how to work with module names if the supervisor.py file lays aside the worker module.
+Be sure to pay attention to the `worker_module_name` parameter. Depending on the command line CWD, Python determines the module name. Look at `benchmark/1_simple_worker/sergeant/supervisor.py` to see how to work with module names when the 'supervisor.py' file is in the same folder as the worker module.
 
 ```python
 import sergeant

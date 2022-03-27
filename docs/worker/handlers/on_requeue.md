@@ -1,4 +1,4 @@
-# Worker Handler - on_requeue
+# on_requeue
 
 The `on_requeue` handler is invoked when a task called the `requeue` method.
 
@@ -11,7 +11,7 @@ def on_requeue(
 ) -> None
 ```
 
-The following use cases are possible:
+Possible use cases include:
 
-- Fire a logging event
-- Implement a metrics collector.
+- Send a log message
+- Create a metrics collector

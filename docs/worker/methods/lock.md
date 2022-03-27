@@ -1,6 +1,6 @@
-# Worker - lock
+# lock
 
-The `lock` method creates a distributed lock in the broker. This way multiple workers can synchronize work with the help of a distributed lock. Many use cases of a distributed lock are available such as lock an access to a throttled resource to avoid exceeding its rate limit.
+A distributed lock is created by the `lock` method and stored on the broker. With the help of a distributed lock, multiple workers can synchronize their work. Distributed locks can be used for many different purposes, such as locking access to a throttled resource so that it does not exceed its rate limit.
 
 
 ## Definition

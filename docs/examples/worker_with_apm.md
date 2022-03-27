@@ -1,6 +1,6 @@
 # Worker With APM - ElasticAPM
 
-This example demonstrates how to integrate with an APM solution. In this case, `ElasticAPM`.
+The following example illustrates how to integrate with an APM solution. In this case, it's `ElasticAPM`.
 
 
 ## Code
@@ -127,14 +127,14 @@ This example demonstrates how to integrate with an APM solution. In this case, `
 
 ## Explanation
 
-In order this integrate an APM solution, we implemented `initialize`, `finalize`, `pre_work` and `post_work`.
+This integration of an APM solution required the implementation of `initialize`, `finalize`, `pre_work` and `post_work`.
 
-- `initialize` - Since this function will run once per the whole worker lifetime, the initialization should happen here. This is where we declare the `elasticapm.Client`.
-- `pre_work` - This function will run once per task, prior to its execution. This is where we will start a transaction.
-- `post_work` - This function will run once per task, after its execution. This is where we will end the transaction. This is also where we will try to capture the exception, if any.
-- `finalize` - This function will run once per the whole worker lifetime. This is where we will do cleanups. In this case, we will implicitly clean the apm client with a call to `close`.
+- `initialize` - Since this function is called once during the lifetime of the worker, the initialization should take place here. Here we declare the `elasticapm.Client`.
+- `pre_work` - This function is called once for every task, before it is executed. This is where we initiate a transaction.
+- `post_work` - This function runs once per task, after it has been executed. At this point, the transaction is complete. We will also try to capture any exceptions here.
+- `finalize` - This function will run once during the lifetime of the worker. This is where cleanup will take place. Hence, we will implicitly clean the APM client by calling `close`.
 
-It is important to mention that this example can be easily extended to any other APM solutions such as `jaeger` and more.
+The following example can easily be adapted to any other APM solution, such as `jaeger`.
 
 
 ## Execution

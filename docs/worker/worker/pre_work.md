@@ -1,6 +1,6 @@
-# Worker - pre_work
+# pre_work
 
-The `pre_work` method is invoked by the worker for every execution of a task, prior to the `work` method. This method allows the user to perform an operation before every task is executed. It can be used to open an APM transaction, to measure the time before a task and more. The timeouts parameter would not affect the execution of this method. The killer has no effect on this method. It means that if the user will run something infinitely here, it will stuck the worker forever.
+Before the `work` method is invoked for each execution of a task, the worker invokes the `pre_work` method. Through this method, the user can perform an operation prior to each execution. You can use it to open an APM transaction, measure the time before a task, and more. There is no effect of the timeout parameter or the killer on this method. In other words, if the user runs something indefinitely here, the worker will be stuck.
 
 
 ## Definition

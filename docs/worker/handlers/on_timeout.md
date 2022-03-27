@@ -1,6 +1,6 @@
-# Worker Handler - on_timeout
+# on_timeout
 
-The `on_timeout` handler is invoked when a task has timed out. Unlike other events, this event is triggered by the Killer and not by something the process has done.
+Upon timeout, the `on_timeout` handler is invoked. Unlike other events, this one is triggered by the Killer and not by something the process has done.
 
 ## Definition
 
@@ -11,9 +11,9 @@ def on_timeout(
 ) -> None
 ```
 
-The following use cases are possible:
+Possible use cases include:
 
-- Fire a logging event.
-- Implement a metrics collector.
-- Cleanup task's traces
-- Call `retry`/`requeue` to retry on timeouts
+- Send a log message
+- Create a metrics collector
+- Clean up the task's traces
+- Call `retry`/`requeue` to rerun the same task

@@ -1,6 +1,6 @@
-# Worker - is_locked
+# is_locked
 
-The `is_locked` method return whether the lock is locked or unlocked.
+`is_locked` returns whether the lock is locked or unlocked.
 
 
 ## Definition

@@ -1,6 +1,6 @@
-# Worker - set_ttl
+# set_ttl
 
-The `set_ttl` sets the lock ttl (in seconds). If there is no lock with the same name, it will return `False`, otherwise it will return `True`. This method could help a worker to extend the lock lifetime.
+This function sets the lock time to live (in seconds). The function will return `False` if there is no lock with that name, otherwise it will return `True`. It could be useful for extending the lock's lifetime. Locks are automatically released when their TTL is exceeded without explicitly calling `release`.
 
 
 ## Definition

@@ -1,6 +1,6 @@
-# Worker - number_of_enqueued_tasks
+# number_of_enqueued_tasks
 
-The `number_of_enqueued_tasks` method return the number of all the tasks from the queue. Unless `task_name` was specified, uses the current worker name. `include_delayed` means whether to count delayed tasks too. A good reason to use `include_delayed` parameter is when you implement an autoscaler, and you want to upscale the number of workers based on the number of consumable tasks rather than the number of tasks along with the delayed tasks.
+This method returns a count of all tasks queued in the queue. The current worker name will be used unless `task_name` was specified. `include_delayed` determines whether to count delayed tasks as well. If you implement an autoscaler, and you want to scale the number of workers based on the number of consumable tasks rather than the number of consumable tasks combined with delayed tasks, then you should use the `include_delayed` parameter.
 
 
 ## Definition

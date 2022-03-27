@@ -1,6 +1,6 @@
-# Worker - post_work
+# post_work
 
-The `post_work` method is invoked by the worker for every execution of a task, after it has finished a `work` run. This method allows the user to perform an operation after every task is executed. It can be used to close an APM transaction, or to send a metrics.
+After a task has been completed, the worker calls the `post_work` method. This method allows the user to perform an operation after each task is completed. You can use it to close an APM transaction or to send a metric.
 
 
 ## Definition

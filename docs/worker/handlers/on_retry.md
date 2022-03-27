@@ -1,4 +1,4 @@
-# Worker Handler - on_retry
+# on_retry
 
 The `on_retry` handler is invoked when a task called the `retry` method.
 
@@ -11,7 +11,7 @@ def on_retry(
 ) -> None
 ```
 
-The following use cases are possible:
+Possible use cases include:
 
-- Fire a logging event
-- Implement a metrics collector.
+- Send a log message
+- Create a metrics collector

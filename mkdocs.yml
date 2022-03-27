@@ -2,59 +2,59 @@ site_name: Sergeant
 site_url: https://intsights.github.io/sergeant/
 repo_url: https://github.com/intsights/sergeant
 site_author: Gal Ben David
-copyright: Intsights (c) 2020
+copyright: Intsights (c) 2022
 remote_branch: gh-pages
 docs_dir: docs
 site_dir: site
 nav:
-    - Home: 'index.md'
-    - Worker:
+  - Home: 'index.md'
+  - Worker:
       - Config:
-        - name: 'worker/config/name.md'
-        - connector: 'worker/config/connector.md'
-        - max_tasks_per_run: 'worker/config/max_tasks_per_run.md'
-        - max_retries: 'worker/config/max_retries.md'
-        - tasks_per_transaction: 'worker/config/tasks_per_transaction.md'
-        - encoder: 'worker/config/encoder.md'
-        - number_of_threads: 'worker/config/number_of_threads.md'
-        - timeouts: 'worker/config/timeouts.md'
-        - logging: 'worker/config/logging.md'
-        - starvation: 'worker/config/starvation.md'
+          - 'worker/config/name.md'
+          - 'worker/config/connector.md'
+          - 'worker/config/max_tasks_per_run.md'
+          - 'worker/config/max_retries.md'
+          - 'worker/config/tasks_per_transaction.md'
+          - 'worker/config/encoder.md'
+          - 'worker/config/number_of_threads.md'
+          - 'worker/config/timeouts.md'
+          - 'worker/config/logging.md'
+          - 'worker/config/starvation.md'
       - Handlers:
-        - on_success: 'worker/handlers/on_success.md'
-        - on_failure: 'worker/handlers/on_failure.md'
-        - on_timeout: 'worker/handlers/on_timeout.md'
-        - on_retry: 'worker/handlers/on_retry.md'
-        - on_max_retries: 'worker/handlers/on_max_retries.md'
-        - on_requeue: 'worker/handlers/on_requeue.md'
-        - on_starvation: 'worker/handlers/on_starvation.md'
+          - 'worker/handlers/on_success.md'
+          - 'worker/handlers/on_failure.md'
+          - 'worker/handlers/on_timeout.md'
+          - 'worker/handlers/on_retry.md'
+          - 'worker/handlers/on_max_retries.md'
+          - 'worker/handlers/on_requeue.md'
+          - 'worker/handlers/on_starvation.md'
       - Worker:
-        - initialize: 'worker/worker/initialize.md'
-        - finalize: 'worker/worker/finalize.md'
-        - pre_work: 'worker/worker/pre_work.md'
-        - post_work: 'worker/worker/post_work.md'
-        - work: 'worker/worker/work.md'
+          - 'worker/worker/initialize.md'
+          - 'worker/worker/finalize.md'
+          - 'worker/worker/pre_work.md'
+          - 'worker/worker/post_work.md'
+          - 'worker/worker/work.md'
       - Methods:
-        - retry: 'worker/methods/retry.md'
-        - requeue: 'worker/methods/requeue.md'
-        - stop: 'worker/methods/stop.md'
-        - respawn: 'worker/methods/respawn.md'
-        - push_task: 'worker/methods/push_task.md'
-        - push_tasks: 'worker/methods/push_tasks.md'
-        - get_next_tasks: 'worker/methods/get_next_tasks.md'
-        - number_of_enqueued_tasks: 'worker/methods/number_of_enqueued_tasks.md'
-        - purge_tasks: 'worker/methods/purge_tasks.md'
-        - lock: 'worker/methods/lock.md'
+          - 'worker/methods/retry.md'
+          - 'worker/methods/requeue.md'
+          - 'worker/methods/stop.md'
+          - 'worker/methods/respawn.md'
+          - 'worker/methods/push_task.md'
+          - 'worker/methods/push_tasks.md'
+          - 'worker/methods/get_next_tasks.md'
+          - 'worker/methods/number_of_enqueued_tasks.md'
+          - 'worker/methods/purge_tasks.md'
+          - 'worker/methods/lock.md'
       - Lock:
-        - acquire: 'worker/lock/acquire.md'
-        - release: 'worker/lock/release.md'
-        - is_locked: 'worker/lock/is_locked.md'
-        - get_ttl: 'worker/lock/get_ttl.md'
-        - set_ttl: 'worker/lock/set_ttl.md'
+          - 'worker/lock/acquire.md'
+          - 'worker/lock/release.md'
+          - 'worker/lock/is_locked.md'
+          - 'worker/lock/get_ttl.md'
+          - 'worker/lock/set_ttl.md'
       - Logging:
-        - logstash: 'worker/logging/logstash.md'
-    - Supervisor: "supervisor.md"
-    - Examples:
+          - 'worker/logging/logstash.md'
+  - Supervisor: 'supervisor.md'
+  - Examples:
       - 'examples/single_producer_consumer.md'
       - 'examples/worker_with_apm.md'
       - 'examples/base_worker.md'
@@ -64,7 +64,7 @@ theme:
   logo: images/logo_icon.png
   favicon: images/favicon.ico
 extra_javascript:
-  - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.1/mermaid.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.14.0/mermaid.min.js
 markdown_extensions:
   - toc:
       permalink: "#"

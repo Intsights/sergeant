@@ -1,6 +1,6 @@
-# Worker - purge_tasks
+# purge_tasks
 
-The `purge_tasks` method deleted all the tasks from the queue. It allows the worker to implement some critical functionality where it identified a situation that should stop all the future tasks from being executed. Unless `task_name` was specified, uses the current worker name.
+`purge_tasks` removes all tasks from the queue. It allows workers to implement some critical functionality in cases where it identifies a situation that should prevent future tasks from being executed. The current worker name will be used unless `task_name` was specified.
 
 
 ## Definition

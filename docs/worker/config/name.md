@@ -1,6 +1,6 @@
-# Worker Config - name
+# name
 
-The `name` parameter an is important parameter inside the architecture. This parameter is mandatory. The usage of this parameter is crucial for the worker to be able to consume tasks. This parameter eventually becomes the queue name inside the broker. The producer should usu that name to invoke the corresponding worker. Using the same worker name with the same broker, would make the two workers share the same queue and eventually consume each other tasks.
+A crucial mandatory parameter in the architecture is the `name` parameter. The worker's ability to consume tasks is dependent on this parameter. The queue name is determined by this parameter. In this case, using the same worker name with the same broker would result in both workers sharing the same queue and eventually consuming each other's tasks.
 
 
 ## Definition

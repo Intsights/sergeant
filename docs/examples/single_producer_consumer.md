@@ -1,14 +1,15 @@
 # Single Producer-Consumer
 
-We will start with a simple Consumer-Producer pattern to understand how it feels to work with `sergeant`
+We'll start with a simple Consumer-Producer pattern to gain an understanding of how to work with `sergeant`
 
 
 ## Graph
 
 ```mermaid
-graph LR
-    Producer -.->|Push Tasks| Broker{{Broker}}
-    Broker -.->|Pull Tasks| Consumer
+graph TD
+    A[Producer] -->|Push Tasks| B{Broker}
+    B -->|Pull Tasks| C[Consumer]
+    C --> B
 ```
 
 
@@ -71,19 +72,19 @@ graph LR
 
 ### Consumer
 
-At the class definition, we inherit from `sergeant.worker.Worker` to gain all the `Worker` class abilities. In order for this worker to be able to produce and consume tasks, we need to define `config` attribute and `work` method.
+In the class definition, we inherit from `sergeant.worker.Worker` to gain all the abilities of the `Worker` class. To make this worker capable of producing and consuming tasks, we must define the `config` attribute and the `work` method.
 
-Defining the `config` class attribute, allow us to config our worker's abilities. The worker config is a `dataclass` named `sergeant.config.WorkerConfig` which has multiple child dataclasses. There are two mandatory fields: `name` which defines the worker's name, and the queue name within the broker, and the second is the `connector`. The connector is the device that is responsible to talk with the broker. In this example we define a `test_worker` worker with a `redis` connector.
-`logging` helps to configure the logger.
+Defining the `config` class attribute allows us to configure our worker's abilities. Worker config is a `dataclass` named `sergeant.config.WorkerConfig` that has multiple child dataclasses. There are two mandatory fields: `name` which defines the worker's name and the queue name within the broker, and `connector`. The connector is responsible for communicating with the broker. The following example shows how to define a worker with a "redis" connector.
+`Logging` facilitates the configuration of the logger.
 
-For each consumed task, the `work` method is invoked. The parameters are passed inside the `task` argument as the key `kwargs`.
+Each consumed task is handled by the `work` method. Within the `task` argument, the parameters are passed as the key `kwargs`.
 
 ### Producer
 
-The producer first loads the consumer module. The reason for that is that once instantiating a `Worker`, you can use its configuration. The producer uses the `Worker` instance so it will have a connection to the broker.
+The producer loads the consumer module first. The reason is that once a `Worker` has been instantiated, its configuration can be used. Since the producer uses the `Worker` instance, it will have a connection to the broker.
 
-Later, we call to `init_broker` so we will create the connection to the task queue inside the Worker instance. We call `purge_tasks` to assure no leftover tasks exist in the queue.
-`push_task` is the function that compose a task object, and pushes it to the queue.
+After that, we call `init_broker` to create a connection to the Worker instance's task queue. To ensure there are no leftover tasks in the queue, we call `purge_tasks`.
+`push_task` composes a task object, and pushes it to the queue.
 
 
 ## Execution

@@ -1,6 +1,6 @@
-# Worker Handler - on_max_retries
+# on_max_retries
 
-The `on_max_retries` handler is invoked when a task called the `retry` method more than the allowed number of times.
+If a task calls the `retry` method more than the allowed number of times, the `on_max_retries` handler is invoked.
 
 ## Definition
 
@@ -11,7 +11,7 @@ def on_max_retries(
 ) -> None
 ```
 
-The following use cases are possible:
+Possible use cases include:
 
-- Fire a logging event
-- Implement a metrics collector.
+- Send a log message
+- Create a metrics collector

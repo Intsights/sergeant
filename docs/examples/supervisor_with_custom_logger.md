@@ -5,7 +5,7 @@ This example demonstrates how to create a supervisor module with a custom logger
 
 ## Code
 
-Both files should be in the same directory to work
+To work, both files must be in the same directory
 
 === "consumer.py"
     ```python

@@ -2,7 +2,7 @@
 
 
 ## Description
-In this benchmark, we produce 100000 tasks. The first two are 'start' and 'end' tasks to mark the first and last tasks.
+100,000 tasks are produced in this benchmark. 'Start' and 'end' tasks mark the beginning and ending of a task.
 
 
 ### Broker docker run

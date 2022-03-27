@@ -1,6 +1,6 @@
-# Worker Config - encoder
+# encoder
 
-The `encoder` parameter controls the encoder which is responsible for the tasks compression and serialization.
+`encoder` specifies how tasks will be serialized and compressed.
 
 
 ## Definition
@@ -15,9 +15,9 @@ class Encoder:
 ```
 
 
-The `compressor` parameter defines the type of the compressor. Each task prior to being pushed to the queue is going through a compressor. The usage of `compressor` can help reducing the storage/memory of the broker. Tasks with a lot of parameters/data can take a lot of memory and might fill the memory/storage quickly. Using a compressor would impact the performance of task pushing/pulling due to the compression algorithm being a CPU intensive operation.
+The `compressor` parameter specifies the type of compressor. Each task is compressed before being pushed to the queue. Brokers can reduce storage/memory usage by using `compressor`. Tasks with a lot of parameters or data can quickly take up a lot of memory. Due to the compression algorithm being a CPU intensive operation, using a compressor would negatively impact task pushing/pulling.
 
-The following compressors are available:
+You can choose from the following compressors:
 
 - `None` [default] - No compression is applied
 - `bzip2`
@@ -26,18 +26,18 @@ The following compressors are available:
 - `zlib`
 
 
-The `serializer` parameter defines the type of the serializer. Each task prior to being pushed to the queue should be serialized so the broker could save it as a byte array. Choosing the right serialization algorithm is important due to some limitations of each serialization algorithm.
+The `serializer` type is defined by the `serializer` parameter. Whenever a task is pushed to the queue, it should be serialized so the broker can save it as a byte array. Because each serialization algorithm has some limitations, it is critical to choose the right serialization algorithm.
 
-The following serializers are available:
+These serializers are available:
 
 - `pickle` [default]:
-    - pros: fast, native, many supported data types.
-    - cons: insecure (allows to run arbitrary code), non-portable, might mislead to think that the parameters were serialized correctly but deserializing them would end with a broken object.
+    - Pros: fast, native, supports many data types.
+    - Cons: insecure (allows arbitrary code to run), non-portable, might deceive into thinking parameters are serialized correctly but finding a broken object upon deserialization.
 - `msgpack`
-    - pros: fast, portable, secured.
-    - cons: fewer supported data types.
+    - Pros: fast, portable, and secure.
+    - Cons: fewer data types are supported.
 
-One can make any combination of compressor and serializer that suit your needs.
+Any combination of compressor and serializer can be made to suit your needs.
 
 ## Examples
 

@@ -1,11 +1,9 @@
-# Worker - release
+# release
 
-The `release` method releases the lock and allows other workers to acquire the lock. If the lock was released, the return value is `True`, otherwise it returns `False`.
+This method releases the lock, allowing other workers to acquire it. The return value is `True` if the lock has been released, otherwise it is `False`.
 
-???+ warning "Never release unless you were the owner of the lock"
-    When some worker calls `release` on a lock that it has not previously acquired, it will release the lock,
-    and make the lock available again, even though some other worker is dependant on it. Always validate
-    you were the owner of the lock.
+???+ warning "You should never release a lock unless you are the owner"
+    If a worker calls 'release' on a lock it did not acquire, the lock is released, and is made available again, even if another worker is holding it. Make sure you own the lock.
 
 
 ## Definition

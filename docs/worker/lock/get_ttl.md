@@ -1,6 +1,6 @@
-# Worker - get_ttl
+# get_ttl
 
-The `get_ttl` method return how much time is seconds left until the lock will expire. An expired lock is not necessarily a lockable lock. There might be other worker that are waiting for the lock to expire. It is an idication thoguh, to decide whether we want to wait or skip to the next task. Return the number of seconds until the lock expires, or None if there is no lock or it has already expired.
+`get_ttl` returns how many seconds remain until the lock expires. An expired lock might not be lockable. It is possible that another worker is waiting for the lock to expire. It might be helpful to call this method in order to determine whether to wait for the lock or move on to another task. This method returns the number of seconds left until the lock expires, or None if there is no lock or it has already expired.
 
 
 ## Definition

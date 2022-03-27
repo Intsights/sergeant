@@ -1,6 +1,6 @@
-# Worker Config - timeouts
+# logging
 
-The `logging` parameter controls the logger of the worker.
+The `logging` parameter controls the worker's logger.
 
 
 ## Definition
@@ -32,18 +32,18 @@ class Logging:
     )
 ```
 
-The following configurations are available:
+There are the following configuration options:
 
-- `level` [logging.ERROR] - The `logging.level` of the logger. Can be one of the available levels.
-- `log_to_stdout` [False] - Whether the logger should log to stdout.
-- `events` - On which events the logger should log.
-    - `on_success` [False] - Every time a task has finished successfully.
-    - `on_failure` [True] - Every time a task has failed.
-    - `on_timeout` [True] - Every time a task timed out.
-    - `on_retry` [True] - Every time a task asked for a retry.
-    - `on_max_retries` [True] - Every time a task asked for a retry beyond the maximum number of retries.
-    - `on_requeue` [True] - Every time a task asked for a requeue.
-- `handlers` - List of handlers [logging.Handler] to attach to the `logging.Logger` object.
+- `level` [logging.ERROR] - The logger's `logging.level`. Available levels can be found in the `logging` library.
+- `log_to_stdout` [False] - Whether the logger should write to stdout.
+- `Events` - Events which the logger should record.
+    - `on_success` [False] - When a task is successfully completed.
+    - `on_failure` - Whenever a task fails.
+    - `on_timeout` [True] - When a task timed out.
+    - `on_retry` [True] - Whenever a task asks for retry.
+    - `on_max_retries` [True] - Each time a task asks for a retry beyond the maximum number of tries.
+    - `on_requeue` [True] - Every time a task requeues.
+- `handlers` - List of handlers [logging.Handler] attached to the `logging.Logger` object.
 
 
 ## Examples

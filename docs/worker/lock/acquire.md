@@ -1,10 +1,10 @@
-# Worker - acquire
+# acquire
 
-The `acquire` method tries to acquire the lock. The method allows to wait for the lock to become available. When the lock is acquired, the return value is `True`, otherwise it returns `False`.
+The `acquire` method attempts to acquire the lock. It allows the user to wait for the lock to become available. This method returns `True` when the lock is acquired, otherwise it returns `False`.
 
-- `timeout`: How much time (in seconds) to wait until the lock is acquireable.
-- `check_interval`: How frequently (in seconds) to check the lock.
-- `ttl`: Once the lock is acquired, how long (in seconds) should be its lifetime.
+- `timeout`: The maximum number of seconds to wait until the lock becomes available.
+- `check_interval`: How often the lock should be checked (in seconds).
+- `ttl`: How long should the lock last (in seconds) after it has been acquired.
 
 
 ## Definition

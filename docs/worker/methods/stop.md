@@ -1,6 +1,6 @@
-# Worker - stop
+# stop
 
-The `stop` method is used to stop the worker from keep running. The request is propogated to the supervisor, and the supervisor will never spawn a new worker instead. This behavior exists for situations where the worker encountered a problem without a solution. A proper use for this method is for example to use in combination with on_starvation. When a worker is starving, and there are not enough tasks to consume, the worker can be stopped intentionally to reduce the load from the queue. Also, if there is an external autoscaler in place, it can delete the instance because it has no more worker running.
+It is possible to stop the worker from running by using the `stop` method. The supervisor receives the request, and will never spawn a new worker instead. A worker uses this method when there is no solution to a problem. Using this method in conjunction with `on_starvation` is a good example of how it should be used. If a worker is starving and there are not enough tasks available to consume, it can be intentionally stopped to reduce the load on the queue. By calling `stop`, all the workers under a specific supervisor will stop as well.
 
 
 ## Definition

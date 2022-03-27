@@ -1,6 +1,6 @@
 # Base Worker
 
-This example demonstrates how to create a base worker so other workers can inherit from and define their own configuration.
+In this example, we show how to create a base worker that other workers can inherit from and customize.
 
 
 ## Code
@@ -49,4 +49,4 @@ This example demonstrates how to create a base worker so other workers can inher
 
 ## Explanation
 
-In order to create a base worker class and implement workers based on it, one should define the base config in the base class object, and use a method `replace` to copy it with differrent configuration. `replace` method was implemented using `dataclasses.replace` method, to copy the dataclass with differrent parameters.
+To create a base worker class from which workers can be derived, define the base class object's configuration and use the `replace` method to copy it with different configurations. `replace` method was implemented by using `dataclasses.replace` method, to copy the dataclass with different parameters.

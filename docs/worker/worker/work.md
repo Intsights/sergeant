@@ -1,6 +1,6 @@
-# Worker - work
+# work
 
-The `work` method is the method that should include our work login. This is where the task should be executed. The `task` input parameter should include all the information for the worker to perform its logic. Many worker methods pass and get the `task` object so they can function properly.
+In the `work` method, we should include our work logic. Here we will execute the task. It is recommended to include all the necessary information in the `task` input parameter so that the worker can perform its logic. It is necessary for worker methods to pass and receive the task object in order to function.
 
 ```python
 @dataclasses.dataclass

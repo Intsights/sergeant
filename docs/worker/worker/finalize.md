@@ -1,6 +1,6 @@
-# Worker - finalize
+# finalize
 
-The `finalize` method is invoked by the once after it has exceeded the maximum number of tasks per run. This is the opportunity to collect metrics, to close handles, and to perform cleanups.
+The `finalize` method is invoked when the maximum number of tasks per run has been reached. It is invoked only once. This is a good time for collecting metrics, closing handles, and performing cleanups.
 
 
 ## Definition

@@ -1,6 +1,6 @@
-# Worker Config - connector
+# connector
 
-The `connector` parameter configures the broker's connection. It is important to note that the broker does not guarantee tasks order. Two consecutive tasks can be pushed to the queue and consumed in a different order. If order does matter to your application, use only one instance of a broker, either `redis` or `mongo` based, and the order would stay consistent.
+The `connector` parameter is used to configure the broker's connection. However, it is crucial to note that the broker cannot guarantee tasks' order. You can queue two consecutive tasks and consume them in a different order. For applications that do care about order, use only one instance of a broker, such as `Redis` or `MongoDB`, and the order would remain constant.
 
 
 ## Definition
@@ -14,12 +14,12 @@ class Connector:
     params: typing.Dict[str, typing.Any]
 ```
 
-The `type` parameter defines the type of the connector. The library currently supports the following types:
+The `type` parameter specifies the type of connector. The library supports the following connector types:
 
-- `redis` - A Single/Multiple redis instances that are not cluster-connected. The library manages the distribution of tasks on the client side by shuffling the list of connections and push/pull from each of them at different times. Order of tasks is not guaranteed.
-- `mongo` - A Single/Multiple MongoDB instances that are not cluster-connected. Each of the servers must be configured as a replica set. The library would take care of the replica-set instantiation. This is a great option for persistent tasks.
+- `redis` - A single or multiple redis instances that are not cluster-connected. Client side distribution of tasks is handled by the library by shuffling the list of connections and pushing/pulling from each one at various times. The order of tasks is not guaranteed.
+- `mongo` - Single/Multiple MongoDB instances that are not clustered. Each server must be configured as a replica set. The library will create the replica set. It's ideally suited for persistent tasks.
 
-The `params` parameter is being passed to the connector directly as `**kwargs`.
+Connectors receive the `params` parameter directly as `**kwargs`.
 
 
 ## Examples

@@ -1,6 +1,6 @@
-# Worker - get_next_tasks
+# get_next_tasks
 
-The `get_next_tasks` method pulls `number_of_tasks` tasks from the queue. Unless `task_name` was specified, uses the current worker name. No one should use this function directly unless they know what they are doing.
+`get_next_tasks` method pulls `number_of_tasks` tasks from the queue. Uses current worker name unless `task_name` was specified. It is not recommended that anyone use this function directly unless they are familiar with it.
 
 
 ## Definition

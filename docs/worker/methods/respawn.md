@@ -1,6 +1,6 @@
-# Worker - respawn
+# respawn
 
-The `respawn` method is used to respawn the worker's process. The supervisor gets the exception, and triggers a new worker process instead. This method can be used to intentionally kill the current worker process and spawn another one. Reasons for using this method can be detection of some bad worker state that can be fixed by restarting the process.
+Respawning the worker's process is accomplished using the `respawn` method. The supervisor receives the exception, and initiates a new worker process instead. The method can be used to kill the current worker process and spawn a new one. It can be used to restart a process after it has entered an irrecoverable state (e.g. a memory leak).
 
 
 ## Definition

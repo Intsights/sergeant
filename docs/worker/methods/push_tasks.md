@@ -1,13 +1,13 @@
-# Worker - push_tasks
+# push_tasks
 
-The `push_tasks` method pushes multiple tasks onto the queue in a bulk insert. Unless `task_name` was specified, uses the current worker name. This method is similar to `push_task` except it gets a list of `kwargs` and pushes much much faster.
+This method bulk inserts multiple tasks into the queue at once. The current worker name will be used unless `task_name` was specified. Unlike `push_task`, this method gets a list of `kwargs` and pushes much faster.
 
 - `kwargs_list` - A list of dictionaries of serializable arguments to pass to the worker.
 - `task_name` - The name of the task/queue to push to.
 - `priority`:
-    - `NORMAL` - The tasks will be pushed on the top of the queue. Will be pulled last. [FIFO]
-    - `HIGH` - The tasks will be pushed to the bottom of the queue. Will be pulled first. [LIFO]
-- `consumable_from` - Timestamp of when the task should be considered as a consumable task and can be popped from the queue.
+    - `NORMAL` - The task will be placed at the top of the queue. It will be pulled last. [FIFO]
+    - `HIGH` - The task will be placed at the bottom of the queue. It will be pulled first. [LIFO]
+- `consumable_from` - The Unix time represents the point in time when the task becomes consumable and can be popped from the queue. `0` means now.
 
 
 ## Definition

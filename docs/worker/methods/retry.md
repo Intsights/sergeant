@@ -1,9 +1,9 @@
-# Worker - retry
+# retry
 
-The `retry` method pushes back the task to the queue while increasing the run count by one. The way it works is by raising a `WorkerRetry` exception which cause the worker to interrupt. It means you should call `retry` only if you have nothing more to do. Calling `retry` and catching the exception will not interrupt the worker but the task would be pushed back to the queue anyway. `retry` makes the task to be considered as a failed task. `consumable_from` is a timestamp of when the task should be considered as a consumable task and can be popped from the queue. Using `consumable_from` parameter allows you to retry in a different time in case of temporary failure that will be resolved later.
+Retrying a task pushes it back into the queue while increasing its run count by one. It works by raising a `WorkerRetry` exception, which causes the worker to interrupt. Therefore, you should only call `retry` if you don't have any more work to do. If you call `retry` and catch the exception, the worker will not be interrupted but the task will be pushed back to the queue anyway. Retrying the task makes it a failed task. `consumable_from` is the Unix time represents the point in time when the task becomes consumable and can be popped from the queue. `0` means now. A temporary failure can be retried at a later time using the `consumable_from` parameter.
 
 ???+ warning "Retry from handlers"
-    One should never call `retry` from the following handlers:
+    `retry` should never be called from the following handlers:
 
     - `on_success`
     - `on_retry`

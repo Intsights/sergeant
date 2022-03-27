@@ -1,11 +1,11 @@
-# Logging - logstash
+# logstash
 
 Sergeant implements logging handlers to support logging platforms with high performance. We implemented for logstash two different handlers:
 
-- `LogstashHandler` - A logstash tcp hanlder. This handler send each log message to the logstash through a tcp socket, and serializes the data using orjson into a json format.
-- `BufferedLogstashHandler` - A logstash tcp hanlder. This handler is exactly equivalent to the `LogstashHandler` except that it manages an internal buffer and it flushes the buffer in specific terms.
+- `LogstashHandler` - Logstash TCP handler. A TCP socket is used to send log messages to logstash, and orjson is used to serialize the data as JSON.
+- `BufferedLogstashHandler` - The same as `LogstashHandler` except that it manages an internal buffer and flushes it according to certain rules.
 
-The logstash server configuration should follow the following example:
+Following is an example of logstash server configuration:
 ```
 input {
     tcp {
@@ -29,9 +29,9 @@ class LogstashHandler(
         timeout: typing.Optional[float] = 2.0,
     ) -> None
 ```
-- `host` - The logstash server hostname or IP address.
-- `port` - The logstash server tcp port.
-- `timeout` - Socket global timeout. If the server does not respond within a following time, the timeout will be used.
+- `host` - The hostname or IP address of the logstash server.
+- `port` - The port of the logstash server's input.
+- `timeout` - Global socket timeout. A timeout will be used if the server does not respond within a certain amount of time.
 
 ### BufferedLogstashHandler
 ```python
@@ -47,11 +47,11 @@ class BufferedLogstashHandler(
         max_store_time: float = 60.0,
     ) -> None
 ```
-- `host` - The logstash server hostname or IP address.
-- `port` - The logstash server tcp port.
-- `timeout` - Socket global timeout. If the server does not respond within a following time, the timeout will be used.
-- `chunk_size` - How much log messages to store before sending them to the logstash over a single connection.
-- `max_store_time` - How much time should pass before sending the available messages to the logstash even though the queue did not reach the `chunk_size`.
+- `host` - The hostname or IP address of the logstash server.
+- `port` - The port of the logstash server's input.
+- `timeout` - Global socket timeout. A timeout will be used if the server does not respond within a certain amount of time.
+- `chunk_size` - The number of log entries to store before sending over a single connection to logstash.
+- `max_store_time` - The amount of time that should elapse before sending the available messages to logstash, even if the queue has not reached the `chunk_size`.
 
 ## Examples
 

@@ -1,6 +1,6 @@
-# Worker Config - max_retries
+# max_retries
 
-`max_retries` defines how many retries the worker can invoke before the task will be dumped. This number should be `int > 0`. Using this parameter is encouraged for tasks that retry exist within them. `retry` method is a function that sends back the current task to the queue after increasing the internal `run_count`. When the `run_count` reaches the `max_retries` number, calling `retry` again would result in an exception. Tasks that you don't want to retry them forever might configure this parameter. A value of 0 means you can retry infinitely.
+The maximum number of retries a worker can make to complete the task before it will never be called again is specified by the `max_retries` parameter. It should be a positive integer greater than zero. For tasks that may require retrying, this parameter should be used. When you call retry, the task is returned to the queue and its internal `run_count` is increased by one. Calling `retry` again after the `run_count` reaches the `max_retries` number will result in an exception. Tasks that should stop after a certain number of retries should define this number. A value of 0 means there can be an infinite number of retries.
 
 
 ## Definition

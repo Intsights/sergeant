@@ -1,6 +1,6 @@
-# Worker Handler - on_starvation
+# on_starvation
 
-The `on_starvation` handler is invoked when a worker becomes starved - meaning it could not pull tasks from the broker because there were no tasks left in the queue. This handler is only invoked when the worker was configured with the `starvation` field. The field `time_with_no_tasks` means after how many seconds without tasks the worker should trigger this handler.
+The `on_starvation` handler is invoked when a worker becomes starved. This means that there were no tasks in the broker queue and it could not pull tasks from the broker. The starvation handler is only invoked when the `starvation` field is configured on the worker. `time_with_no_tasks` indicates after how many seconds the worker should trigger this handler without tasks.
 
 
 ## Definition
@@ -13,9 +13,9 @@ def on_starvation(
     pass
 ```
 
-The following use cases are possible:
+Possible use cases include:
 
-- Fire a logging event.
-- Hint an external autoscaler to reduce the amount of worker in the system.
-- Call `stop` to kill the worker as it is no longer needed.
-- Call `respawn` to respawn the worker process as it is an opportunity to release memory and start from scratch.
+- Send a log message
+- Hint an external autoscaler to reduce the number of workers in the system
+- The worker is no longer needed, so call `stop` to kill it
+- Respawn the worker process by calling `respawn`, which allows memory to be released and the process to start over

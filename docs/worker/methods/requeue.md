@@ -1,9 +1,9 @@
-# Worker - requeue
+# requeue
 
-The `requeue` method pushes back the task to the queue without increasing the run count by one. The way it works is by raising a `WorkerRequeue` exception which cause the worker to interrupt. It means you should call `requeue` only if you have nothing more to do. Calling `requeue` and catching the exception will not interrupt the worker but the task would be pushed back to the queue anyway. `requeue` makes the task to be considered as a failed task. `consumable_from` is a timestamp of when the task should be considered as a consumable task and can be popped from the queue.
+Using this method, the task is pushed back to the queue without increasing the its `run_count`. It works by raising a `WorkerRequeue` exception, which causes the worker to interrupt. It means you should call `requeue` only if there is nothing else to do. If you call `requeue` and catch the exception, the worker will not be interrupted, but the task will still be returned to the queue. Tasks that are requeued are considered failed tasks. `consumable_from` is the Unix time represents the point in time when the task becomes consumable and can be popped from the queue. `0` means now.
 
 ???+ warning "Requeue from handlers"
-    One should never call `requeue` from the following handlers:
+    `requeue` should never be called from the following handlers:
 
     - `on_success`
     - `on_retry`
