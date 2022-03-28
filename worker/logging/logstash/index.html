@@ -10,14 +10,14 @@
         <meta name="author" content="Gal Ben David">
       
       
-        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/config/connector/">
+        <link rel="canonical" href="https://intsights.github.io/sergeant/worker/logging/logstash/">
       
       <link rel="icon" href="../../../images/favicon.ico">
       <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-8.2.6">
     
     
       
-        <title>connector - Sergeant</title>
+        <title>logstash - Sergeant</title>
       
     
     
@@ -63,7 +63,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#connector" class="md-skip">
+        <a href="#logstash" class="md-skip">
           Skip to content
         </a>
       
@@ -95,7 +95,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              connector
+              logstash
             
           </span>
         </div>
@@ -245,14 +245,12 @@
               
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_1" type="checkbox" id="__nav_2_1" >
       
       
       
@@ -275,7 +273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../name/" class="md-nav__link">
+      <a href="../../config/name/" class="md-nav__link">
         name
       </a>
     </li>
@@ -287,59 +285,11 @@
               
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          connector
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../config/connector/" class="md-nav__link">
         connector
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#definition" class="md-nav__link">
-    Definition
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
-    Examples
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -351,7 +301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../max_tasks_per_run/" class="md-nav__link">
+      <a href="../../config/max_tasks_per_run/" class="md-nav__link">
         max_tasks_per_run
       </a>
     </li>
@@ -365,7 +315,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../max_retries/" class="md-nav__link">
+      <a href="../../config/max_retries/" class="md-nav__link">
         max_retries
       </a>
     </li>
@@ -379,7 +329,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tasks_per_transaction/" class="md-nav__link">
+      <a href="../../config/tasks_per_transaction/" class="md-nav__link">
         tasks_per_transaction
       </a>
     </li>
@@ -393,7 +343,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../encoder/" class="md-nav__link">
+      <a href="../../config/encoder/" class="md-nav__link">
         encoder
       </a>
     </li>
@@ -407,7 +357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../number_of_threads/" class="md-nav__link">
+      <a href="../../config/number_of_threads/" class="md-nav__link">
         number_of_threads
       </a>
     </li>
@@ -421,7 +371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../timeouts/" class="md-nav__link">
+      <a href="../../config/timeouts/" class="md-nav__link">
         timeouts
       </a>
     </li>
@@ -435,7 +385,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../logging/" class="md-nav__link">
+      <a href="../../config/logging/" class="md-nav__link">
         logging
       </a>
     </li>
@@ -449,7 +399,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../starvation/" class="md-nav__link">
+      <a href="../../config/starvation/" class="md-nav__link">
         starvation
       </a>
     </li>
@@ -978,12 +928,14 @@
               
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2_6" type="checkbox" id="__nav_2_6" checked>
       
       
       
@@ -1004,11 +956,79 @@
               
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../logging/logstash/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          logstash
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         logstash
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#definition" class="md-nav__link">
+    Definition
+  </a>
+  
+    <nav class="md-nav" aria-label="Definition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logstashhandler" class="md-nav__link">
+    LogstashHandler
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferedlogstashhandler" class="md-nav__link">
+    BufferedLogstashHandler
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1163,6 +1183,26 @@
     Definition
   </a>
   
+    <nav class="md-nav" aria-label="Definition">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#logstashhandler" class="md-nav__link">
+    LogstashHandler
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bufferedlogstashhandler" class="md-nav__link">
+    BufferedLogstashHandler
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1184,37 +1224,58 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/intsights/sergeant/edit/master/docs/worker/config/connector.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/intsights/sergeant/edit/master/docs/worker/logging/logstash.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-<h1 id="connector">connector<a class="headerlink" href="#connector" title="Permanent link">#</a></h1>
-<p>The <code>connector</code> parameter is used to configure the broker's connection. However, it is crucial to note that the broker cannot guarantee tasks' order. You can queue two consecutive tasks and consume them in a different order. For applications that do care about order, use only one instance of a broker, such as <code>Redis</code> or <code>MongoDB</code>, and the order would remain constant.</p>
-<h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
+<h1 id="logstash">logstash<a class="headerlink" href="#logstash" title="Permanent link">#</a></h1>
+<p>Sergeant implements logging handlers to support logging platforms with high performance. We implemented for logstash two different handlers:</p>
+<ul>
+<li><code>LogstashHandler</code> - Logstash TCP handler. A TCP socket is used to send log messages to logstash, and orjson is used to serialize the data as JSON.</li>
+<li><code>BufferedLogstashHandler</code> - The same as <code>LogstashHandler</code> except that it manages an internal buffer and flushes it according to certain rules.</li>
+</ul>
+<p>Following is an example of logstash server configuration:
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
 <span class="normal">4</span>
 <span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span>
-    <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="k">class</span> <span class="nc">Connector</span><span class="p">:</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>input {
+    tcp {
+        port =&gt; 9999
+        codec =&gt; json_lines
+    }
+}
+</code></pre></div>
+</td></tr></table></p>
+<h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">#</a></h2>
+<h3 id="logstashhandler">LogstashHandler<a class="headerlink" href="#logstashhandler" title="Permanent link">#</a></h3>
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span>
+<span class="normal">9</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LogstashHandler</span><span class="p">(</span>
+    <span class="n">BaseLogstashHandler</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 </td></tr></table>
-<p>The <code>type</code> parameter specifies the type of connector. The library supports the following connector types:</p>
-<ul>
-<li><code>redis</code> - A single or multiple redis instances that are not cluster-connected. Client side distribution of tasks is handled by the library by shuffling the list of connections and pushing/pulling from each one at various times. The order of tasks is not guaranteed.</li>
-<li><code>mongo</code> - Single/Multiple MongoDB instances that are not clustered. Each server must be configured as a replica set. The library will create the replica set. It's ideally suited for persistent tasks.</li>
-</ul>
-<p>Connectors receive the <code>params</code> parameter directly as <code>**kwargs</code>.</p>
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
-<div class="tabbed-set" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">redis-single</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+- <code>host</code> - The hostname or IP address of the logstash server.
+- <code>port</code> - The port of the logstash server's input.
+- <code>timeout</code> - Global socket timeout. A timeout will be used if the server does not respond within a certain amount of time.</p>
+<h3 id="bufferedlogstashhandler">BufferedLogstashHandler<a class="headerlink" href="#bufferedlogstashhandler" title="Permanent link">#</a></h3>
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
 <span class="normal"> 4</span>
@@ -1224,25 +1285,25 @@
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span>
-    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6379</span><span class="p">,</span>
-                <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">],</span>
-    <span class="p">},</span>
-<span class="p">)</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">BufferedLogstashHandler</span><span class="p">(</span>
+    <span class="n">BaseLogstashHandler</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">max_store_time</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </code></pre></div>
 </td></tr></table>
-</div>
-<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">redis-multi</label><div class="tabbed-content">
+- <code>host</code> - The hostname or IP address of the logstash server.
+- <code>port</code> - The port of the logstash server's input.
+- <code>timeout</code> - Global socket timeout. A timeout will be used if the server does not respond within a certain amount of time.
+- <code>chunk_size</code> - The number of log entries to store before sending over a single connection to logstash.
+- <code>max_store_time</code> - The amount of time that should elapse before sending the available messages to logstash, even if the queue has not reached the <code>chunk_size</code>.</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1261,93 +1322,51 @@
 <span class="normal">16</span>
 <span class="normal">17</span>
 <span class="normal">18</span>
-<span class="normal">19</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span>
-    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6379</span><span class="p">,</span>
-                <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">sergeant</span>
+
+
+<span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span>
+    <span class="n">sergeant</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">Worker</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">WorkerConfig</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_worker&#39;</span><span class="p">,</span>
+        <span class="n">connector</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+                <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6379</span><span class="p">,</span>
+                        <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="p">},</span>
+                <span class="p">],</span>
             <span class="p">},</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6380</span><span class="p">,</span>
-                <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">],</span>
-    <span class="p">},</span>
-<span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">logging</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Logging</span><span class="p">(</span>
+            <span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">sergeant</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">logstash</span><span class="o">.</span><span class="n">LogstashHandler</span><span class="p">(</span>
+                    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                    <span class="n">port</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
 </code></pre></div>
 </td></tr></table>
-</div>
-<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">mongo-single</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mongo&#39;</span><span class="p">,</span>
-    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">27017</span><span class="p">,</span>
-                <span class="s1">&#39;replica_set&#39;</span><span class="p">:</span> <span class="s1">&#39;replica_set_name&#39;</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">],</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-<input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><label for="__tabbed_1_4">mongo-multi</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
-    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;mongo&#39;</span><span class="p">,</span>
-    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">27017</span><span class="p">,</span>
-                <span class="s1">&#39;replica_set&#39;</span><span class="p">:</span> <span class="s1">&#39;replica_set_name&#39;</span><span class="p">,</span>
-            <span class="p">},</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">27018</span><span class="p">,</span>
-                <span class="s1">&#39;replica_set&#39;</span><span class="p">:</span> <span class="s1">&#39;replica_set_name&#39;</span><span class="p">,</span>
-            <span class="p">},</span>
-        <span class="p">],</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
 
               
             </article>
@@ -1361,7 +1380,7 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../name/" class="md-footer__link md-footer__link--prev" aria-label="Previous: name" rel="prev">
+        <a href="../../lock/set_ttl/" class="md-footer__link md-footer__link--prev" aria-label="Previous: set_ttl" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -1370,20 +1389,20 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              name
+              set_ttl
             </div>
           </div>
         </a>
       
       
         
-        <a href="../max_tasks_per_run/" class="md-footer__link md-footer__link--next" aria-label="Next: max_tasks_per_run" rel="next">
+        <a href="../../../supervisor/" class="md-footer__link md-footer__link--next" aria-label="Next: Supervisor" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              max_tasks_per_run
+              Supervisor
             </div>
           </div>
           <div class="md-footer__button md-icon">
