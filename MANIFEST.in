@@ -1,2 +1,0 @@
-recursive-include sergeant *.py
-prune tests

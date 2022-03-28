@@ -1,7 +1,46 @@
-[project]
+[build-system]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
 name = "sergeant"
-version = "0.23.0"
+version = "0.24.0"
 readme = "README.md"
+homepage = "https://github.com/Intsights/sergeant"
+repository = "https://github.com/Intsights/sergeant"
+description = "Fast, Safe & Simple Asynchronous Task Queues Written In Pure Python"
+authors = ["Gal Ben David <gal@intsights.com>"]
+license = "MIT"
+documentation = "https://intsights.github.io/sergeant/"
+classifiers = [
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+]
+keywords = [
+    "tasks",
+    "worker",
+    "queue",
+    "redis",
+    "celery",
+]
+packages = [
+    { include = "sergeant" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+hiredis = "^2"
+msgpack = "^1"
+orjson = "^3"
+psutil = "^5"
+pymongo = ">=3.0,<5.0"
+redis = "^4"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7"
 
 [tool.isort]
 skip_gitignore = true
@@ -25,7 +64,7 @@ sections = [
 default_section = "THIRDPARTY"
 
 [tool.pytest.ini_options]
-minversion = "6.0"
+minversion = "7.0"
 addopts = [
     "--tb=native",
     "--show-capture=stdout",
