@@ -1,5 +1,6 @@
 [project]
 name = "sergeant"
+version = "0.23.0"
 readme = "README.md"
 
 [tool.isort]
