@@ -1,4 +1,4 @@
-[project]
+[tool.poetry]
 name = "sergeant"
 readme = "README.md"
 
