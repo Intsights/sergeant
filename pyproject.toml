@@ -36,11 +36,11 @@ hiredis = "^2"
 msgpack = "^1"
 orjson = "^3"
 psutil = "^5"
-pymongo = "^3"
+pymongo = ">=3.0,<5.0"
 redis = "^4"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6"
+pytest = "^7"
 
 [tool.isort]
 skip_gitignore = true
@@ -64,7 +64,7 @@ sections = [
 default_section = "THIRDPARTY"
 
 [tool.pytest.ini_options]
-minversion = "6.0"
+minversion = "7.0"
 addopts = [
     "--tb=native",
     "--show-capture=stdout",
