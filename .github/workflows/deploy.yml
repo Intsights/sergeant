@@ -1,6 +1,9 @@
 ---
 name: Deploy
 on:
+  push:
+    branches:
+      - hotfix-pyproject-version-fix
   release:
     types: [published]
   workflow_dispatch:
