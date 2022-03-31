@@ -295,7 +295,11 @@ class Connector(
         )
 
         results = []
-        while result := cursor.fetchone():
+        while True:
+            result = cursor.fetchone()
+            if result is None:
+                break
+
             results.append(result[0])
 
         return results
