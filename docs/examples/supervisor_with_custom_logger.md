@@ -15,22 +15,25 @@ To work, both files must be in the same directory
     class BaseWorker(
         sergeant.worker.Worker,
     ):
-        config = sergeant.config.WorkerConfig(
-            name='some_worker',
-            connector=sergeant.config.Connector(
-                type='redis',
-                params={
-                    'nodes': [
-                        {
-                            'host': 'localhost',
-                            'port': 6379,
-                            'password': None,
-                            'database': 0,
-                        },
-                    ],
-                },
-            ),
-        )
+        def generate_config(
+            self,
+        ):
+            return sergeant.config.WorkerConfig(
+                name='some_worker',
+                connector=sergeant.config.Connector(
+                    type='redis',
+                    params={
+                        'nodes': [
+                            {
+                                'host': 'localhost',
+                                'port': 6379,
+                                'password': None,
+                                'database': 0,
+                            },
+                        ],
+                    },
+                ),
+            )
 
         ...
     ```

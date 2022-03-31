@@ -1,4 +1,5 @@
 import dataclasses
+import tempfile
 import typing
 
 import logging
@@ -67,7 +68,14 @@ class Starvation:
 )
 class WorkerConfig:
     name: str
-    connector: Connector
+    connector: Connector = dataclasses.field(
+        default_factory=lambda: Connector(
+            type='local',
+            params={
+                'file_path': f'{tempfile.gettempdir()}/sergeant_default_db.sqlite3',
+            },
+        ),
+    )
     max_tasks_per_run: int = 0
     max_retries: int = 0
     tasks_per_transaction: int = 1

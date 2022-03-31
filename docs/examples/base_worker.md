@@ -13,22 +13,25 @@ In this example, we show how to create a base worker that other workers can inhe
     class BaseWorker(
         sergeant.worker.Worker,
     ):
-        config = sergeant.config.WorkerConfig(
-            name='base_worker',
-            connector=sergeant.config.Connector(
-                type='redis',
-                params={
-                    'nodes': [
-                        {
-                            'host': 'localhost',
-                            'port': 6379,
-                            'password': None,
-                            'database': 0,
-                        },
-                    ],
-                },
-            ),
-        )
+        def generate_config(
+            self,
+        ):
+            return sergeant.config.WorkerConfig(
+                name='base_worker',
+                connector=sergeant.config.Connector(
+                    type='redis',
+                    params={
+                        'nodes': [
+                            {
+                                'host': 'localhost',
+                                'port': 6379,
+                                'password': None,
+                                'database': 0,
+                            },
+                        ],
+                    },
+                ),
+            )
     ```
 
 === "derived_worker.py"
@@ -41,9 +44,12 @@ In this example, we show how to create a base worker that other workers can inhe
     class Worker(
         base.BaseWorker,
     ):
-        config = base.BaseWorker.config.replace(
-            name='derived_worker',
-        )
+        def generate_config(
+            self,
+        ):
+            return super().replace(
+                name='derived_worker',
+            )
     ```
 
 

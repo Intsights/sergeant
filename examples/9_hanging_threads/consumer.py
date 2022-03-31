@@ -8,28 +8,31 @@ import sergeant
 class Worker(
     sergeant.worker.Worker,
 ):
-    config = sergeant.config.WorkerConfig(
-        name='test_worker',
-        connector=sergeant.config.Connector(
-            type='redis',
-            params={
-                'nodes': [
-                    {
-                        'host': 'localhost',
-                        'port': 6379,
-                        'password': None,
-                        'database': 0,
-                    },
-                ],
-            },
-        ),
-        logging=sergeant.config.Logging(
-            level=logging.INFO,
-            log_to_stdout=True,
-        ),
-        number_of_threads=2,
-        max_tasks_per_run=1,
-    )
+    def generate_config(
+        self,
+    ):
+        return sergeant.config.WorkerConfig(
+            name='test_worker',
+            connector=sergeant.config.Connector(
+                type='redis',
+                params={
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
+                },
+            ),
+            logging=sergeant.config.Logging(
+                level=logging.INFO,
+                log_to_stdout=True,
+            ),
+            number_of_threads=2,
+            max_tasks_per_run=1,
+        )
 
     def work(
         self,

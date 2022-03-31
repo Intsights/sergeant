@@ -16,29 +16,32 @@ The following example illustrates how to integrate with an APM solution. In this
     class Worker(
         sergeant.worker.Worker,
     ):
-        config = sergeant.config.WorkerConfig(
-            name='test_worker',
-            connector=sergeant.config.Connector(
-                type='redis',
-                params={
-                    'nodes': [
-                        {
-                            'host': 'localhost',
-                            'port': 6379,
-                            'password': None,
-                            'database': 0,
-                        },
-                    ],
-                },
-            ),
-            max_tasks_per_run=100,
-            tasks_per_transaction=1,
-            max_retries=3,
-            logging=sergeant.config.Logging(
-                level=logging.INFO,
-                log_to_stdout=True,
-            ),
-        )
+        def generate_config(
+            self,
+        ):
+            return sergeant.config.WorkerConfig(
+                name='test_worker',
+                connector=sergeant.config.Connector(
+                    type='redis',
+                    params={
+                        'nodes': [
+                            {
+                                'host': 'localhost',
+                                'port': 6379,
+                                'password': None,
+                                'database': 0,
+                            },
+                        ],
+                    },
+                ),
+                max_tasks_per_run=100,
+                tasks_per_transaction=1,
+                max_retries=3,
+                logging=sergeant.config.Logging(
+                    level=logging.INFO,
+                    log_to_stdout=True,
+                ),
+            )
 
         def initialize(
             self,

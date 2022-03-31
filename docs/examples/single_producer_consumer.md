@@ -24,26 +24,29 @@ graph TD
     class Worker(
         sergeant.worker.Worker,
     ):
-        config = sergeant.config.WorkerConfig(
-            name='test_worker',
-            connector=sergeant.config.Connector(
-                type='redis',
-                params={
-                    'nodes': [
-                        {
-                            'host': 'localhost',
-                            'port': 6379,
-                            'password': None,
-                            'database': 0,
-                        },
-                    ],
-                },
-            ),
-            logging=sergeant.config.Logging(
-                level=logging.INFO,
-                log_to_stdout=True,
-            ),
-        )
+        def generate_config(
+            self,
+        ):
+            return sergeant.config.WorkerConfig(
+                name='test_worker',
+                connector=sergeant.config.Connector(
+                    type='redis',
+                    params={
+                        'nodes': [
+                            {
+                                'host': 'localhost',
+                                'port': 6379,
+                                'password': None,
+                                'database': 0,
+                            },
+                        ],
+                    },
+                ),
+                logging=sergeant.config.Logging(
+                    level=logging.INFO,
+                    log_to_stdout=True,
+                ),
+            )
 
         def work(
             self,
@@ -72,9 +75,9 @@ graph TD
 
 ### Consumer
 
-In the class definition, we inherit from `sergeant.worker.Worker` to gain all the abilities of the `Worker` class. To make this worker capable of producing and consuming tasks, we must define the `config` attribute and the `work` method.
+In the class definition, we inherit from `sergeant.worker.Worker` to gain all the abilities of the `Worker` class. To make this worker capable of producing and consuming tasks, we must define the `generate_config` method and the `work` method.
 
-Defining the `config` class attribute allows us to configure our worker's abilities. Worker config is a `dataclass` named `sergeant.config.WorkerConfig` that has multiple child dataclasses. There are two mandatory fields: `name` which defines the worker's name and the queue name within the broker, and `connector`. The connector is responsible for communicating with the broker. The following example shows how to define a worker with a "redis" connector.
+Defining the `generate_config` class method allows us to configure our worker's abilities. Worker config is a `dataclass` named `sergeant.config.WorkerConfig` that has multiple child dataclasses. There are two mandatory fields: `name` which defines the worker's name and the queue name within the broker, and `connector`. The connector is responsible for communicating with the broker. The following example shows how to define a worker with a "redis" connector.
 `Logging` facilitates the configuration of the logger.
 
 Each consumed task is handled by the `work` method. Within the `task` argument, the parameters are passed as the key `kwargs`.

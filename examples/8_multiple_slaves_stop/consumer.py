@@ -7,26 +7,29 @@ import sergeant
 class Worker(
     sergeant.worker.Worker,
 ):
-    config = sergeant.config.WorkerConfig(
-        name='test_worker',
-        connector=sergeant.config.Connector(
-            type='redis',
-            params={
-                'nodes': [
-                    {
-                        'host': 'localhost',
-                        'port': 6379,
-                        'password': None,
-                        'database': 0,
-                    },
-                ],
-            },
-        ),
-        logging=sergeant.config.Logging(
-            level=logging.INFO,
-            log_to_stdout=True,
-        ),
-    )
+    def generate_config(
+        self,
+    ):
+        return sergeant.config.WorkerConfig(
+            name='test_worker',
+            connector=sergeant.config.Connector(
+                type='redis',
+                params={
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
+                },
+            ),
+            logging=sergeant.config.Logging(
+                level=logging.INFO,
+                log_to_stdout=True,
+            ),
+        )
 
     def work(
         self,

@@ -1,7 +1,6 @@
 import datetime
 import signal
 import sys
-import tempfile
 import time
 import types
 import typing
@@ -17,19 +16,11 @@ from . import objects
 
 
 class Worker:
-    config = config.WorkerConfig(
-        name='test_worker',
-        connector=config.Connector(
-            type='local',
-            params={
-                'file_path': f'{tempfile.gettempdir()}/sergeant_default_db.sqlite3',
-            },
-        ),
-    )
-
     def __init__(
         self,
     ) -> None:
+        self.config = self.generate_config()
+
         self.logger = logging.getLogger(
             name=self.config.name,
         )
@@ -47,6 +38,13 @@ class Worker:
         self.executor_obj: typing.Optional[executor._executor.Executor] = None
 
         signal.signal(signal.SIGTERM, self.stop_signal_handler)
+
+    def generate_config(
+        self,
+    ) -> config.WorkerConfig:
+        return config.WorkerConfig(
+            name='worker',
+        )
 
     def stop_signal_handler(
         self,

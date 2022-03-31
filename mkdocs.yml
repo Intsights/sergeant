@@ -29,6 +29,7 @@ nav:
           - 'worker/handlers/on_requeue.md'
           - 'worker/handlers/on_starvation.md'
       - Worker:
+          - 'worker/worker/generate_config.md'
           - 'worker/worker/initialize.md'
           - 'worker/worker/finalize.md'
           - 'worker/worker/pre_work.md'
