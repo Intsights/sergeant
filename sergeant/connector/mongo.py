@@ -177,7 +177,7 @@ class Connector(
             connection.sergeant.keys.create_index(
                 keys=[
                     (
-                        'value',
+                        'key',
                         pymongo.ASCENDING,
                     ),
                 ],
