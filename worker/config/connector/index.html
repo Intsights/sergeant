@@ -627,6 +627,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../worker/generate_config/" class="md-nav__link">
+        generate_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../worker/initialize/" class="md-nav__link">
         initialize
       </a>
@@ -1202,18 +1216,19 @@
     <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="k">class</span> <span class="nc">Connector</span><span class="p">:</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span> <span class="s1">&#39;mongo&#39;</span><span class="p">,</span> <span class="s1">&#39;local&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;local&#39;</span>
 </code></pre></div>
 </td></tr></table>
 <p>The <code>type</code> parameter specifies the type of connector. The library supports the following connector types:</p>
 <ul>
 <li><code>redis</code> - A single or multiple redis instances that are not cluster-connected. Client side distribution of tasks is handled by the library by shuffling the list of connections and pushing/pulling from each one at various times. The order of tasks is not guaranteed.</li>
 <li><code>mongo</code> - Single/Multiple MongoDB instances that are not clustered. Each server must be configured as a replica set. The library will create the replica set. It's ideally suited for persistent tasks.</li>
+<li><code>local</code> - Local is a SQLite3-based connector. It requires a file system to store the database files. With this connector, you can run Sergeant without having to rely on servers.</li>
 </ul>
 <p>Connectors receive the <code>params</code> parameter directly as <code>**kwargs</code>.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">#</a></h2>
-<div class="tabbed-set" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">redis-single</label><div class="tabbed-content">
+<div class="tabbed-set" data-tabs="1:5"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">redis-single</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1342,6 +1357,21 @@
                 <span class="s1">&#39;replica_set&#39;</span><span class="p">:</span> <span class="s1">&#39;replica_set_name&#39;</span><span class="p">,</span>
             <span class="p">},</span>
         <span class="p">],</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_1_5" name="__tabbed_1" type="radio" /><label for="__tabbed_1_5">local</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;local&#39;</span><span class="p">,</span>
+    <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;file_path&#39;</span><span class="p">:</span> <span class="s1">&#39;/tmp/sergeant_db.sqlite3&#39;</span><span class="p">,</span>
     <span class="p">},</span>
 <span class="p">)</span>
 </code></pre></div>

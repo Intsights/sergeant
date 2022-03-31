@@ -577,6 +577,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../worker/generate_config/" class="md-nav__link">
+        generate_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../worker/initialize/" class="md-nav__link">
         initialize
       </a>
@@ -1334,37 +1348,43 @@
 <span class="normal">28</span>
 <span class="normal">29</span>
 <span class="normal">30</span>
-<span class="normal">31</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">sergeant</span>
 
 
 <span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span>
     <span class="n">sergeant</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">Worker</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">WorkerConfig</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_worker&#39;</span><span class="p">,</span>
-        <span class="n">connector</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
-            <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span>
-            <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-                <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6379</span><span class="p">,</span>
-                        <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                        <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">],</span>
-            <span class="p">},</span>
-        <span class="p">),</span>
-        <span class="n">logging</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Logging</span><span class="p">(</span>
-            <span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
-                <span class="n">sergeant</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">logstash</span><span class="o">.</span><span class="n">LogstashHandler</span><span class="p">(</span>
-                    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                    <span class="n">port</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
-                <span class="p">),</span>
-            <span class="p">],</span>
-        <span class="p">),</span>
-    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">generate_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">WorkerConfig</span><span class="p">(</span>
+          <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_worker&#39;</span><span class="p">,</span>
+          <span class="n">connector</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
+              <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span>
+              <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+                  <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
+                      <span class="p">{</span>
+                          <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                          <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6379</span><span class="p">,</span>
+                          <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                          <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                      <span class="p">},</span>
+                  <span class="p">],</span>
+              <span class="p">},</span>
+          <span class="p">),</span>
+          <span class="n">logging</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Logging</span><span class="p">(</span>
+              <span class="n">handlers</span><span class="o">=</span><span class="p">[</span>
+                  <span class="n">sergeant</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="n">logstash</span><span class="o">.</span><span class="n">LogstashHandler</span><span class="p">(</span>
+                      <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                      <span class="n">port</span><span class="o">=</span><span class="mi">9999</span><span class="p">,</span>
+                  <span class="p">),</span>
+              <span class="p">],</span>
+          <span class="p">),</span>
+      <span class="p">)</span>
 </code></pre></div>
 </td></tr></table>
 

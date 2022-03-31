@@ -585,6 +585,20 @@
   
   
     <li class="md-nav__item">
+      <a href="worker/worker/generate_config/" class="md-nav__link">
+        generate_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="worker/worker/initialize/" class="md-nav__link">
         initialize
       </a>
@@ -1136,7 +1150,7 @@
 </p>
 
 <h1 id="home">Home<a class="headerlink" href="#home" title="Permanent link">#</a></h1>
-<p><code>Sergeant</code> was written in Insights when <code>Celery</code> failed to work on large scales. At a peak, we had over 100k tasks per second and thousands of workers. Celery was unreliable on that scale. Compared to <code>celery</code>, <code>Sergeant</code> is simpler and easier to understand. This library offers a simple and intuitive interface to implement a queue-based distributed workers architecture instead of supporting a variety of backends and scenarios. <code>Redis</code> and <code>MongoDB</code> are the two supported backends. <code>Redis</code> is recommended for high throughput environments where performance is paramount. Whenever you need to save your tasks on the disk, you should use <code>MongoDB</code> for stable, consistent systems. We decided not to support AMQP backends in order to keep the library simple. Using some of Python's latest features, such as <code>dataclasses</code> and <code>f-strings</code>, this library is only compatible with <code>Python 3.7</code> and up.</p>
+<p><code>Sergeant</code> was written in Insights when <code>Celery</code> failed to work on large scales. At a peak, we had over 100k tasks per second and thousands of workers. Celery was unreliable on that scale. Compared to <code>celery</code>, <code>Sergeant</code> is simpler and easier to understand. This library offers a simple and intuitive interface to implement a queue-based distributed workers architecture instead of supporting a variety of backends and scenarios. <code>Redis</code> and <code>MongoDB</code> are the two supported server backends. <code>Redis</code> is recommended for high throughput environments where performance is paramount. Whenever you need to save your tasks on the disk, you should use <code>MongoDB</code> for stable, consistent systems. There is a third backend called <code>local</code> which is based on SQLite3 database file. We decided not to support AMQP backends in order to keep the library simple. Using some of Python's latest features, such as <code>dataclasses</code> and <code>f-strings</code>, this library is only compatible with <code>Python 3.7</code> and up.</p>
 <p>Multiple serializers and compressions are provided by the library. Before pushing a job into the queue, the library serializes it and optionally compresses it. <code>pickle</code> and <code>msgpack</code> are available serializers. The default serializer <code>pickle</code> should not be switched unless it has some limitations, such as security concerns or portability issues. Different serializers support different types of data. Even though Pickle is not portable, it handles more data types than any other serializer. The serialization and deserialization of tasks with parameters not supported by msgpack must be done manually or using Pickle.</p>
 <p>This library includes multiple built-in compression algorithms that are natively supported by Python. <code>zlib</code>, <code>gzip</code>, <code>bzip2</code> and <code>lzma</code>. When <code>None</code> is selected, no compression is performed. If you have a lot of tasks queued and need to free up some RAM/storage, using a compressor is recommended.</p>
 <p>Tasks can be executed using either multiprocessing or threading. Each task may be executed in a different thread or process, depending on the implementor. Concurrency levels can be configured.</p>

@@ -575,6 +575,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../worker/worker/generate_config/" class="md-nav__link">
+        generate_config
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../worker/worker/initialize/" class="md-nav__link">
         initialize
       </a>
@@ -1289,7 +1303,10 @@
 <span class="normal">81</span>
 <span class="normal">82</span>
 <span class="normal">83</span>
-<span class="normal">84</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">elasticapm</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">elasticapm</span>
 <span class="kn">import</span> <span class="nn">sergeant</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">requests</span>
@@ -1298,29 +1315,32 @@
 <span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span>
     <span class="n">sergeant</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">Worker</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">WorkerConfig</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_worker&#39;</span><span class="p">,</span>
-        <span class="n">connector</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
-            <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span>
-            <span class="n">params</span><span class="o">=</span><span class="p">{</span>
-                <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
-                    <span class="p">{</span>
-                        <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
-                        <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6379</span><span class="p">,</span>
-                        <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                        <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                    <span class="p">},</span>
-                <span class="p">],</span>
-            <span class="p">},</span>
-        <span class="p">),</span>
-        <span class="n">max_tasks_per_run</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-        <span class="n">tasks_per_transaction</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-        <span class="n">logging</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Logging</span><span class="p">(</span>
-            <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
-            <span class="n">log_to_stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">),</span>
-    <span class="p">)</span>
+    <span class="k">def</span> <span class="nf">generate_config</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">WorkerConfig</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s1">&#39;test_worker&#39;</span><span class="p">,</span>
+            <span class="n">connector</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Connector</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span>
+                <span class="n">params</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s1">&#39;nodes&#39;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">6379</span><span class="p">,</span>
+                            <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="s1">&#39;database&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                        <span class="p">},</span>
+                    <span class="p">],</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+            <span class="n">max_tasks_per_run</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">tasks_per_transaction</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">max_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">logging</span><span class="o">=</span><span class="n">sergeant</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">Logging</span><span class="p">(</span>
+                <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                <span class="n">log_to_stdout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
