@@ -38,6 +38,7 @@ orjson = "^3"
 psutil = "^5"
 pymongo = ">=3.0,<5.0"
 redis = "^4"
+typing_extensions = "^3.10"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"

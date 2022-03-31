@@ -1,6 +1,7 @@
 import dataclasses
 import tempfile
 import typing
+import typing_extensions
 
 import logging
 
@@ -45,7 +46,7 @@ class Encoder:
 )
 class Connector:
     params: typing.Dict[str, typing.Any]
-    type: typing.Literal['redis', 'mongo', 'local'] = 'local'
+    type: typing_extensions.Literal['redis', 'mongo', 'local'] = 'local'
 
 
 @dataclasses.dataclass(
