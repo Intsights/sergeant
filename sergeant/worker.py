@@ -1,6 +1,7 @@
 import datetime
 import signal
 import sys
+import tempfile
 import time
 import types
 import typing
@@ -19,8 +20,10 @@ class Worker:
     config = config.WorkerConfig(
         name='test_worker',
         connector=config.Connector(
-            type='redis',
-            params={},
+            type='local',
+            params={
+                'file_path': f'{tempfile.gettempdir()}/sergeant_default_db.sqlite3',
+            },
         ),
     )
 
@@ -108,6 +111,8 @@ class Worker:
             connector_obj = connector.mongo.Connector(**self.config.connector.params)
         elif self.config.connector.type == 'redis':
             connector_obj = connector.redis.Connector(**self.config.connector.params)
+        elif self.config.connector.type == 'local':
+            connector_obj = connector.local.Connector(**self.config.connector.params)
         else:
             raise ValueError(f'connector type {self.config.connector.type} is not supported')
 

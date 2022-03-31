@@ -1,3 +1,4 @@
+import tempfile
 import time
 import unittest
 import unittest.mock
@@ -730,6 +731,44 @@ class MongoMultipleServersConnectorTestCase(
                     'replica_set': 'test_replica_set',
                 },
             ],
+        )
+
+        cls.test_broker = sergeant.broker.Broker(
+            connector=connector_obj,
+            encoder=sergeant.encoder.encoder.Encoder(
+                compressor_name=None,
+                serializer_name='pickle',
+            ),
+        )
+
+        compressor_names = list(sergeant.encoder.encoder.Encoder.compressors.keys())
+        compressor_names.append(None)
+        serializer_names = sergeant.encoder.encoder.Encoder.serializers.keys()
+        for compressor_name in compressor_names:
+            for serializer_name in serializer_names:
+                encoder_obj = sergeant.encoder.encoder.Encoder(
+                    compressor_name=compressor_name,
+                    serializer_name=serializer_name,
+                )
+                cls.test_brokers.append(
+                    sergeant.broker.Broker(
+                        connector=connector_obj,
+                        encoder=encoder_obj,
+                    )
+                )
+
+class LocalBrokerTestCase(
+    BrokerTestCase,
+    unittest.TestCase,
+):
+    @classmethod
+    def setUpClass(
+        cls,
+    ):
+        cls.test_brokers = []
+        temp_folder_path = tempfile.gettempdir()
+        connector_obj = sergeant.connector.local.Connector(
+            file_path=f'{temp_folder_path}/sergeant_default_db.sqlite3',
         )
 
         cls.test_broker = sergeant.broker.Broker(

@@ -1,4 +1,5 @@
 from . import _connector
+from . import local
 from . import mongo
 from . import redis
 

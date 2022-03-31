@@ -444,6 +444,25 @@ class ConnectorTestCase:
                 )
         lock.release()
 
+        lock = self.connector.lock(
+            name='test_lock',
+        )
+        self.assertTrue(
+            expr=lock.acquire(
+                timeout=0,
+            ),
+        )
+        self.assertTrue(
+            expr=lock.is_locked(),
+        )
+        del lock
+        lock = self.connector.lock(
+            name='test_lock',
+        )
+        self.assertFalse(
+            expr=lock.is_locked(),
+        )
+
     def test_queue_consumable(
         self,
     ):
@@ -729,4 +748,16 @@ class MongoMultipleServersConnectorTestCase(
                     'replica_set': 'test_replica_set',
                 },
             ],
+        )
+
+
+class LocalConnectorTestCase(
+    ConnectorTestCase,
+    unittest.TestCase,
+):
+    def setUp(
+        self,
+    ):
+        self.connector = sergeant.connector.local.Connector(
+            file_path='/tmp/test.sqlite3',
         )

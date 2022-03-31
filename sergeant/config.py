@@ -43,8 +43,8 @@ class Encoder:
     frozen=True,
 )
 class Connector:
-    type: str
     params: typing.Dict[str, typing.Any]
+    type: typing.Literal['redis', 'mongo', 'local'] = 'local'
 
 
 @dataclasses.dataclass(
