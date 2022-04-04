@@ -45,7 +45,7 @@ class Worker(
                 kwargs={
                     'type': 'delayed',
                 },
-                consumable_from=int(time.time() + 5),
+                consumable_from=time.time() + 5,
             )
         elif task.kwargs['type'] == 'delayed':
             self.logger.info('type: delayed')

@@ -276,7 +276,7 @@ class Connector(
                 filter={
                     'queue_name': queue_name,
                     'priority': {
-                        '$lte': int(time.time()),
+                        '$lte': time.time(),
                     },
                 },
                 projection={
@@ -310,7 +310,7 @@ class Connector(
                         filter={
                             'queue_name': queue_name,
                             'priority': {
-                                '$lte': int(time.time()),
+                                '$lte': time.time(),
                             },
                         },
                         projection={
@@ -354,16 +354,16 @@ class Connector(
         queue_name: str,
         item: bytes,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from != 0:
+        if consumable_from is not None:
             priority_value = consumable_from
         elif priority == 'HIGH':
-            priority_value = 0
+            priority_value = 0.0
         elif priority == 'NORMAL':
-            priority_value = 1
+            priority_value = 1.0
         else:
-            priority_value = 1
+            priority_value = 1.0
 
         insert_one_result = self.next_connection.sergeant.task_queue.insert_one(
             document={
@@ -380,16 +380,16 @@ class Connector(
         queue_name: str,
         items: typing.Iterable[bytes],
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from != 0:
+        if consumable_from is not None:
             priority_value = consumable_from
         elif priority == 'HIGH':
-            priority_value = 0
+            priority_value = 0.0
         elif priority == 'NORMAL':
-            priority_value = 1
+            priority_value = 1.0
         else:
-            priority_value = 1
+            priority_value = 1.0
 
         insert_many_result = self.next_connection.sergeant.task_queue.insert_many(
             documents=[
@@ -424,7 +424,7 @@ class Connector(
                     filter={
                         'queue_name': queue_name,
                         'priority': {
-                            '$lte': int(time.time()),
+                            '$lte': time.time(),
                         },
                     },
                 )

@@ -39,7 +39,7 @@ class Broker:
         task_name: str,
         task: objects.Task,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
         encoded_item = self.encoder.encode(
             data=task,
@@ -59,7 +59,7 @@ class Broker:
         task_name: str,
         tasks: typing.Iterable[objects.Task],
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
         encoded_tasks = []
         for task in tasks:
@@ -112,7 +112,7 @@ class Broker:
         task_name: str,
         task: objects.Task,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
         task.run_count += 1
 
@@ -128,7 +128,7 @@ class Broker:
         task_name: str,
         task: objects.Task,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
         return self.push_task(
             task_name=task_name,

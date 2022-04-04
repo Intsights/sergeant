@@ -70,7 +70,7 @@ class Connector:
         queue_name: str,
         item: bytes,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
         raise NotImplementedError()
 
@@ -79,7 +79,7 @@ class Connector:
         queue_name: str,
         items: typing.Iterable[bytes],
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
         raise NotImplementedError()
 

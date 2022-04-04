@@ -65,13 +65,13 @@ class BrokerTestCase:
             task_name='test_task',
             task=self.tasks[1],
             priority='NORMAL',
-            consumable_from=int(time.time()),
+            consumable_from=time.time(),
         )
         self.test_broker.push_task(
             task_name='test_task',
             task=self.tasks[2],
             priority='NORMAL',
-            consumable_from=int(time.time()) + 100,
+            consumable_from=time.time() + 100,
         )
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
@@ -112,25 +112,25 @@ class BrokerTestCase:
             task_name='test_task',
             tasks=self.tasks[10:15],
             priority='NORMAL',
-            consumable_from=int(time.time()),
+            consumable_from=time.time(),
         )
         self.test_broker.push_tasks(
             task_name='test_task',
             tasks=self.tasks[15:20],
             priority='NORMAL',
-            consumable_from=int(time.time()),
+            consumable_from=time.time(),
         )
         self.test_broker.push_tasks(
             task_name='test_task',
             tasks=self.tasks[20:25],
             priority='NORMAL',
-            consumable_from=int(time.time()) + 100,
+            consumable_from=time.time() + 100,
         )
         self.test_broker.push_tasks(
             task_name='test_task',
             tasks=self.tasks[25:30],
             priority='NORMAL',
-            consumable_from=int(time.time()) + 100,
+            consumable_from=time.time() + 100,
         )
         self.assertEqual(
             first=self.test_broker.number_of_enqueued_tasks(
@@ -169,7 +169,7 @@ class BrokerTestCase:
                 task_name='test_task',
                 task=self.tasks[3],
                 priority='NORMAL',
-                consumable_from=int(time.time()),
+                consumable_from=time.time(),
             )
             test_broker.push_task(
                 task_name='test_task',
@@ -236,7 +236,7 @@ class BrokerTestCase:
                     self.tasks[5],
                 ],
                 priority='NORMAL',
-                consumable_from=int(time.time()),
+                consumable_from=time.time(),
             )
             test_broker.push_tasks(
                 task_name='test_task_one',
@@ -245,7 +245,7 @@ class BrokerTestCase:
                     self.tasks[7],
                 ],
                 priority='NORMAL',
-                consumable_from=int(time.time()),
+                consumable_from=time.time(),
             )
             test_broker.push_tasks(
                 task_name='test_task_one',

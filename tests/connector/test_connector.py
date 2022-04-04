@@ -496,13 +496,13 @@ class ConnectorTestCase:
             queue_name=self.test_queue_name,
             item=self.test_queue_item + b'1',
             priority='NORMAL',
-            consumable_from=int(time.time()),
+            consumable_from=time.time(),
         )
         self.connector.queue_push(
             queue_name=self.test_queue_name,
             item=self.test_queue_item + b'2',
             priority='NORMAL',
-            consumable_from=int(time.time() + 100),
+            consumable_from=time.time() + 100.0,
         )
         queue_length = self.connector.queue_length(
             queue_name=self.test_queue_name,
@@ -552,13 +552,13 @@ class ConnectorTestCase:
             queue_name=self.test_queue_name,
             item=self.test_queue_item + b'1',
             priority='NORMAL',
-            consumable_from=int(time.time()),
+            consumable_from=time.time(),
         )
         self.connector.queue_push(
             queue_name=self.test_queue_name,
             item=self.test_queue_item + b'2',
             priority='NORMAL',
-            consumable_from=int(time.time() + 100),
+            consumable_from=time.time() + 100,
         )
         item = self.connector.queue_pop(
             queue_name=self.test_queue_name,
@@ -595,7 +595,7 @@ class ConnectorTestCase:
                 queue_name=self.test_queue_name,
                 item=item,
                 priority='NORMAL',
-                consumable_from=int(time.time()),
+                consumable_from=time.time(),
             )
 
         items = []
@@ -614,7 +614,7 @@ class ConnectorTestCase:
             queue_name=self.test_queue_name,
             items=self.test_queue_items,
             priority='NORMAL',
-            consumable_from=int(time.time()),
+            consumable_from=time.time(),
         )
         items = []
         for i in range(len(self.test_queue_items)):
@@ -632,7 +632,7 @@ class ConnectorTestCase:
             queue_name=self.test_queue_name,
             items=self.test_queue_items,
             priority='NORMAL',
-            consumable_from=int(time.time()),
+            consumable_from=time.time(),
         )
         items = self.connector.queue_pop_bulk(
             queue_name=self.test_queue_name,

@@ -135,7 +135,7 @@ class QueueRedis(
             pipeline.zcount(
                 name=f'{queue_name}.delayed',
                 min=0,
-                max=int(time.time()),
+                max=time.time(),
             )
 
         return sum(pipeline.execute())
@@ -168,7 +168,7 @@ class QueueRedis(
         else:
             delayed_item, delayed_item_score = result[0]
 
-        if delayed_item_score <= int(time.time()):
+        if delayed_item_score <= time.time():
             return delayed_item
         else:
             self.zadd(
@@ -200,7 +200,7 @@ class QueueRedis(
                 ],
                 args=[
                     delayed_items_to_pull,
-                    int(time.time()),
+                    time.time(),
                 ],
             )
 
@@ -310,9 +310,9 @@ class Connector(
         queue_name: str,
         item: bytes,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from == 0:
+        if consumable_from is None:
             if priority == 'HIGH':
                 return self.next_connection.lpush(queue_name, item) > 0
             else:
@@ -331,9 +331,9 @@ class Connector(
         queue_name: str,
         items: typing.Iterable[bytes],
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from == 0:
+        if consumable_from is None:
             if priority == 'HIGH':
                 return self.next_connection.lpush(queue_name, *items) > 0
             else:

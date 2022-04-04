@@ -165,7 +165,7 @@ class Worker:
         kwargs: typing.Dict[str, typing.Any],
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
         trace_id: typing.Optional[str] = None,
     ) -> bool:
         task = objects.Task(
@@ -185,7 +185,7 @@ class Worker:
         kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
         task_name: typing.Optional[str] = None,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
         trace_id: typing.Optional[str] = None,
     ) -> bool:
         trace_id = trace_id if trace_id is not None else self.get_trace_id()
@@ -366,7 +366,7 @@ class Worker:
         self,
         task: objects.Task,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> None:
         if self.config.max_retries > 0 and self.config.max_retries <= task.run_count:
             raise WorkerMaxRetries()
@@ -384,7 +384,7 @@ class Worker:
         self,
         task: objects.Task,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> None:
         self.broker.requeue(
             task_name=self.config.name,

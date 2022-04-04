@@ -167,7 +167,7 @@ class Connector(
                 PRAGMA journal_mode = OFF;
                 PRAGMA synchronous = FULL;
 
-                CREATE TABLE IF NOT EXISTS task_queue (queue_name TEXT, priority INTEGER, value BLOB);
+                CREATE TABLE IF NOT EXISTS task_queue (queue_name TEXT, priority REAL, value BLOB);
                 CREATE INDEX IF NOT EXISTS queue_by_priority ON task_queue (queue_name, priority);
 
                 CREATE TABLE IF NOT EXISTS keys (name TEXT, value BLOB);
@@ -262,7 +262,7 @@ class Connector(
             ''',
             (
                 queue_name,
-                int(time.time()),
+                time.time(),
             ),
         )
 
@@ -289,7 +289,7 @@ class Connector(
             ''',
             (
                 queue_name,
-                int(time.time()),
+                time.time(),
                 number_of_items,
             ),
         )
@@ -309,16 +309,16 @@ class Connector(
         queue_name: str,
         item: bytes,
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from != 0:
+        if consumable_from is not None:
             priority_value = consumable_from
         elif priority == 'HIGH':
-            priority_value = 0
+            priority_value = 0.0
         elif priority == 'NORMAL':
-            priority_value = 1
+            priority_value = 1.0
         else:
-            priority_value = 1
+            priority_value = 1.0
 
         cursor = self.connection.execute(
             '''
@@ -339,16 +339,16 @@ class Connector(
         queue_name: str,
         items: typing.Iterable[bytes],
         priority: str = 'NORMAL',
-        consumable_from: int = 0,
+        consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from != 0:
+        if consumable_from is not None:
             priority_value = consumable_from
         elif priority == 'HIGH':
-            priority_value = 0
+            priority_value = 0.0
         elif priority == 'NORMAL':
-            priority_value = 1
+            priority_value = 1.0
         else:
-            priority_value = 1
+            priority_value = 1.0
 
         cursor = self.connection.executemany(
             '''
@@ -390,7 +390,7 @@ class Connector(
                 ''',
                 (
                     queue_name,
-                    int(time.time()),
+                    time.time(),
                 ),
             )
 
