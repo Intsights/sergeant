@@ -1,5 +1,6 @@
 import tempfile
 import time
+import typing
 import unittest
 import unittest.mock
 
@@ -9,7 +10,13 @@ import sergeant.encoder
 import sergeant.objects
 
 
-class BrokerTestCase:
+class BrokerTestCase(
+    unittest.TestCase,
+):
+    __test__ = False
+
+    test_broker: sergeant.broker.Broker
+    test_brokers: typing.List[sergeant.broker.Broker]
     tasks = [
         sergeant.objects.Task(
             kwargs={
@@ -567,8 +574,9 @@ class BrokerTestCase:
 
 class RedisSingleServerBrokerTestCase(
     BrokerTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     @classmethod
     def setUpClass(
         cls,
@@ -613,8 +621,9 @@ class RedisSingleServerBrokerTestCase(
 
 class RedisMultipleServerBrokerTestCase(
     BrokerTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     @classmethod
     def setUpClass(
         cls,
@@ -665,8 +674,9 @@ class RedisMultipleServerBrokerTestCase(
 
 class MongoSingleServerConnectorTestCase(
     BrokerTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     @classmethod
     def setUpClass(
         cls,
@@ -710,8 +720,9 @@ class MongoSingleServerConnectorTestCase(
 
 class MongoMultipleServersConnectorTestCase(
     BrokerTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     @classmethod
     def setUpClass(
         cls,
@@ -760,8 +771,9 @@ class MongoMultipleServersConnectorTestCase(
 
 class LocalBrokerTestCase(
     BrokerTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     @classmethod
     def setUpClass(
         cls,

@@ -5,7 +5,12 @@ import unittest.mock
 import sergeant.connector
 
 
-class ConnectorTestCase:
+class ConnectorTestCase(
+    unittest.TestCase,
+):
+    __test__ = False
+
+    connector: sergeant.connector._connector.Connector
     test_queue_name = 'test_queue_name'
     test_queue_item = b'test_queue_item'
     test_queue_items = [
@@ -668,8 +673,9 @@ class ConnectorTestCase:
 
 class RedisSingleServerConnectorTestCase(
     ConnectorTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     def setUp(
         self,
     ):
@@ -687,8 +693,9 @@ class RedisSingleServerConnectorTestCase(
 
 class RedisMultipleServersConnectorTestCase(
     ConnectorTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     def setUp(
         self,
     ):
@@ -712,8 +719,9 @@ class RedisMultipleServersConnectorTestCase(
 
 class MongoSingleServerConnectorTestCase(
     ConnectorTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     def setUp(
         self,
     ):
@@ -730,8 +738,9 @@ class MongoSingleServerConnectorTestCase(
 
 class MongoMultipleServersConnectorTestCase(
     ConnectorTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     def setUp(
         self,
     ):
@@ -753,8 +762,9 @@ class MongoMultipleServersConnectorTestCase(
 
 class LocalConnectorTestCase(
     ConnectorTestCase,
-    unittest.TestCase,
 ):
+    __test__ = True
+
     def setUp(
         self,
     ):

@@ -1,6 +1,11 @@
 import unittest
 import unittest.mock
 
+import sergeant.broker
+import sergeant.config
+import sergeant.connector
+import sergeant.encoder
+import sergeant.logging
 import sergeant.worker
 
 
@@ -13,10 +18,6 @@ class WorkerInitializersTestCase(
         worker = sergeant.worker.Worker()
         worker.config = sergeant.config.WorkerConfig(
             name='some_worker',
-            connector=sergeant.config.Connector(
-                type='',
-                params={},
-            ),
         )
 
         worker.init_logger()
@@ -26,10 +27,6 @@ class WorkerInitializersTestCase(
 
         worker.config = sergeant.config.WorkerConfig(
             name='some_worker',
-            connector=sergeant.config.Connector(
-                type='',
-                params={},
-            ),
             logging=sergeant.config.Logging(
                 handlers=[
                     sergeant.logging.logstash.LogstashHandler(
@@ -214,10 +211,6 @@ class WorkerInitializersTestCase(
         worker = sergeant.worker.Worker()
         worker.config = sergeant.config.WorkerConfig(
             name='some_worker',
-            connector=sergeant.config.Connector(
-                type='',
-                params={},
-            ),
         )
         worker.init_executor()
         self.assertIsInstance(
@@ -227,10 +220,6 @@ class WorkerInitializersTestCase(
 
         worker.config = sergeant.config.WorkerConfig(
             name='some_worker',
-            connector=sergeant.config.Connector(
-                type='',
-                params={},
-            ),
             number_of_threads=1,
         )
         worker.init_executor()
@@ -241,10 +230,6 @@ class WorkerInitializersTestCase(
 
         worker.config = sergeant.config.WorkerConfig(
             name='some_worker',
-            connector=sergeant.config.Connector(
-                type='',
-                params={},
-            ),
             number_of_threads=2,
         )
         worker.init_executor()
