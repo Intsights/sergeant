@@ -1,4 +1,5 @@
 import typing
+import typing_extensions
 
 from . import compressor
 from . import serializer
@@ -18,8 +19,8 @@ class Encoder:
 
     def __init__(
         self,
-        compressor_name: typing.Optional[str],
-        serializer_name: str,
+        compressor_name: typing.Optional[typing_extensions.Literal['bzip2', 'gzip', 'lzma', 'zlib', 'dummy']],
+        serializer_name: typing_extensions.Literal['msgpack', 'pickle'],
     ) -> None:
         self.compressor = None
         if compressor_name:

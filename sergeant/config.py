@@ -37,8 +37,8 @@ class Logging:
     frozen=True,
 )
 class Encoder:
-    compressor: typing.Optional[str] = None
-    serializer: str = 'pickle'
+    compressor: typing.Optional[typing_extensions.Literal['bzip2', 'gzip', 'lzma', 'zlib', 'dummy']] = None
+    serializer: typing_extensions.Literal['msgpack', 'pickle'] = 'pickle'
 
 
 @dataclasses.dataclass(
