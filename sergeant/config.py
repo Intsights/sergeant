@@ -46,7 +46,7 @@ class Encoder:
 )
 class Connector:
     params: typing.Dict[str, typing.Any]
-    type: typing_extensions.Literal['redis', 'mongo', 'local'] = 'local'
+    type: typing_extensions.Literal['redis', 'mongo', 'local', 'postgres'] = 'local'
 
 
 @dataclasses.dataclass(

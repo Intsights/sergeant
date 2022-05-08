@@ -771,3 +771,34 @@ class LocalConnectorTestCase(
         self.connector = sergeant.connector.local.Connector(
             file_path='/tmp/test.sqlite3',
         )
+
+
+class PostgresSingleServerConnectorTestCase(
+    ConnectorTestCase,
+):
+    __test__ = True
+
+    def setUp(
+        self,
+    ):
+        self.connector = sergeant.connector.postgres.Connector(
+            connection_strings=[
+                'postgresql://postgres:mysecretpassword@127.0.0.1:5432/',
+            ]
+        )
+
+
+class PostgresMultipleServersConnectorTestCase(
+    ConnectorTestCase,
+):
+    __test__ = True
+
+    def setUp(
+        self,
+    ):
+        self.connector = sergeant.connector.postgres.Connector(
+            connection_strings=[
+                'postgresql://postgres:mysecretpassword@127.0.0.1:5432/',
+                'postgresql://postgres:mysecretpassword@127.0.0.1:5433/',
+            ]
+        )

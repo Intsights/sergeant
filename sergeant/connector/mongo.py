@@ -412,15 +412,15 @@ class Connector(
     ) -> int:
         queue_length = 0
 
-        for i in range(self.number_of_connections):
+        for connection in self.connections:
             if include_delayed:
-                queue_length += self.next_connection.sergeant.task_queue.count_documents(
+                queue_length += connection.sergeant.task_queue.count_documents(
                     filter={
                         'queue_name': queue_name,
                     },
                 )
             else:
-                queue_length += self.next_connection.sergeant.task_queue.count_documents(
+                queue_length += connection.sergeant.task_queue.count_documents(
                     filter={
                         'queue_name': queue_name,
                         'priority': {
