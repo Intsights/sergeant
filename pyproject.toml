@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "sergeant"
-version = "0.25.0"
+version = "0.26.0"
 readme = "README.md"
 homepage = "https://github.com/Intsights/sergeant"
 repository = "https://github.com/Intsights/sergeant"
@@ -39,6 +39,7 @@ psutil = "^5"
 pymongo = ">=3.0,<5.0"
 redis = "^4"
 typing_extensions = "^3.10"
+psycopg = {version = "^3", extras = ["binary"]}
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"
