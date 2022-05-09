@@ -5,7 +5,7 @@ on:
 jobs:
   lint:
     if: github.event_name == 'push' && !startsWith(github.event.ref, 'refs/tags')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -41,7 +41,7 @@ jobs:
           - '3.9'
           - '3.10'
         os:
-          - ubuntu-latest
+          - ubuntu-22.04
     services:
       redis-node-one:
         image: redis
