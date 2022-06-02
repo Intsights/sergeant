@@ -38,11 +38,11 @@ class Lock(
                 expire_at = time.time() + ttl
                 with self.connection.cursor() as cursor:
                     cursor.execute(
-                        '''
+                        query='''
                             INSERT INTO locks (name, expire_at)
                             VALUES(%s, %s);
                         ''',
-                        (
+                        params=(
                             self.name,
                             expire_at,
                         ),
@@ -62,19 +62,19 @@ class Lock(
         if self.acquired:
             with self.connection.cursor() as cursor:
                 cursor.execute(
-                    '''
+                    query='''
                         DELETE FROM locks WHERE expire_at < %s;
                     ''',
-                    (
+                    params=(
                         time.time(),
                     ),
                 )
 
                 cursor.execute(
-                    '''
+                    query='''
                         DELETE FROM locks WHERE name = %s;
                     ''',
-                    (
+                    params=(
                         self.name,
                     ),
                 )
@@ -89,11 +89,11 @@ class Lock(
     ) -> bool:
         with self.connection.cursor() as cursor:
             cursor.execute(
-                '''
+                query='''
                     SELECT * FROM locks
                     WHERE name = %s AND expire_at > %s;
                 ''',
-                (
+                params=(
                     self.name,
                     time.time(),
                 ),
@@ -113,12 +113,12 @@ class Lock(
 
         with self.connection.cursor() as cursor:
             cursor.execute(
-                '''
+                query='''
                     UPDATE locks
                     SET expire_at = %s
                     WHERE name = %s AND expire_at > %s;
                 ''',
-                (
+                params=(
                     now + ttl,
                     self.name,
                     now,
@@ -134,11 +134,11 @@ class Lock(
 
         with self.connection.cursor() as cursor:
             cursor.execute(
-                '''
+                query='''
                     SELECT expire_at FROM locks
                     WHERE name = %s;
                 ''',
-                (
+                params=(
                     self.name,
                 ),
             )
@@ -176,7 +176,7 @@ class Connector(
             with connection.cursor() as cursor:
                 try:
                     cursor.execute(
-                        '''
+                        query='''
                             CREATE DATABASE sergeant WITH ENCODING 'UTF8';
                         '''
                     )
@@ -223,11 +223,11 @@ class Connector(
         with key_server_connection.cursor() as cursor:
             try:
                 cursor.execute(
-                    '''
+                    query='''
                         INSERT INTO keys (name, value)
                         VALUES(%s, %s);
                     ''',
-                    (
+                    params=(
                         key,
                         value,
                     ),
@@ -246,10 +246,10 @@ class Connector(
 
         with key_server_connection.cursor() as cursor:
             cursor.execute(
-                '''
+                query='''
                     SELECT value FROM keys WHERE name = %s;
                 ''',
-                (
+                params=(
                     key,
                 ),
             )
@@ -269,10 +269,10 @@ class Connector(
 
         with key_server_connection.cursor() as cursor:
             cursor.execute(
-                '''
+                query='''
                     DELETE FROM keys WHERE name = %s;
                 ''',
-                (
+                params=(
                     key,
                 ),
             )
@@ -290,7 +290,7 @@ class Connector(
                 ),
             ) as cursor:
                 cursor.execute(
-                    '''
+                    query='''
                         DELETE FROM task_queue
                         WHERE id = any(
                             array(
@@ -302,7 +302,7 @@ class Connector(
                         )
                         RETURNING value;
                     ''',
-                    (
+                    params=(
                         queue_name,
                         time.time(),
                     ),
@@ -329,7 +329,7 @@ class Connector(
                 ),
             ) as cursor:
                 cursor.execute(
-                    '''
+                    query='''
                         DELETE FROM task_queue
                         WHERE id = any(
                             array(
@@ -341,7 +341,7 @@ class Connector(
                         )
                         RETURNING value;
                     ''',
-                    (
+                    params=(
                         queue_name,
                         time.time(),
                         current_count,
@@ -374,11 +374,11 @@ class Connector(
 
         with self.next_connection.cursor() as cursor:
             cursor.execute(
-                '''
+                query='''
                     INSERT INTO task_queue (queue_name, priority, value)
                     VALUES(%s, %s, %s);
                 ''',
-                (
+                params=(
                     queue_name,
                     priority_value,
                     item,
@@ -409,7 +409,7 @@ class Connector(
                 for item in items
             )
             cursor.execute(
-                f'''
+                query=f'''
                     INSERT INTO task_queue (queue_name, priority, value)
                     VALUES {
                         ','.join(values)
@@ -430,21 +430,21 @@ class Connector(
             with connection.cursor() as cursor:
                 if include_delayed:
                     cursor.execute(
-                        '''
+                        query='''
                             SELECT COUNT(*) FROM task_queue
                             WHERE queue_name = %s;
                         ''',
-                        (
+                        params=(
                             queue_name,
                         ),
                     )
                 else:
                     cursor.execute(
-                        '''
+                        query='''
                             SELECT COUNT(*) FROM task_queue
                             WHERE queue_name = %s AND priority <= %s;
                         ''',
-                        (
+                        params=(
                             queue_name,
                             time.time(),
                         ),
@@ -465,10 +465,10 @@ class Connector(
         for connection in self.connections:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    '''
+                    query='''
                         DELETE FROM task_queue WHERE queue_name = %s;
                     ''',
-                    (
+                    params=(
                         queue_name,
                     ),
                 )
