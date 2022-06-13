@@ -728,7 +728,7 @@ class MongoSingleServerConnectorTestCase(
         self.connector = sergeant.connector.mongo.Connector(
             nodes=[
                 {
-                    'host': 'localhost',
+                    'host': 'mongo-node-one',
                     'port': 27017,
                     'replica_set': 'test_replica_set',
                 },
@@ -747,12 +747,12 @@ class MongoMultipleServersConnectorTestCase(
         self.connector = sergeant.connector.mongo.Connector(
             nodes=[
                 {
-                    'host': 'localhost',
+                    'host': 'mongo-node-one',
                     'port': 27017,
                     'replica_set': 'test_replica_set',
                 },
                 {
-                    'host': 'localhost',
+                    'host': 'mongo-node-two',
                     'port': 27018,
                     'replica_set': 'test_replica_set',
                 },
