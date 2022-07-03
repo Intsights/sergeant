@@ -2,8 +2,10 @@ import argparse
 import multiprocessing
 import multiprocessing.context
 import psutil
+import select
 import shlex
 import signal
+import socket
 import subprocess
 import sys
 import time
@@ -86,6 +88,37 @@ class SupervisedWorker:
         self.kill()
 
 
+class LivenessServer:
+    def __init__(
+        self,
+        port: int,
+    ) -> None:
+        self.port = port
+
+    def start(
+        self,
+    ) -> None:
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.bind(
+            (
+                '0.0.0.0',
+                self.port,
+            ),
+        )
+        self.socket.listen()
+
+    def process_requests(
+        self,
+        timeout: float = 0.5,
+    ) -> None:
+        readable, _, _ = select.select([self.socket], [], [], timeout)
+        for open_connection in readable:
+            client_socket, address = open_connection.accept()
+            client_socket.shutdown(socket.SHUT_RDWR)
+            client_socket.close()
+
+
 class Supervisor:
     def __init__(
         self,
@@ -94,6 +127,7 @@ class Supervisor:
         concurrent_workers: int,
         max_worker_memory_usage: typing.Optional[int] = None,
         logger: typing.Optional[logging.Logger] = None,
+        liveness_server_port: typing.Optional[int] = None,
     ):
         self.worker_module_name = worker_module_name
         self.worker_class_name = worker_class_name
@@ -128,6 +162,14 @@ class Supervisor:
             stream_handler.setFormatter(formatter)
             self.logger.addHandler(stream_handler)
             self.logger.setLevel(logging.INFO)
+
+        if liveness_server_port is not None:
+            self.liveness_server = LivenessServer(
+                port=liveness_server_port,
+            )
+            self.liveness_server.start()
+        else:
+            self.liveness_server = None
 
         self.current_workers: typing.List[SupervisedWorker] = []
 
@@ -174,7 +216,10 @@ class Supervisor:
 
                 self.clean_zombies()
 
-                time.sleep(0.5)
+                if self.liveness_server:
+                    self.liveness_server.process_requests(
+                        timeout=0.5,
+                    )
 
             self.logger.info(
                 msg='no more workers to supervise',
@@ -406,6 +451,13 @@ def main() -> None:
         required=False,
         dest='max_worker_memory_usage',
     )
+    parser.add_argument(
+        '--liveness-server-port',
+        help='TCP port to listen to to handle liveness checks. If empty, no liveness server will be started.',
+        type=int,
+        required=False,
+        dest='liveness_server_port',
+    )
     args = parser.parse_args()
 
     supervisor = Supervisor(
@@ -413,6 +465,7 @@ def main() -> None:
         worker_class_name=args.worker_class,
         concurrent_workers=args.concurrent_workers,
         max_worker_memory_usage=args.max_worker_memory_usage,
+        liveness_server_port=args.liveness_server_port,
     )
     supervisor.start()
 
