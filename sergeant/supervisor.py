@@ -425,9 +425,9 @@ def main() -> None:
     )
     parser.add_argument(
         '--concurrent-workers',
-        help='Number of subprocesses to open',
+        help='The number of subprocesses to open. It will use the number of CPUs if not supplied.',
         type=int,
-        required=True,
+        default=psutil.cpu_count(),
         dest='concurrent_workers',
     )
     parser.add_argument(
@@ -453,7 +453,7 @@ def main() -> None:
     )
     parser.add_argument(
         '--liveness-server-port',
-        help='TCP port to listen to to handle liveness checks. If empty, no liveness server will be started.',
+        help='TCP port for checking liveness. There will be no liveness server started if this field is empty.',
         type=int,
         required=False,
         dest='liveness_server_port',
