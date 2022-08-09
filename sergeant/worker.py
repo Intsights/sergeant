@@ -37,6 +37,8 @@ class Worker:
         )
         self.executor_obj: typing.Optional[executor._executor.Executor] = None
 
+        self.received_stop_signal = False
+
         signal.signal(signal.SIGTERM, self.stop_signal_handler)
 
     def generate_config(
@@ -55,8 +57,9 @@ class Worker:
             msg='stop signal has been received',
         )
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        self.received_stop_signal = True
 
-        raise WorkerStop()
+        self.stop()
 
     def init_worker(
         self,
@@ -259,6 +262,9 @@ class Worker:
 
                         yield task
                 finally:
+                    if self.received_stop_signal:
+                        iterated_tasks -= 1
+
                     if iterated_tasks < len(tasks):
                         self.push_tasks(
                             kwargs_list=[
@@ -615,6 +621,34 @@ class Worker:
                 },
             )
 
+    def handle_stop(
+        self,
+        task: objects.Task,
+    ) -> None:
+        try:
+            if self.config.logging.events.on_stop:
+                self.logger.error(
+                    msg='task has stopped',
+                    extra={
+                        'task': task,
+                        'received_stop_signal': self.received_stop_signal,
+                    },
+                )
+
+            self.on_stop(
+                task=task,
+            )
+        except WorkerInterrupt:
+            raise
+        except Exception as exception:
+            self.logger.error(
+                msg=f'on_stop handler has failed: {exception}',
+                extra={
+                    'task': task,
+                    'received_stop_signal': self.received_stop_signal,
+                },
+            )
+
     def initialize(
         self,
     ) -> None:
@@ -686,6 +720,12 @@ class Worker:
     def on_starvation(
         self,
         time_with_no_tasks: int,
+    ) -> None:
+        pass
+
+    def on_stop(
+        self,
+        task: objects.Task,
     ) -> None:
         pass
 

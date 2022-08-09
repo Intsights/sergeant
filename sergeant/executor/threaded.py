@@ -133,6 +133,17 @@ class ThreadedExecutor(
             self.worker_object.handle_requeue(
                 task=task,
             )
+        except worker.WorkerStop as exception:
+            self.post_work(
+                task=task,
+                success=False,
+                exception=exception,
+                killer_object=killer_object,
+            )
+
+            self.worker_object.handle_stop(
+                task=task,
+            )
         except worker.WorkerInterrupt as exception:
             self.post_work(
                 task=task,
