@@ -1,6 +1,6 @@
 # on_stop
 
-The `on_stop` handler is invoked when a task called the `stop` method or a when a SIGTERM signal received.
+The `on_stop` handler is invoked when a task calls the stop method or receives a `SIGTERM` signal.
 
 ## Definition
 

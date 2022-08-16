@@ -43,7 +43,7 @@ There are the following configuration options:
     - `on_retry` [True] - Whenever a task asks for retry.
     - `on_max_retries` [True] - Each time a task asks for a retry beyond the maximum number of tries.
     - `on_requeue` [True] - Every time a task requeues.
-    - `on_stop` [True] - Every time a task stopped on the middle.
+    - `on_stop` [True] - Every time a task calls `stop` or is interrupted by a `SIGTERM`.
 - `handlers` - List of handlers [logging.Handler] attached to the `logging.Logger` object.
 
 
