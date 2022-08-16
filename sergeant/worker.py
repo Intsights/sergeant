@@ -627,7 +627,7 @@ class Worker:
     ) -> None:
         try:
             if self.config.logging.events.on_stop:
-                self.logger.error(
+                self.logger.warning(
                     msg='task has stopped',
                     extra={
                         'task': task,
