@@ -697,6 +697,123 @@ class WorkerHandlersTestCase(
             },
         )
 
+    def test_on_stop(
+        self,
+    ):
+        worker = sergeant.worker.Worker()
+        worker.config = sergeant.config.WorkerConfig(
+            name='some_worker',
+            connector=sergeant.config.Connector(
+                type='redis',
+                params={
+                    'nodes': [
+                        {
+                            'host': 'localhost',
+                            'port': 6379,
+                            'password': None,
+                            'database': 0,
+                        },
+                    ],
+                },
+            ),
+            max_retries=3,
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_stop=False,
+                ),
+            ),
+        )
+        worker.init_broker()
+
+        task = sergeant.objects.Task()
+
+        worker.on_stop = unittest.mock.MagicMock()
+        worker.logger = unittest.mock.MagicMock()
+
+        worker.handle_stop(
+            task=task,
+        )
+        worker.on_stop.assert_called_once()
+        worker.logger.info.assert_not_called()
+
+        worker.on_stop.reset_mock()
+        worker.logger.reset_mock()
+        worker.config = worker.config.replace(
+            logging=sergeant.config.Logging(
+                events=sergeant.config.LoggingEvents(
+                    on_stop=True,
+                ),
+            ),
+        )
+        worker.handle_stop(
+            task=task,
+        )
+        worker.on_stop.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has stopped',
+            extra={
+                'task': task,
+                'received_stop_signal': False,
+            },
+        )
+
+        worker.on_stop.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_stop.side_effect = Exception('exception message')
+        worker.handle_stop(
+            task=task,
+        )
+        worker.on_stop.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has stopped',
+            extra={
+                'task': task,
+                'received_stop_signal': False,
+            },
+        )
+        worker.logger.error.assert_called_once_with(
+            msg='on_stop handler has failed: exception message',
+            extra={
+                'task': task,
+            },
+        )
+
+        worker.on_stop.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_stop.side_effect = sergeant.worker.WorkerStop()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerStop,
+        ):
+            worker.handle_stop(
+                task=task,
+            )
+        worker.on_stop.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has stopped',
+            extra={
+                'task': task,
+                'received_stop_signal': False,
+            },
+        )
+
+        worker.on_stop.reset_mock()
+        worker.logger.reset_mock()
+        worker.on_stop.side_effect = sergeant.worker.WorkerRespawn()
+        with self.assertRaises(
+            expected_exception=sergeant.worker.WorkerRespawn,
+        ):
+            worker.handle_stop(
+                task=task,
+            )
+        worker.on_stop.assert_called_once()
+        worker.logger.info.assert_called_once_with(
+            msg='task has stopped',
+            extra={
+                'task': task,
+                'received_stop_signal': False,
+            },
+        )
+
     def test_on_starvation(
         self,
     ):

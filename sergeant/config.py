@@ -17,6 +17,7 @@ class LoggingEvents:
     on_max_retries: bool = True
     on_requeue: bool = True
     on_starvation: bool = True
+    on_stop: bool = True
 
 
 @dataclasses.dataclass(

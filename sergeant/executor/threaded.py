@@ -141,6 +141,14 @@ class ThreadedExecutor(
                 killer_object=killer_object,
             )
 
+            if isinstance(
+                exception,
+                worker.WorkerStop,
+            ):
+                self.worker_object.handle_stop(
+                    task=task,
+                )
+
             self.interrupt_exception = exception
         except Exception as exception:
             self.post_work(
