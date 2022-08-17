@@ -60,8 +60,5 @@ def stop(
         self,
         task,
     ):
-        super().on_stop(
-            task=task,
-        )
         self.database.close()
     ```
