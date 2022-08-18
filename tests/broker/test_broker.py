@@ -807,3 +807,86 @@ class LocalBrokerTestCase(
                         encoder=encoder_obj,
                     )
                 )
+
+
+class PostgresSingleServerBrokerTestCase(
+    BrokerTestCase,
+):
+    __test__ = True
+
+    @classmethod
+    def setUpClass(
+        cls,
+    ):
+        cls.test_brokers = []
+        connector_obj = sergeant.connector.postgres.Connector(
+            connection_strings=[
+                'postgresql://postgres:mysecretpassword@127.0.0.1:5432/',
+            ]
+        )
+
+        cls.test_broker = sergeant.broker.Broker(
+            connector=connector_obj,
+            encoder=sergeant.encoder.encoder.Encoder(
+                compressor_name=None,
+                serializer_name='pickle',
+            ),
+        )
+
+        compressor_names = list(sergeant.encoder.encoder.Encoder.compressors.keys())
+        compressor_names.append(None)
+        serializer_names = sergeant.encoder.encoder.Encoder.serializers.keys()
+        for compressor_name in compressor_names:
+            for serializer_name in serializer_names:
+                encoder_obj = sergeant.encoder.encoder.Encoder(
+                    compressor_name=compressor_name,
+                    serializer_name=serializer_name,
+                )
+                cls.test_brokers.append(
+                    sergeant.broker.Broker(
+                        connector=connector_obj,
+                        encoder=encoder_obj,
+                    )
+                )
+
+
+class PostgresMultipleServersBrokerTestCase(
+    BrokerTestCase,
+):
+    __test__ = True
+
+    @classmethod
+    def setUpClass(
+        cls,
+    ):
+        cls.test_brokers = []
+        connector_obj = sergeant.connector.postgres.Connector(
+            connection_strings=[
+                'postgresql://postgres:mysecretpassword@127.0.0.1:5432/',
+                'postgresql://postgres:mysecretpassword@127.0.0.1:5433/',
+            ]
+        )
+
+        cls.test_broker = sergeant.broker.Broker(
+            connector=connector_obj,
+            encoder=sergeant.encoder.encoder.Encoder(
+                compressor_name=None,
+                serializer_name='pickle',
+            ),
+        )
+
+        compressor_names = list(sergeant.encoder.encoder.Encoder.compressors.keys())
+        compressor_names.append(None)
+        serializer_names = sergeant.encoder.encoder.Encoder.serializers.keys()
+        for compressor_name in compressor_names:
+            for serializer_name in serializer_names:
+                encoder_obj = sergeant.encoder.encoder.Encoder(
+                    compressor_name=compressor_name,
+                    serializer_name=serializer_name,
+                )
+                cls.test_brokers.append(
+                    sergeant.broker.Broker(
+                        connector=connector_obj,
+                        encoder=encoder_obj,
+                    )
+                )

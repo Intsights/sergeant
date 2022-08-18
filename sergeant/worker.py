@@ -110,6 +110,8 @@ class Worker:
         connector_obj: connector.Connector
         if self.config.connector.type == 'mongo':
             connector_obj = connector.mongo.Connector(**self.config.connector.params)
+        elif self.config.connector.type == 'postgres':
+            connector_obj = connector.postgres.Connector(**self.config.connector.params)
         elif self.config.connector.type == 'redis':
             connector_obj = connector.redis.Connector(**self.config.connector.params)
         elif self.config.connector.type == 'local':

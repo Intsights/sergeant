@@ -5,7 +5,7 @@ on:
 jobs:
   lint:
     if: github.event_name == 'push' && !startsWith(github.event.ref, 'refs/tags')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -41,7 +41,7 @@ jobs:
           - '3.9'
           - '3.10'
         os:
-          - ubuntu-latest
+          - ubuntu-22.04
     services:
       redis-node-one:
         image: redis
@@ -69,6 +69,18 @@ jobs:
           MONGODB_REPLICA_SET_MODE: primary
           MONGODB_REPLICA_SET_NAME: test_replica_set
           ALLOW_EMPTY_PASSWORD: 'yes'
+      postgres-node-one:
+        image: 'postgres:latest'
+        ports:
+          - '5432:5432'
+        env:
+          POSTGRES_PASSWORD: 'mysecretpassword'
+      postgres-node-two:
+        image: 'postgres:latest'
+        ports:
+          - '5433:5432'
+        env:
+          POSTGRES_PASSWORD: 'mysecretpassword'
     steps:
       - name: Checkout
         uses: actions/checkout@v3

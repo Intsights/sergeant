@@ -35,7 +35,7 @@ class Lock(
                 expire_at = time.time() + ttl
                 self.connection.execute(
                     '''
-                        INSERT INTO locks (name, expireAt)
+                        INSERT INTO locks (name, expire_at)
                         VALUES(?, ?);
                     ''',
                     (
@@ -55,16 +55,16 @@ class Lock(
     def release(
         self,
     ) -> bool:
-        self.connection.execute(
-            '''
-                DELETE FROM locks WHERE expireAt < ?;
-            ''',
-            (
-                time.time(),
-            ),
-        )
-
         if self.acquired:
+            self.connection.execute(
+                '''
+                    DELETE FROM locks WHERE expire_at < ?;
+                ''',
+                (
+                    time.time(),
+                ),
+            )
+
             cursor = self.connection.execute(
                 '''
                     DELETE FROM locks WHERE name = ?;
@@ -85,7 +85,7 @@ class Lock(
         cursor = self.connection.execute(
             '''
                 SELECT * FROM locks
-                WHERE name = ? AND expireAt > ?;
+                WHERE name = ? AND expire_at > ?;
             ''',
             (
                 self.name,
@@ -107,8 +107,8 @@ class Lock(
         cursor = self.connection.execute(
             '''
                 UPDATE locks
-                SET expireAt = ?
-                WHERE name = ? AND expireAt > ?;
+                SET expire_at = ?
+                WHERE name = ? AND expire_at > ?;
             ''',
             (
                 now + ttl,
@@ -125,7 +125,7 @@ class Lock(
         now = time.time()
         cursor = self.connection.execute(
             '''
-                SELECT expireAt FROM locks
+                SELECT expire_at FROM locks
                 WHERE name = ?;
             ''',
             (
@@ -173,9 +173,9 @@ class Connector(
                 CREATE TABLE IF NOT EXISTS keys (name TEXT, value BLOB);
                 CREATE UNIQUE INDEX IF NOT EXISTS key_by_name ON keys (name);
 
-                CREATE TABLE IF NOT EXISTS locks (name TEXT, expireAt REAL);
+                CREATE TABLE IF NOT EXISTS locks (name TEXT, expire_at REAL);
                 CREATE UNIQUE INDEX IF NOT EXISTS lock_by_name ON locks (name);
-                CREATE INDEX IF NOT EXISTS lock_by_expireAt ON locks (expireAt);
+                CREATE INDEX IF NOT EXISTS lock_by_expire_at ON locks (expire_at);
             '''
         )
 
