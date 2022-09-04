@@ -312,7 +312,7 @@ class Connector(
         priority: str = 'NORMAL',
         consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from is None:
+        if not consumable_from:
             if priority == 'HIGH':
                 return self.next_connection.lpush(queue_name, item) > 0
             else:
@@ -333,7 +333,7 @@ class Connector(
         priority: str = 'NORMAL',
         consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from is None:
+        if not consumable_from:
             if priority == 'HIGH':
                 return self.next_connection.lpush(queue_name, *items) > 0
             else:

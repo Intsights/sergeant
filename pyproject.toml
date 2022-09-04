@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "sergeant"
-version = "0.26.0"
+version = "0.27.0"
 readme = "README.md"
 homepage = "https://github.com/Intsights/sergeant"
 repository = "https://github.com/Intsights/sergeant"
