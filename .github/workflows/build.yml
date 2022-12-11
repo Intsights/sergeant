@@ -59,7 +59,7 @@ jobs:
           - '27017:27017'
         env:
           MONGODB_REPLICA_SET_MODE: primary
-          MONGODB_REPLICA_SET_NAME: test_replica_set
+          MONGODB_REPLICA_SET_NAME: test_replica_set_one
           ALLOW_EMPTY_PASSWORD: 'yes'
           MONGODB_ADVERTISED_HOSTNAME: 'localhost'
       mongo-node-two:
@@ -68,7 +68,7 @@ jobs:
           - '27018:27017'
         env:
           MONGODB_REPLICA_SET_MODE: primary
-          MONGODB_REPLICA_SET_NAME: test_replica_set
+          MONGODB_REPLICA_SET_NAME: test_replica_set_two
           ALLOW_EMPTY_PASSWORD: 'yes'
           MONGODB_ADVERTISED_HOSTNAME: 'localhost'
     steps:

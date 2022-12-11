@@ -688,7 +688,7 @@ class MongoSingleServerConnectorTestCase(
                 {
                     'host': 'localhost',
                     'port': 27017,
-                    'replica_set': 'test_replica_set',
+                    'replica_set': 'test_replica_set_one',
                 },
             ],
         )
@@ -734,12 +734,12 @@ class MongoMultipleServersConnectorTestCase(
                 {
                     'host': 'localhost',
                     'port': 27017,
-                    'replica_set': 'test_replica_set',
+                    'replica_set': 'test_replica_set_one',
                 },
                 {
                     'host': 'localhost',
                     'port': 27018,
-                    'replica_set': 'test_replica_set',
+                    'replica_set': 'test_replica_set_two',
                 },
             ],
         )
