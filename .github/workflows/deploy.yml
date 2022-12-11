@@ -9,11 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
       - name: Build and publish to PYPI
-        uses: JRubics/poetry-publish@v1.10
+        uses: JRubics/poetry-publish@v1.15
         with:
           pypi_token: '${{ secrets.pypi_password }}'

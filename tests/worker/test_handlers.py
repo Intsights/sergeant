@@ -749,7 +749,7 @@ class WorkerHandlersTestCase(
             task=task,
         )
         worker.on_stop.assert_called_once()
-        worker.logger.info.assert_called_once_with(
+        worker.logger.warning.assert_called_once_with(
             msg='task has stopped',
             extra={
                 'task': task,
@@ -764,7 +764,7 @@ class WorkerHandlersTestCase(
             task=task,
         )
         worker.on_stop.assert_called_once()
-        worker.logger.info.assert_called_once_with(
+        worker.logger.warning.assert_called_once_with(
             msg='task has stopped',
             extra={
                 'task': task,
@@ -775,6 +775,7 @@ class WorkerHandlersTestCase(
             msg='on_stop handler has failed: exception message',
             extra={
                 'task': task,
+                'received_stop_signal': False,
             },
         )
 
@@ -788,7 +789,7 @@ class WorkerHandlersTestCase(
                 task=task,
             )
         worker.on_stop.assert_called_once()
-        worker.logger.info.assert_called_once_with(
+        worker.logger.warning.assert_called_once_with(
             msg='task has stopped',
             extra={
                 'task': task,
@@ -806,7 +807,7 @@ class WorkerHandlersTestCase(
                 task=task,
             )
         worker.on_stop.assert_called_once()
-        worker.logger.info.assert_called_once_with(
+        worker.logger.warning.assert_called_once_with(
             msg='task has stopped',
             extra={
                 'task': task,
