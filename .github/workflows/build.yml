@@ -60,17 +60,19 @@ jobs:
         env:
           MONGODB_REPLICA_SET_MODE: primary
           MONGODB_REPLICA_SET_NAME: test_replica_set_one
-          ALLOW_EMPTY_PASSWORD: 'yes'
-          MONGODB_ADVERTISED_HOSTNAME: 'localhost'
+          MONGODB_PORT_NUMBER: 27017
+          ALLOW_EMPTY_PASSWORD: yes
+          MONGODB_ADVERTISED_HOSTNAME: localhost
       mongo-node-two:
         image: 'bitnami/mongodb:latest'
         ports:
-          - '27018:27017'
+          - '27018:27018'
         env:
           MONGODB_REPLICA_SET_MODE: primary
           MONGODB_REPLICA_SET_NAME: test_replica_set_two
-          ALLOW_EMPTY_PASSWORD: 'yes'
-          MONGODB_ADVERTISED_HOSTNAME: 'localhost'
+          MONGODB_PORT_NUMBER: 27018
+          ALLOW_EMPTY_PASSWORD: yes
+          MONGODB_ADVERTISED_HOSTNAME: localhost
     steps:
       - name: Checkout
         uses: actions/checkout@v3
