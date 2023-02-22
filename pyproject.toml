@@ -40,7 +40,7 @@ psutil = "^5"
 pymongo = ">=3.0,<5.0"
 redis = "^4"
 typing_extensions = "^4"
-psycopg2 = "^2
+psycopg = "^3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"

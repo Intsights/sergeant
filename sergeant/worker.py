@@ -1,11 +1,10 @@
 import datetime
+import logging
 import signal
 import sys
 import time
 import types
 import typing
-
-import logging
 
 from . import broker
 from . import config
@@ -17,7 +16,7 @@ from . import objects
 
 class Worker:
     def __init__(
-        self,
+            self,
     ) -> None:
         self.config = self.generate_config()
 
@@ -42,16 +41,16 @@ class Worker:
         signal.signal(signal.SIGTERM, self.stop_signal_handler)
 
     def generate_config(
-        self,
+            self,
     ) -> config.WorkerConfig:
         return config.WorkerConfig(
             name='worker',
         )
 
     def stop_signal_handler(
-        self,
-        signal_num: int,
-        frame: typing.Optional[types.FrameType],
+            self,
+            signal_num: int,
+            frame: typing.Optional[types.FrameType],
     ) -> None:
         self.logger.info(
             msg='stop signal has been received',
@@ -62,14 +61,14 @@ class Worker:
         self.stop()
 
     def init_worker(
-        self,
+            self,
     ) -> None:
         self.init_logger()
         self.init_broker()
         self.init_executor()
 
     def init_logger(
-        self,
+            self,
     ) -> None:
         for handler in self.logger.handlers:
             self.logger.removeHandler(
@@ -100,7 +99,7 @@ class Worker:
             )
 
     def init_broker(
-        self,
+            self,
     ) -> None:
         encoder_obj = encoder.encoder.Encoder(
             compressor_name=self.config.encoder.compressor,
@@ -114,6 +113,8 @@ class Worker:
             connector_obj = connector.redis.Connector(**self.config.connector.params)
         elif self.config.connector.type == 'local':
             connector_obj = connector.local.Connector(**self.config.connector.params)
+        elif self.config.connector.type == 'postgres':
+            connector_obj = connector.postgres.Connector(**self.config.connector.params)
         else:
             raise ValueError(f'connector type {self.config.connector.type} is not supported')
 
@@ -123,7 +124,7 @@ class Worker:
         )
 
     def init_executor(
-        self,
+            self,
     ) -> None:
         if self.config.number_of_threads == 1:
             self.executor_obj = executor.serial.SerialExecutor(
@@ -136,7 +137,7 @@ class Worker:
             )
 
     def get_trace_id(
-        self,
+            self,
     ) -> typing.Optional[str]:
         if self.executor_obj is not None:
             current_task = self.executor_obj.get_current_task()
@@ -146,17 +147,17 @@ class Worker:
         return None
 
     def purge_tasks(
-        self,
-        task_name: typing.Optional[str] = None,
+            self,
+            task_name: typing.Optional[str] = None,
     ) -> bool:
         return self.broker.purge_tasks(
             task_name=task_name if task_name else self.config.name,
         )
 
     def number_of_enqueued_tasks(
-        self,
-        task_name: typing.Optional[str] = None,
-        include_delayed: bool = False,
+            self,
+            task_name: typing.Optional[str] = None,
+            include_delayed: bool = False,
     ) -> int:
         return self.broker.number_of_enqueued_tasks(
             task_name=task_name if task_name else self.config.name,
@@ -164,12 +165,12 @@ class Worker:
         )
 
     def push_task(
-        self,
-        kwargs: typing.Dict[str, typing.Any],
-        task_name: typing.Optional[str] = None,
-        priority: str = 'NORMAL',
-        consumable_from: typing.Optional[float] = None,
-        trace_id: typing.Optional[str] = None,
+            self,
+            kwargs: typing.Dict[str, typing.Any],
+            task_name: typing.Optional[str] = None,
+            priority: str = 'NORMAL',
+            consumable_from: typing.Optional[float] = None,
+            trace_id: typing.Optional[str] = None,
     ) -> bool:
         task = objects.Task(
             kwargs=kwargs,
@@ -184,12 +185,12 @@ class Worker:
         )
 
     def push_tasks(
-        self,
-        kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
-        task_name: typing.Optional[str] = None,
-        priority: str = 'NORMAL',
-        consumable_from: typing.Optional[float] = None,
-        trace_id: typing.Optional[str] = None,
+            self,
+            kwargs_list: typing.Iterable[typing.Dict[str, typing.Any]],
+            task_name: typing.Optional[str] = None,
+            priority: str = 'NORMAL',
+            consumable_from: typing.Optional[float] = None,
+            trace_id: typing.Optional[str] = None,
     ) -> bool:
         trace_id = trace_id if trace_id is not None else self.get_trace_id()
         tasks = [
@@ -208,9 +209,9 @@ class Worker:
         )
 
     def get_next_tasks(
-        self,
-        number_of_tasks: int,
-        task_name: typing.Optional[str] = None,
+            self,
+            number_of_tasks: int,
+            task_name: typing.Optional[str] = None,
     ) -> typing.List[objects.Task]:
         return self.broker.pop_tasks(
             task_name=task_name if task_name else self.config.name,
@@ -218,15 +219,15 @@ class Worker:
         )
 
     def lock(
-        self,
-        name: str,
+            self,
+            name: str,
     ) -> connector.Lock:
         return self.broker.lock(
             name=name,
         )
 
     def iterate_tasks(
-        self,
+            self,
     ) -> typing.Iterable[objects.Task]:
         time_with_no_tasks = 0
         run_forever = self.config.max_tasks_per_run == 0
@@ -287,7 +288,7 @@ class Worker:
                 continue
 
     def work_loop(
-        self,
+            self,
     ) -> typing.Dict[str, typing.Any]:
         summary: typing.Dict[str, typing.Any] = {
             'start_time': datetime.datetime.utcnow(),
@@ -369,10 +370,10 @@ class Worker:
         return summary
 
     def retry(
-        self,
-        task: objects.Task,
-        priority: str = 'NORMAL',
-        consumable_from: typing.Optional[float] = None,
+            self,
+            task: objects.Task,
+            priority: str = 'NORMAL',
+            consumable_from: typing.Optional[float] = None,
     ) -> None:
         if self.config.max_retries > 0 and self.config.max_retries <= task.run_count:
             raise WorkerMaxRetries()
@@ -387,10 +388,10 @@ class Worker:
             raise WorkerRetry()
 
     def requeue(
-        self,
-        task: objects.Task,
-        priority: str = 'NORMAL',
-        consumable_from: typing.Optional[float] = None,
+            self,
+            task: objects.Task,
+            priority: str = 'NORMAL',
+            consumable_from: typing.Optional[float] = None,
     ) -> None:
         self.broker.requeue(
             task_name=self.config.name,
@@ -402,19 +403,19 @@ class Worker:
         raise WorkerRequeue()
 
     def stop(
-        self,
+            self,
     ) -> None:
         raise WorkerStop()
 
     def respawn(
-        self,
+            self,
     ) -> None:
         raise WorkerRespawn()
 
     def handle_success(
-        self,
-        task: objects.Task,
-        returned_value: typing.Any,
+            self,
+            task: objects.Task,
+            returned_value: typing.Any,
     ) -> None:
         try:
             if self.config.logging.events.on_success:
@@ -440,9 +441,9 @@ class Worker:
             )
 
     def handle_failure(
-        self,
-        task: objects.Task,
-        exception: Exception,
+            self,
+            task: objects.Task,
+            exception: Exception,
     ) -> None:
         try:
             if self.config.logging.events.on_failure:
@@ -480,8 +481,8 @@ class Worker:
             )
 
     def handle_timeout(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_timeout:
@@ -518,8 +519,8 @@ class Worker:
             )
 
     def handle_retry(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_retry:
@@ -544,8 +545,8 @@ class Worker:
             )
 
     def handle_max_retries(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_max_retries:
@@ -570,8 +571,8 @@ class Worker:
             )
 
     def handle_requeue(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_requeue:
@@ -596,8 +597,8 @@ class Worker:
             )
 
     def handle_starvation(
-        self,
-        time_with_no_tasks: int,
+            self,
+            time_with_no_tasks: int,
     ) -> None:
         try:
             if self.config.logging.events.on_starvation:
@@ -622,8 +623,8 @@ class Worker:
             )
 
     def handle_stop(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         try:
             if self.config.logging.events.on_stop:
@@ -650,82 +651,82 @@ class Worker:
             )
 
     def initialize(
-        self,
+            self,
     ) -> None:
         pass
 
     def finalize(
-        self,
+            self,
     ) -> None:
         pass
 
     def pre_work(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         pass
 
     def post_work(
-        self,
-        task: objects.Task,
-        success: bool,
-        exception: typing.Optional[BaseException],
+            self,
+            task: objects.Task,
+            success: bool,
+            exception: typing.Optional[BaseException],
     ) -> None:
         pass
 
     def work(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> typing.Any:
         pass
 
     def on_success(
-        self,
-        task: objects.Task,
-        returned_value: typing.Any,
+            self,
+            task: objects.Task,
+            returned_value: typing.Any,
     ) -> None:
         pass
 
     def on_failure(
-        self,
-        task: objects.Task,
-        exception: Exception,
+            self,
+            task: objects.Task,
+            exception: Exception,
     ) -> None:
         pass
 
     def on_timeout(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         pass
 
     def on_retry(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         pass
 
     def on_requeue(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         pass
 
     def on_max_retries(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         pass
 
     def on_starvation(
-        self,
-        time_with_no_tasks: int,
+            self,
+            time_with_no_tasks: int,
     ) -> None:
         pass
 
     def on_stop(
-        self,
-        task: objects.Task,
+            self,
+            task: objects.Task,
     ) -> None:
         pass
 

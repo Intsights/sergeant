@@ -2,8 +2,9 @@ import math
 import time
 import typing
 
-import psycopg2.extensions
-import psycopg2
+import psycopg
+import psycopg.connection
+
 from . import _connector
 
 
@@ -12,11 +13,10 @@ class Lock(
 ):
     def __init__(
             self,
-            connection: psycopg2.extensions.connection,
+            connection: psycopg.Connection,
             name: str,
     ) -> None:
         self.connection = connection
-        self.cursor = connection.cursor()
         self.name = name
 
         self.acquired = False
@@ -31,7 +31,7 @@ class Lock(
         while True:
             try:
                 expire_at = time.time() + ttl
-                self.cursor.execute(
+                self.connection.execute(
                     '''
                         INSERT INTO locks (name, expireAt)
                         VALUES(%s, %s);
@@ -41,10 +41,11 @@ class Lock(
                         expire_at,
                     ),
                 )
+                self.connection.commit()
                 self.acquired = True
 
                 return True
-            except psycopg2.Error:
+            except psycopg.Error:
                 if time_to_stop is not None and time.time() > time_to_stop:
                     return False
 
@@ -53,7 +54,7 @@ class Lock(
     def release(
             self,
     ) -> bool:
-        self.cursor.execute(
+        self.connection.execute(
             '''
                 DELETE FROM locks WHERE expireAt < %s;
             ''',
@@ -61,9 +62,9 @@ class Lock(
                 time.time(),
             ),
         )
-
+        self.connection.commit()
         if self.acquired:
-            cursor = self.cursor.execute(
+            cursor = self.connection.execute(
                 '''
                     DELETE FROM locks WHERE name = %s;
                 ''',
@@ -71,6 +72,7 @@ class Lock(
                     self.name,
                 ),
             )
+            self.connection.commit()
             self.acquired = False
 
             return cursor.rowcount == 1
@@ -80,7 +82,7 @@ class Lock(
     def is_locked(
             self,
     ) -> bool:
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
                 SELECT * FROM locks
                 WHERE name = %s AND expireAt > %s;
@@ -99,7 +101,7 @@ class Lock(
             ttl: int,
     ) -> bool:
         now = time.time()
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
                 UPDATE locks
                 SET expireAt = %s
@@ -118,7 +120,7 @@ class Lock(
             self,
     ) -> typing.Optional[int]:
         now = time.time()
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
                 SELECT expireAt FROM locks
                 WHERE name = %s;
@@ -146,13 +148,12 @@ class Connector(
 ):
     def __init__(
             self,
-            dsn: str,
+            conninfo: str,
     ) -> None:
-        self.connection = psycopg2.connect(
-            dsn=dsn,
+        self.connection = psycopg.connect(
+            conninfo=conninfo,
         )
-        self.cursor = self.connection.cursor()
-        self.cursor.execute(
+        self.connection.execute(
             '''
                 CREATE TABLE IF NOT EXISTS task_queue (queue_name TEXT, priority REAL, value bytea);
                 CREATE INDEX IF NOT EXISTS queue_by_priority ON task_queue (queue_name, priority);
@@ -165,6 +166,7 @@ class Connector(
                 CREATE INDEX IF NOT EXISTS lock_by_expireAt ON locks (expireAt);
             '''
         )
+        self.connection.commit()
 
     def key_set(
             self,
@@ -172,7 +174,7 @@ class Connector(
             value: bytes,
     ) -> bool:
         try:
-            self.cursor.execute(
+            self.connection.execute(
                 '''
                     INSERT INTO keys (name, value)
                     VALUES(%s, %s);
@@ -182,10 +184,11 @@ class Connector(
                     value,
                 ),
             )
+            self.connection.commit()
 
             return True
-        except psycopg2.Error:
-            self.cursor.execute(
+        except psycopg.Error:
+            self.connection.execute(
                 '''
                     UPDATE keys
                     SET value = %s
@@ -196,14 +199,14 @@ class Connector(
                     key,
                 ),
             )
-
+            self.connection.commit()
         return False
 
     def key_get(
             self,
             key: str,
     ) -> typing.Optional[bytes]:
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
                 SELECT value FROM keys WHERE name = %s;
             ''',
@@ -219,7 +222,7 @@ class Connector(
             self,
             key: str,
     ) -> bool:
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
                 DELETE FROM keys WHERE name = %s;
             ''',
@@ -227,28 +230,33 @@ class Connector(
                 key,
             ),
         )
-
+        self.connection.commit()
         return cursor.rowcount == 1
 
     def queue_pop(
             self,
             queue_name: str,
     ) -> typing.Optional[bytes]:
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
-                DELETE FROM task_queue
-                WHERE rowid in (
-                    SELECT rowid FROM task_queue
-                    WHERE queue_name = %s AND priority <= %s
-                    LIMIT 1
-                )
+                DELETE
+                FROM task_queue
+                where CTID in (
+                        select CTID rnum
+                        from task_queue
+                        WHERE queue_name = %s
+                        AND priority <= %s
+                        LIMIT 1
+                    )
                 RETURNING value;
+
             ''',
             (
                 queue_name,
                 time.time(),
             ),
         )
+        self.connection.commit()
 
         result = cursor.fetchone()
         return None if result is None else result[0]
@@ -258,14 +266,17 @@ class Connector(
             queue_name: str,
             number_of_items: int,
     ) -> typing.List[bytes]:
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
-                DELETE FROM task_queue
-                WHERE rowid in (
-                    SELECT rowid FROM task_queue
-                    WHERE queue_name = %s AND priority <= %s
-                    LIMIT %s
-                )
+                DELETE
+                FROM task_queue
+                where CTID in (
+                        select CTID rnum
+                        from task_queue
+                        WHERE queue_name = %s
+                        AND priority <= %s
+                        LIMIT %s
+                        )
                 RETURNING value;
             ''',
             (
@@ -298,7 +309,7 @@ class Connector(
             priority_value = 0.0
         else:
             priority_value = 1.0
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
                 INSERT INTO task_queue (queue_name, priority, value)
                 VALUES(%s, %s, %s);
@@ -309,8 +320,9 @@ class Connector(
                 item,
             ),
         )
+        self.connection.commit()
 
-        return cursor.rowcount == 0
+        return cursor.rowcount == 1
 
     def queue_push_bulk(
             self,
@@ -325,22 +337,24 @@ class Connector(
             priority_value = 0.0
         else:
             priority_value = 1.0
-        cursor = self.cursor.execute(
-            '''
-                INSERT INTO task_queue (queue_name, priority, value)
-                VALUES(%s, %s, %s);
-            ''',
-            (
-                (
-                    queue_name,
-                    priority_value,
-                    item,
-                )
-                for item in items
-            ),
-        )
 
-        return cursor.rowcount > 0
+        with self.connection.cursor() as cursor:
+            cursor.executemany(
+                '''
+                    INSERT INTO task_queue (queue_name, priority, value)
+                    VALUES(%s, %s, %s);
+                ''',
+                (
+                    (
+                        queue_name,
+                        priority_value,
+                        item,
+                    )
+                    for item in items
+                ),
+            )
+            self.connection.commit()
+            return cursor.rowcount > 0
 
     def queue_length(
             self,
@@ -348,7 +362,7 @@ class Connector(
             include_delayed: bool,
     ) -> int:
         if include_delayed:
-            cursor = self.cursor.execute(
+            cursor = self.connection.execute(
                 '''
                     SELECT COUNT(*) FROM task_queue
                     WHERE queue_name = %s;
@@ -358,7 +372,7 @@ class Connector(
                 ),
             )
         else:
-            cursor = self.cursor.execute(
+            cursor = self.connection.execute(
                 '''
                     SELECT COUNT(*) FROM task_queue
                     WHERE queue_name = %s AND priority <= %s;
@@ -376,7 +390,7 @@ class Connector(
             self,
             queue_name: str,
     ) -> bool:
-        cursor = self.cursor.execute(
+        cursor = self.connection.execute(
             '''
                 DELETE FROM task_queue WHERE queue_name = %s;
             ''',
