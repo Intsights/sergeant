@@ -1,9 +1,8 @@
 import math
-import time
-import typing
-
 import psycopg
 import psycopg.connection
+import time
+import typing
 
 from . import _connector
 
