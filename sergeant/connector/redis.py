@@ -1,6 +1,11 @@
 import binascii
 import random
-import redis
+
+
+try:
+    import redis
+except ImportError:
+    redis = None
 import time
 import typing
 
@@ -15,6 +20,11 @@ class Lock(
         redis_connection: redis.Redis,
         name: str,
     ) -> None:
+        if not redis:
+            raise ImportError(
+                'You need to install the redis library to use the Redis Lock',
+            )
+
         self.redis_connection = redis_connection
         self.name = f'__lock__.{name}'
 
@@ -100,17 +110,22 @@ class QueueRedis(
         *args: typing.Any,
         **kwargs: typing.Any,
     ) -> None:
+        if not redis:
+            raise ImportError(
+                'You need to install the redis library to use the Queue Redis',
+            )
+
         super().__init__(*args, **kwargs)
 
         self.delayed_queue_pop_bulk_script = self.register_script(
             script='''
                 local number_of_items_to_pop = tonumber(ARGV[1])
 
-                local zpopped_items = redis.call("ZRANGEBYSCORE", KEYS[1], 0, ARGV[2], "LIMIT", 0, number_of_items_to_pop)
+                local zpopped_items = redis.call('ZRANGEBYSCORE', KEYS[1], 0, ARGV[2], 'LIMIT', 0, number_of_items_to_pop)
 
                 local zset_number_of_elements = table.getn(zpopped_items)
                 if zset_number_of_elements > 0 then
-                    redis.call("ZREMRANGEBYRANK", KEYS[1], 0, zset_number_of_elements - 1)
+                    redis.call('ZREMRANGEBYRANK', KEYS[1], 0, zset_number_of_elements - 1)
                 end
 
                 return zpopped_items
@@ -214,6 +229,11 @@ class Connector(
         self,
         nodes: typing.List[typing.Dict[str, typing.Any]],
     ) -> None:
+        if not redis:
+            raise ImportError(
+                'You need to install the redis library to use the Redis Connector',
+            )
+
         self.connections = [
             QueueRedis(
                 host=node['host'],

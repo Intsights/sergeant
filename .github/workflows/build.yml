@@ -83,6 +83,6 @@ jobs:
       - name: Install Poetry
         uses: abatilo/actions-poetry@v2
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --all-extras
       - name: Test
         run: poetry run pytest

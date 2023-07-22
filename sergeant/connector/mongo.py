@@ -1,9 +1,14 @@
 import binascii
 import datetime
 import math
-import pymongo
-import pymongo.collection
-import pymongo.errors
+
+
+try:
+    import pymongo
+    import pymongo.collection
+    import pymongo.errors
+except ImportError:
+    pymongo = None
 import random
 import time
 import typing
@@ -19,6 +24,11 @@ class Lock(
         locks_collection: pymongo.collection.Collection,
         name: str,
     ) -> None:
+        if not pymongo:
+            raise ImportError(
+                'You need to install the pymongo library to use the Mongo Lock',
+            )
+
         self.locks_collection = locks_collection
         self.name = name
 
@@ -131,6 +141,11 @@ class Connector(
         self,
         nodes: typing.List[typing.Dict[str, typing.Any]],
     ) -> None:
+        if not pymongo:
+            raise ImportError(
+                'You need to install the pymongo library to use the Mongo Connector',
+            )
+
         self.connections = []
 
         for node in nodes:
