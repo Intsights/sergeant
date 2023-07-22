@@ -121,11 +121,11 @@ class QueueRedis(
             script='''
                 local number_of_items_to_pop = tonumber(ARGV[1])
 
-                local zpopped_items = redis.call('ZRANGEBYSCORE', KEYS[1], 0, ARGV[2], 'LIMIT', 0, number_of_items_to_pop)
+                local zpopped_items = redis.call("ZRANGEBYSCORE", KEYS[1], 0, ARGV[2], 'LIMIT', 0, number_of_items_to_pop)
 
                 local zset_number_of_elements = table.getn(zpopped_items)
                 if zset_number_of_elements > 0 then
-                    redis.call('ZREMRANGEBYRANK', KEYS[1], 0, zset_number_of_elements - 1)
+                    redis.call("ZREMRANGEBYRANK", KEYS[1], 0, zset_number_of_elements - 1)
                 end
 
                 return zpopped_items
