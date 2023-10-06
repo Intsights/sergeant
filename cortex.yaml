@@ -1,0 +1,15 @@
+---
+info:
+  title: Sergeant
+  description: Fast, Safe & Simple Asynchronous Task Queues Written In Pure Python
+  x-cortex-git:
+    github:
+      alias: intsightsorg
+      repository: Intsights/sergeant
+  x-cortex-tag: sergeant
+  x-cortex-type: service
+  x-cortex-domain-parents:
+  - tag: threatintel-rd
+openapi: 3.0.1
+servers:
+- url: "/"
