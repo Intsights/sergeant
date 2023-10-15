@@ -1,6 +1,11 @@
 import binascii
 import random
-import redis
+
+
+try:
+    import redis
+except ImportError:
+    redis = None
 import time
 import typing
 
@@ -15,6 +20,11 @@ class Lock(
         redis_connection: redis.Redis,
         name: str,
     ) -> None:
+        if not redis:
+            raise ImportError(
+                'You need to install the redis library to use the Redis Lock',
+            )
+
         self.redis_connection = redis_connection
         self.name = f'__lock__.{name}'
 
@@ -100,6 +110,11 @@ class QueueRedis(
         *args: typing.Any,
         **kwargs: typing.Any,
     ) -> None:
+        if not redis:
+            raise ImportError(
+                'You need to install the redis library to use the Queue Redis',
+            )
+
         super().__init__(*args, **kwargs)
 
         self.delayed_queue_pop_bulk_script = self.register_script(
@@ -214,6 +229,11 @@ class Connector(
         self,
         nodes: typing.List[typing.Dict[str, typing.Any]],
     ) -> None:
+        if not redis:
+            raise ImportError(
+                'You need to install the redis library to use the Redis Connector',
+            )
+
         self.connections = [
             QueueRedis(
                 host=node['host'],

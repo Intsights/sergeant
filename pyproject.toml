@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "sergeant"
-version = "0.26.1"
+version = "1.0.0"
 readme = "README.md"
 homepage = "https://github.com/Intsights/sergeant"
 repository = "https://github.com/Intsights/sergeant"
@@ -43,6 +43,11 @@ typing_extensions = "^4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7"
+
+[tool.poetry.extras]
+redis = ["redis"]
+mongo = ["pymongo"]
+
 
 [tool.isort]
 skip_gitignore = true
