@@ -67,7 +67,7 @@ It is possilbe to programatically invoke a `Supervisor` if you would like to doc
 Be sure to pay attention to the `worker_module_name` parameter. Depending on the command line CWD, Python determines the module name. Look at `benchmark/1_simple_worker/sergeant/supervisor.py` to see how to work with module names when the 'supervisor.py' file is in the same folder as the worker module.
 
 ```python
-import sergeant
+import sergeant.supervisor
 
 
 def main():
