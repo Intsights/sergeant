@@ -9,7 +9,7 @@ info:
   x-cortex-tag: sergeant
   x-cortex-type: service
   x-cortex-domain-parents:
-  - tag: threatintel-rd
+  - tag: threatintel
 openapi: 3.0.1
 servers:
 - url: "/"
