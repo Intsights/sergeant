@@ -40,15 +40,15 @@ class Serializer(
         self,
         obj: typing.Any,
     ) -> typing.Any:
-        if type(obj) == datetime.datetime:
+        if type(obj) is datetime.datetime:
             return {
                 '__datetime__': obj.timestamp(),
             }
-        elif type(obj) == tuple:
+        elif type(obj) is tuple:
             return {
                 '__tuple__': list(obj),
             }
-        elif type(obj) == objects.Task:
+        elif type(obj) is objects.Task:
             return {
                 '__task__': obj.__dict__,
             }
