@@ -99,7 +99,7 @@ def kill_running_background_threads() -> bool:
         if thread is threading.main_thread():
             continue
 
-        if thread.ident:
+        if thread.ident and not isinstance(thread, threading._DummyThread):
             ctypes.pythonapi.PyThreadState_SetAsyncExc(
                 ctypes.c_ulong(thread.ident),
                 ctypes.py_object(SystemExit),
