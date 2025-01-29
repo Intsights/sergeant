@@ -1,19 +1,13 @@
 import ctypes
 import pytest
 import threading
-import time
 
 import sergeant.slave
 
 
-def dummy_thread():
-    while True:
-        time.sleep(0.1)
-
-
 @pytest.fixture
 def background_threads():
-    threads = [threading.Thread(target=dummy_thread, daemon=False) for _ in range(3)]
+    threads = [threading.Thread(target=threading._DummyThread, daemon=False) for _ in range(3)]
 
     for thread in threads:
         thread.start()
