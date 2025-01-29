@@ -14,12 +14,12 @@ def dummy_thread():
 @pytest.fixture
 def background_threads():
     threads = [threading.Thread(target=dummy_thread, daemon=False) for _ in range(3)]
-    
+
     for thread in threads:
         thread.start()
-    
+
     yield threads
-    
+
     for thread in threads:
         if thread.is_alive():
             ctypes.pythonapi.PyThreadState_SetAsyncExc(
@@ -29,8 +29,10 @@ def background_threads():
             thread.join()
 
 
-def test_kill_running_background_threads(background_threads):
+def test_kill_running_background_threads(
+    background_threads,
+):
     assert sergeant.slave.kill_running_background_threads() is True
-    
+
     for thread in background_threads:
         assert not thread.is_alive()
