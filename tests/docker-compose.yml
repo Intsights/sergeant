@@ -11,13 +11,29 @@ services:
             - 6380:6379
     mongo-node-one:
         image: mongo
+        restart: always
         ports:
             - 27017:27017
         command: >
-            mongod --port 27017 --replSet test_replica_set --bind_ip_all
+            mongod --replSet test_replica_set --bind_ip_all
+        container_name: mongo-one
+        volumes:
+            - mongo1_data:/data/db
+
     mongo-node-two:
         image: mongo
+        restart: always
         ports:
-            - 27018:27018
+            - 27018:27017
         command: >
-            mongod --port 27018 --replSet test_replica_set --bind_ip_all
+            mongod --replSet test_replica_set --bind_ip_all
+        container_name: mongo-two
+        volumes:
+            - mongo2_data:/data/db
+
+
+volumes:
+    mongo1_data:
+        driver: local
+    mongo2_data:
+        driver: local

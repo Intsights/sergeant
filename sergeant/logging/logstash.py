@@ -73,7 +73,7 @@ class BaseLogstashHandler(
             if attribute_name not in self.logrecord_internal_attributes:
                 if dataclasses.is_dataclass(attribute_value):
                     attribute_value = dataclasses.asdict(
-                        attribute_value,
+                        attribute_value,  # type: ignore[arg-type]  # noqa: I005
                     )
 
                 message['extra'][attribute_name] = attribute_value
