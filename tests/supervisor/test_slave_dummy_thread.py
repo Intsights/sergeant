@@ -1,26 +1,27 @@
-import ctypes
 import pytest
 import threading
+import time
 
 import sergeant.slave
 
 
+def sleep_thread():
+    while True:
+        time.sleep(0.3)
+
+
 @pytest.fixture
 def background_threads():
-    threads = [threading.Thread(target=threading._DummyThread, daemon=False) for _ in range(3)]
+    dummy_thread = threading._DummyThread()
+
+    threads = [threading.Thread(target=sleep_thread) for _ in range(3)]
 
     for thread in threads:
         thread.start()
 
-    yield threads
+    threads.append(dummy_thread)
 
-    for thread in threads:
-        if thread.is_alive():
-            ctypes.pythonapi.PyThreadState_SetAsyncExc(
-                ctypes.c_ulong(thread.ident),
-                ctypes.py_object(SystemExit),
-            )
-            thread.join()
+    yield threads
 
 
 def test_kill_running_background_threads(
@@ -29,4 +30,5 @@ def test_kill_running_background_threads(
     assert sergeant.slave.kill_running_background_threads() is True
 
     for thread in background_threads:
-        assert not thread.is_alive()
+        if not isinstance(thread, threading._DummyThread):
+            assert not thread.is_alive()
