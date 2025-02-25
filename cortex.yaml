@@ -9,7 +9,10 @@ info:
   x-cortex-tag: sergeant
   x-cortex-type: service
   x-cortex-domain-parents:
-  - tag: threatintel
+  - tag: threatintel-platform-delivery
+  x-cortex-groups:
+  - exposure:internal-ship
+  - target:library
 openapi: 3.0.1
 servers:
 - url: "/"
