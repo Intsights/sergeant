@@ -311,7 +311,7 @@ class Connector(
         priority: str = 'NORMAL',
         consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from is not None:
+        if consumable_from:
             priority_value = consumable_from
         elif priority == 'HIGH':
             priority_value = 0.0
@@ -341,7 +341,7 @@ class Connector(
         priority: str = 'NORMAL',
         consumable_from: typing.Optional[float] = None,
     ) -> bool:
-        if consumable_from is not None:
+        if consumable_from:
             priority_value = consumable_from
         elif priority == 'HIGH':
             priority_value = 0.0
