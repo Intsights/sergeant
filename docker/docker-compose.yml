@@ -41,7 +41,7 @@ services:
         environment:
             ELASTICSEARCH_HOSTS: http://logserver-elasticsearch:9200
     logserver-logstash:
-        image: docker.elastic.co/logstash/logstash:8.1.1
+        image: docker.elastic.co/logstash/logstash:8.19.21
         links:
             - logserver-elasticsearch
         ports:
