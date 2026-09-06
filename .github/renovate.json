@@ -14,14 +14,12 @@
         "*"
       ],
       "matchUpdateTypes": [
+        "major",
         "minor",
         "patch"
       ],
-      "matchCategories": [
-        "python"
-      ],
-      "groupName": "all non-major python dependencies",
-      "groupSlug": "all-minor-patch-python"
+      "groupName": "all dependencies",
+      "groupSlug": "all-dependencies"
     }
   ]
 }
