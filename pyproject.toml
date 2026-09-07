@@ -38,7 +38,7 @@ msgpack = "^1"
 orjson = "^3"
 psutil = "^5"
 pymongo = ">=3.0,<5.0"
-redis = "^4"
+redis = "^8.0.0"
 typing_extensions = "^4"
 
 [tool.poetry.dev-dependencies]
