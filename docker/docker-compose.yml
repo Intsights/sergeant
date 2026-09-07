@@ -2,7 +2,7 @@ version: '2.4'
 
 services:
     logserver-elasticsearch:
-        image: docker.elastic.co/elasticsearch/elasticsearch:8.1.1
+        image: docker.elastic.co/elasticsearch/elasticsearch:9.5.3
         environment:
             - ES_JAVA_OPTS=-Xms512m -Xmx512m -Dio.netty.recycler.maxCapacityPerThread=0
             - bootstrap.memory_lock=true
