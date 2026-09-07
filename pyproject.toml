@@ -33,7 +33,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.7"
-hiredis = "^2"
+hiredis = "^3.0.0"
 msgpack = "^1"
 orjson = "^3"
 psutil = "^5"
